@@ -9,12 +9,19 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as PromotionsRouteImport } from './routes/promotions'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as CompareRouteImport } from './routes/compare'
+import { Route as CategoriesRouteImport } from './routes/categories'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ClinicClinicIdRouteImport } from './routes/clinic.$clinicId'
 
+const PromotionsRoute = PromotionsRouteImport.update({
+  id: '/promotions',
+  path: '/promotions',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DashboardRoute = DashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -23,6 +30,11 @@ const DashboardRoute = DashboardRouteImport.update({
 const CompareRoute = CompareRouteImport.update({
   id: '/compare',
   path: '/compare',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CategoriesRoute = CategoriesRouteImport.update({
+  id: '/categories',
+  path: '/categories',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -44,49 +56,80 @@ const ClinicClinicIdRoute = ClinicClinicIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/categories': typeof CategoriesRoute
   '/compare': typeof CompareRoute
   '/dashboard': typeof DashboardRoute
+  '/promotions': typeof PromotionsRoute
   '/clinic/$clinicId': typeof ClinicClinicIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/categories': typeof CategoriesRoute
   '/compare': typeof CompareRoute
   '/dashboard': typeof DashboardRoute
+  '/promotions': typeof PromotionsRoute
   '/clinic/$clinicId': typeof ClinicClinicIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/categories': typeof CategoriesRoute
   '/compare': typeof CompareRoute
   '/dashboard': typeof DashboardRoute
+  '/promotions': typeof PromotionsRoute
   '/clinic/$clinicId': typeof ClinicClinicIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/compare' | '/dashboard' | '/clinic/$clinicId'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/categories'
+    | '/compare'
+    | '/dashboard'
+    | '/promotions'
+    | '/clinic/$clinicId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/compare' | '/dashboard' | '/clinic/$clinicId'
+  to:
+    | '/'
+    | '/auth'
+    | '/categories'
+    | '/compare'
+    | '/dashboard'
+    | '/promotions'
+    | '/clinic/$clinicId'
   id:
     | '__root__'
     | '/'
     | '/auth'
+    | '/categories'
     | '/compare'
     | '/dashboard'
+    | '/promotions'
     | '/clinic/$clinicId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRoute
+  CategoriesRoute: typeof CategoriesRoute
   CompareRoute: typeof CompareRoute
   DashboardRoute: typeof DashboardRoute
+  PromotionsRoute: typeof PromotionsRoute
   ClinicClinicIdRoute: typeof ClinicClinicIdRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/promotions': {
+      id: '/promotions'
+      path: '/promotions'
+      fullPath: '/promotions'
+      preLoaderRoute: typeof PromotionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dashboard': {
       id: '/dashboard'
       path: '/dashboard'
@@ -99,6 +142,13 @@ declare module '@tanstack/react-router' {
       path: '/compare'
       fullPath: '/compare'
       preLoaderRoute: typeof CompareRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/categories': {
+      id: '/categories'
+      path: '/categories'
+      fullPath: '/categories'
+      preLoaderRoute: typeof CategoriesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -128,10 +178,22 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRoute,
+  CategoriesRoute: CategoriesRoute,
   CompareRoute: CompareRoute,
   DashboardRoute: DashboardRoute,
+  PromotionsRoute: PromotionsRoute,
   ClinicClinicIdRoute: ClinicClinicIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
