@@ -1,6 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { Stethoscope, Building2, ShieldCheck, UserRound } from "lucide-react";
+import { Building2, ShieldCheck, UserRound } from "lucide-react";
+import { MedCentralLogo } from "@/components/medcentral-logo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
