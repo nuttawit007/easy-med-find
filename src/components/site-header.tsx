@@ -11,7 +11,7 @@ export function SiteHeader() {
             <Stethoscope className="h-5 w-5" />
           </div>
           <span className="text-lg font-bold tracking-tight">
-            Clinic<span className="text-primary">Compare</span>
+            Med<span className="text-primary">Central</span>
           </span>
         </Link>
 

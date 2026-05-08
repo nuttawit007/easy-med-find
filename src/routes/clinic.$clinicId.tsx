@@ -31,7 +31,7 @@ export const Route = createFileRoute("/clinic/$clinicId")({
     const c = getClinic(params.clinicId);
     return {
       meta: [
-        { title: c ? `${c.name} — ClinicCompare` : "Clinic — ClinicCompare" },
+        { title: c ? `${c.name} — MedCentral` : "Clinic — MedCentral" },
         { name: "description", content: c?.description ?? "Clinic details and booking." },
         ...(c ? [{ property: "og:image", content: c.banner }] : []),
       ],

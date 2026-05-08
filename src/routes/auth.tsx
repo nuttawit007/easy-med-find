@@ -9,7 +9,7 @@ import { toast } from "sonner";
 
 export const Route = createFileRoute("/auth")({
   component: Auth,
-  head: () => ({ meta: [{ title: "Sign in — ClinicCompare" }] }),
+  head: () => ({ meta: [{ title: "Sign in — MedCentral" }] }),
 });
 
 function Auth() {
@@ -23,7 +23,7 @@ function Auth() {
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-primary-foreground">
             <Stethoscope className="h-5 w-5" />
           </div>
-          <span className="text-xl font-bold">ClinicCompare</span>
+          <span className="text-xl font-bold">MedCentral</span>
         </Link>
 
         <Tabs defaultValue="login">

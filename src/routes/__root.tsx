@@ -73,10 +73,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "ClinicCompare — Find & Book Trusted Clinics" },
+      { title: "MedCentral — Find & Book Trusted Clinics" },
       { name: "description", content: "Compare clinics, read reviews, and book appointments instantly with an AI assistant guiding your choice." },
-      { name: "author", content: "ClinicCompare" },
-      { property: "og:title", content: "ClinicCompare — Find & Book Trusted Clinics" },
+      { name: "author", content: "MedCentral" },
+      { property: "og:title", content: "MedCentral — Find & Book Trusted Clinics" },
       { property: "og:description", content: "Compare clinics, read reviews, and book appointments instantly." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

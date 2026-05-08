@@ -10,7 +10,7 @@ import { upcomingAppointments, bookingHistory } from "@/lib/mock-data";
 export const Route = createFileRoute("/dashboard")({
   component: Dashboard,
   head: () => ({
-    meta: [{ title: "My Dashboard — ClinicCompare" }],
+    meta: [{ title: "My Dashboard — MedCentral" }],
   }),
 });
 

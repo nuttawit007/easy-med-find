@@ -19,7 +19,7 @@ export const Route = createFileRoute("/")({
   component: Index,
   head: () => ({
     meta: [
-      { title: "ClinicCompare — Discover & Book Clinics" },
+      { title: "MedCentral — Discover & Book Clinics" },
       { name: "description", content: "Find, compare and book trusted clinics near you. AI-powered recommendations." },
     ],
   }),
@@ -170,7 +170,7 @@ function Index() {
 
       <footer className="border-t border-border bg-card/50 py-8">
         <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
-          © 2026 ClinicCompare · Trusted clinics, transparent pricing.
+          © 2026 MedCentral · Trusted clinics, transparent pricing.
         </div>
       </footer>
     </div>

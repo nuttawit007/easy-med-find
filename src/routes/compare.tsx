@@ -16,7 +16,7 @@ export const Route = createFileRoute("/compare")({
   component: ComparePage,
   head: () => ({
     meta: [
-      { title: "Compare clinics — ClinicCompare" },
+      { title: "Compare clinics — MedCentral" },
       { name: "description", content: "Compare up to 3 clinics side by side: ratings, prices, promos, distance." },
     ],
   }),
