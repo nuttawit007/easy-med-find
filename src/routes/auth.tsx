@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 import { useAuth, type Role } from "@/lib/auth";
 
 export const Route = createFileRoute("/auth")({
@@ -18,6 +19,7 @@ function Auth() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { login, loginWithEmail } = useAuth();
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   const quickLogin = (role: Role, label: string) => {
