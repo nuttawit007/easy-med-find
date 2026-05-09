@@ -58,8 +58,8 @@ function Auth() {
 
         <Tabs defaultValue="login">
           <TabsList className="mb-5 w-full">
-            <TabsTrigger value="login" className="flex-1">Sign in</TabsTrigger>
-            <TabsTrigger value="register" className="flex-1">Create account</TabsTrigger>
+            <TabsTrigger value="login" className="flex-1">{t("auth.login")}</TabsTrigger>
+            <TabsTrigger value="register" className="flex-1">{t("auth.signup")}</TabsTrigger>
           </TabsList>
 
           <div className="space-y-3">
@@ -96,7 +96,7 @@ function Auth() {
                 <Label htmlFor="pw">Password</Label>
                 <Input id="pw" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} />
               </div>
-              <Button className="w-full" size="lg" type="submit">Sign in</Button>
+              <Button className="w-full" size="lg" type="submit">{t("auth.login")}</Button>
             </form>
           </TabsContent>
 
@@ -122,7 +122,7 @@ function Auth() {
                 <Label htmlFor="pw2">Password</Label>
                 <Input id="pw2" type="password" required minLength={8} />
               </div>
-              <Button className="w-full" size="lg" type="submit">Create account</Button>
+              <Button className="w-full" size="lg" type="submit">{t("auth.signup")}</Button>
             </form>
           </TabsContent>
         </Tabs>
