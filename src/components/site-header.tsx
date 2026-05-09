@@ -1,6 +1,8 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { LogOut, LayoutDashboard } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { MedCentralLogo } from "@/components/medcentral-logo";
+import { LanguageToggle } from "@/components/language-toggle";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/auth";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -15,6 +17,7 @@ import {
 
 export function SiteHeader() {
   const { user, logout } = useAuth();
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   return (
@@ -29,34 +32,35 @@ export function SiteHeader() {
 
         <nav className="hidden items-center gap-6 text-sm font-medium md:flex">
           <Link to="/" className="text-muted-foreground transition-colors hover:text-foreground" activeProps={{ className: "text-foreground" }} activeOptions={{ exact: true }}>
-            Discover
+            {t("nav.discover")}
           </Link>
           <Link to="/categories" className="text-muted-foreground transition-colors hover:text-foreground" activeProps={{ className: "text-foreground" }}>
-            Categories
+            {t("nav.categories")}
           </Link>
           <Link to="/promotions" className="text-muted-foreground transition-colors hover:text-foreground" activeProps={{ className: "text-foreground" }}>
-            Promotions
+            {t("nav.promotions")}
           </Link>
           <Link to="/compare" className="text-muted-foreground transition-colors hover:text-foreground" activeProps={{ className: "text-foreground" }}>
-            Compare
+            {t("nav.compare")}
           </Link>
         </nav>
 
         <div className="flex items-center gap-2">
+          <LanguageToggle />
           {!user ? (
             <>
               <Button asChild variant="ghost" size="sm">
-                <Link to="/auth">Log In</Link>
+                <Link to="/auth">{t("auth.login")}</Link>
               </Button>
               <Button asChild size="sm" className="shadow-soft">
-                <Link to="/auth">Sign Up</Link>
+                <Link to="/auth">{t("auth.signup")}</Link>
               </Button>
             </>
           ) : (
             <>
               <Button asChild variant="ghost" size="sm" className="hidden sm:inline-flex">
                 <Link to="/dashboard">
-                  <LayoutDashboard className="mr-1 h-4 w-4" /> Dashboard
+                  <LayoutDashboard className="mr-1 h-4 w-4" /> {t("nav.dashboard")}
                 </Link>
               </Button>
               <DropdownMenu>
@@ -79,10 +83,10 @@ export function SiteHeader() {
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem asChild>
-                    <Link to="/dashboard"><LayoutDashboard className="mr-2 h-4 w-4" /> Dashboard</Link>
+                    <Link to="/dashboard"><LayoutDashboard className="mr-2 h-4 w-4" /> {t("nav.dashboard")}</Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => { logout(); navigate({ to: "/" }); }}>
-                    <LogOut className="mr-2 h-4 w-4" /> Log out
+                    <LogOut className="mr-2 h-4 w-4" /> {t("auth.logout")}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>

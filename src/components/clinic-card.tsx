@@ -1,9 +1,11 @@
 import { Link } from "@tanstack/react-router";
 import { MapPin, Star, Tag } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import type { Clinic } from "@/lib/mock-data";
 import { Badge } from "@/components/ui/badge";
 
 export function ClinicCard({ clinic }: { clinic: Clinic }) {
+  const { t } = useTranslation();
   return (
     <Link
       to="/clinic/$clinicId"
@@ -35,7 +37,7 @@ export function ClinicCard({ clinic }: { clinic: Clinic }) {
           <MapPin className="h-3 w-3" /> {clinic.location} · {clinic.distanceKm} km
         </div>
         <div className="mt-auto flex items-end justify-between pt-2">
-          <span className="text-xs text-muted-foreground">Starting from</span>
+          <span className="text-xs text-muted-foreground">{t("common.startingFrom")}</span>
           <span className="text-lg font-bold text-primary">฿{clinic.startingPrice.toLocaleString()}</span>
         </div>
       </div>
