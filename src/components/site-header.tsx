@@ -30,29 +30,29 @@ export function SiteHeader() {
           </span>
         </Link>
 
-        <nav className="hidden items-center gap-6 text-sm font-medium md:flex">
-          <Link to="/" className="text-muted-foreground transition-colors hover:text-foreground" activeProps={{ className: "text-foreground" }} activeOptions={{ exact: true }}>
+        <nav className="hidden items-center gap-x-2 text-sm font-medium md:flex">
+          <Link to="/" className="inline-block min-w-[100px] text-center text-muted-foreground transition-colors hover:text-foreground" activeProps={{ className: "text-foreground" }} activeOptions={{ exact: true }}>
             {t("nav.discover")}
           </Link>
-          <Link to="/categories" className="text-muted-foreground transition-colors hover:text-foreground" activeProps={{ className: "text-foreground" }}>
+          <Link to="/categories" className="inline-block min-w-[100px] text-center text-muted-foreground transition-colors hover:text-foreground" activeProps={{ className: "text-foreground" }}>
             {t("nav.categories")}
           </Link>
-          <Link to="/promotions" className="text-muted-foreground transition-colors hover:text-foreground" activeProps={{ className: "text-foreground" }}>
+          <Link to="/promotions" className="inline-block min-w-[100px] text-center text-muted-foreground transition-colors hover:text-foreground" activeProps={{ className: "text-foreground" }}>
             {t("nav.promotions")}
           </Link>
-          <Link to="/compare" className="text-muted-foreground transition-colors hover:text-foreground" activeProps={{ className: "text-foreground" }}>
+          <Link to="/compare" className="inline-block min-w-[100px] text-center text-muted-foreground transition-colors hover:text-foreground" activeProps={{ className: "text-foreground" }}>
             {t("nav.compare")}
           </Link>
         </nav>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-x-2">
           <LanguageToggle />
           {!user ? (
             <>
-              <Button asChild variant="ghost" size="sm">
+              <Button asChild variant="ghost" size="sm" className="w-28">
                 <Link to="/auth">{t("auth.login")}</Link>
               </Button>
-              <Button asChild size="sm" className="shadow-soft">
+              <Button asChild size="sm" className="w-28 shadow-soft">
                 <Link to="/auth">{t("auth.signup")}</Link>
               </Button>
             </>
