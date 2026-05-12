@@ -1,13 +1,14 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Loader2 } from "lucide-react";
+import { Loader2, ShieldAlert } from "lucide-react";
 import { MedCentralLogo } from "@/components/medcentral-logo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
-import { useAuth } from "@/lib/auth";
+import { useAuth, type UserRole } from "@/lib/auth";
 
 export const Route = createFileRoute("/auth")({
   component: Auth,
@@ -15,13 +16,33 @@ export const Route = createFileRoute("/auth")({
 });
 
 function Auth() {
-  const { user, loading, signInWithGoogle, signInWithLine, signInWithEmail, signUpWithEmail } = useAuth();
+  const {
+    user,
+    loading,
+    signInWithGoogle,
+    signInWithLine,
+    signInWithEmail,
+    signUpWithEmail,
+    signInAsMock,
+  } = useAuth();
   const { t } = useTranslation();
   const navigate = useNavigate();
 
   const [mode, setMode] = useState<"signin" | "signup">("signin");
+
+  // Sign-in fields
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  // Sign-up fields
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [signUpEmail, setSignUpEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [signUpPassword, setSignUpPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [role, setRole] = useState<UserRole>("patient");
+
   const [submitting, setSubmitting] = useState(false);
   const [oauthLoading, setOauthLoading] = useState<"google" | "line" | null>(null);
 
@@ -29,7 +50,7 @@ function Auth() {
     if (!loading && user) navigate({ to: "/dashboard" });
   }, [user, loading, navigate]);
 
-  const handleEmailSubmit = async (e: React.FormEvent) => {
+  const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !password) {
       toast.error("Please enter email and password");
@@ -37,16 +58,45 @@ function Auth() {
     }
     setSubmitting(true);
     try {
-      if (mode === "signin") {
-        await signInWithEmail(email, password);
-      } else {
-        const { needsConfirmation } = await signUpWithEmail(email, password);
-        if (needsConfirmation) {
-          toast.success(t("auth.checkEmail"));
-        }
-      }
+      await signInWithEmail(email, password);
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Authentication failed");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleSignUp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!firstName || !lastName || !signUpEmail || !phone || !signUpPassword) {
+      toast.error("Please fill out all fields");
+      return;
+    }
+    if (signUpPassword !== confirmPassword) {
+      toast.error("Passwords do not match");
+      return;
+    }
+    if (signUpPassword.length < 6) {
+      toast.error("Password must be at least 6 characters");
+      return;
+    }
+    setSubmitting(true);
+    try {
+      const { needsConfirmation } = await signUpWithEmail({
+        email: signUpEmail,
+        password: signUpPassword,
+        firstName,
+        lastName,
+        phone,
+        role,
+      });
+      if (needsConfirmation) {
+        toast.success(t("auth.checkEmail", "Check your email to confirm your account."));
+      } else {
+        toast.success("Account created");
+      }
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Sign up failed");
     } finally {
       setSubmitting(false);
     }
@@ -72,7 +122,10 @@ function Auth() {
     }
   };
 
-  const isSignIn = mode === "signin";
+  const handleMockLogin = (r: UserRole) => {
+    signInAsMock(r);
+    navigate({ to: "/dashboard" });
+  };
 
   return (
     <div className="bg-hero-gradient flex min-h-screen items-center justify-center px-4 py-10">
@@ -84,51 +137,155 @@ function Auth() {
           </span>
         </Link>
 
-        <h1 className="mb-1 text-center text-2xl font-bold">
-          {isSignIn ? t("auth.signInTitle") : t("auth.signUpTitle")}
-        </h1>
-        <p className="mb-6 text-center text-sm text-muted-foreground">
-          {isSignIn ? t("auth.signInSubtitle") : t("auth.signUpSubtitle")}
-        </p>
+        <Tabs value={mode} onValueChange={(v) => setMode(v as "signin" | "signup")} className="w-full">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="signin">Log In</TabsTrigger>
+            <TabsTrigger value="signup">Sign Up</TabsTrigger>
+          </TabsList>
 
-        <form onSubmit={handleEmailSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="email">{t("auth.email")}</Label>
-            <Input
-              id="email"
-              type="email"
-              autoComplete="email"
-              placeholder={t("auth.emailPlaceholder")}
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              disabled={submitting}
-              required
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="password">{t("auth.password")}</Label>
-            <Input
-              id="password"
-              type="password"
-              autoComplete={isSignIn ? "current-password" : "new-password"}
-              placeholder={t("auth.passwordPlaceholder")}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              disabled={submitting}
-              minLength={6}
-              required
-            />
-          </div>
-          <Button type="submit" className="w-full" size="lg" disabled={submitting}>
-            {submitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            {isSignIn ? t("auth.signInCta") : t("auth.signUpCta")}
-          </Button>
-        </form>
+          <TabsContent value="signin" className="mt-6">
+            <h1 className="mb-1 text-center text-2xl font-bold">Welcome back</h1>
+            <p className="mb-6 text-center text-sm text-muted-foreground">
+              Sign in to manage your bookings and rewards.
+            </p>
+            <form onSubmit={handleSignIn} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  autoComplete="email"
+                  placeholder="you@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  disabled={submitting}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="password">Password</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  autoComplete="current-password"
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  disabled={submitting}
+                  minLength={6}
+                  required
+                />
+              </div>
+              <Button type="submit" className="w-full" size="lg" disabled={submitting}>
+                {submitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                Log In
+              </Button>
+            </form>
+          </TabsContent>
+
+          <TabsContent value="signup" className="mt-6">
+            <h1 className="mb-1 text-center text-2xl font-bold">Create your account</h1>
+            <p className="mb-6 text-center text-sm text-muted-foreground">
+              Join MedCentral as a patient, clinic, or admin.
+            </p>
+            <form onSubmit={handleSignUp} className="space-y-4">
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-2">
+                  <Label htmlFor="firstName">First Name</Label>
+                  <Input
+                    id="firstName"
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                    disabled={submitting}
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="lastName">Last Name</Label>
+                  <Input
+                    id="lastName"
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                    disabled={submitting}
+                    required
+                  />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="signUpEmail">Email</Label>
+                <Input
+                  id="signUpEmail"
+                  type="email"
+                  autoComplete="email"
+                  value={signUpEmail}
+                  onChange={(e) => setSignUpEmail(e.target.value)}
+                  disabled={submitting}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="phone">Phone Number</Label>
+                <Input
+                  id="phone"
+                  type="tel"
+                  autoComplete="tel"
+                  placeholder="+66 ..."
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  disabled={submitting}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="signUpPassword">Password</Label>
+                <Input
+                  id="signUpPassword"
+                  type="password"
+                  autoComplete="new-password"
+                  value={signUpPassword}
+                  onChange={(e) => setSignUpPassword(e.target.value)}
+                  disabled={submitting}
+                  minLength={6}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="confirmPassword">Confirm Password</Label>
+                <Input
+                  id="confirmPassword"
+                  type="password"
+                  autoComplete="new-password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  disabled={submitting}
+                  minLength={6}
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label>Account Type</Label>
+                <Tabs value={role} onValueChange={(v) => setRole(v as UserRole)}>
+                  <TabsList className="grid w-full grid-cols-3">
+                    <TabsTrigger value="patient">Patient</TabsTrigger>
+                    <TabsTrigger value="clinic">Clinic</TabsTrigger>
+                    <TabsTrigger value="admin">Admin</TabsTrigger>
+                  </TabsList>
+                </Tabs>
+              </div>
+
+              <Button type="submit" className="w-full" size="lg" disabled={submitting}>
+                {submitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                Create Account
+              </Button>
+            </form>
+          </TabsContent>
+        </Tabs>
 
         <div className="my-6 flex items-center gap-3">
           <div className="h-px flex-1 bg-border" />
           <span className="text-xs uppercase tracking-wide text-muted-foreground">
-            {t("auth.orContinueWith")}
+            Or continue with
           </span>
           <div className="h-px flex-1 bg-border" />
         </div>
@@ -159,16 +316,23 @@ function Auth() {
           </Button>
         </div>
 
-        <p className="mt-6 text-center text-sm text-muted-foreground">
-          {isSignIn ? t("auth.noAccount") : t("auth.haveAccount")}{" "}
-          <button
-            type="button"
-            className="font-medium text-primary hover:underline"
-            onClick={() => setMode(isSignIn ? "signup" : "signin")}
-          >
-            {isSignIn ? t("auth.switchToSignUp") : t("auth.switchToSignIn")}
-          </button>
-        </p>
+        <div className="mt-8 rounded-2xl border border-dashed border-border bg-muted/40 p-4">
+          <div className="mb-3 flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+            <ShieldAlert className="h-3.5 w-3.5" />
+            Developer Quick Login (Testing Only)
+          </div>
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+            <Button size="sm" variant="secondary" onClick={() => handleMockLogin("patient")}>
+              Log in as Patient
+            </Button>
+            <Button size="sm" variant="secondary" onClick={() => handleMockLogin("clinic")}>
+              Log in as Clinic
+            </Button>
+            <Button size="sm" variant="secondary" onClick={() => handleMockLogin("admin")}>
+              Log in as Admin
+            </Button>
+          </div>
+        </div>
       </div>
     </div>
   );

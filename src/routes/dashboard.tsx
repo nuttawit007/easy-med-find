@@ -40,7 +40,13 @@ function Dashboard() {
     <div className="min-h-screen bg-background">
       <SiteHeader />
       <section className="container mx-auto px-4 py-10">
-        <PatientDashboard name={user.name} />
+        {user.role === "admin" ? (
+          <PlatformAdminDashboard name={user.name} />
+        ) : user.role === "clinic" ? (
+          <ClinicAdminDashboard name={user.name} />
+        ) : (
+          <PatientDashboard name={user.name} />
+        )}
       </section>
     </div>
   );
