@@ -228,7 +228,7 @@ function ClinicDetail() {
               disabled={!selectedSlot}
               onClick={() => setConfirmOpen(true)}
             >
-              Book Now
+              {t("booking.bookNow")}
             </Button>
           </div>
         </aside>
