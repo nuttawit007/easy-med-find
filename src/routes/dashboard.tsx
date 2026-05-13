@@ -1,15 +1,22 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Calendar, Clock, Gift, Trophy, Building2, Stethoscope, Users, CheckCircle2, XCircle, Pencil, Plus, ShieldCheck, Loader2 } from "lucide-react";
+import { Clock, Gift, Trophy, Building2, Users, CheckCircle2, XCircle, Pencil, Plus, ShieldCheck, Loader2, MoreHorizontal, RotateCcw, CalendarDays, Stethoscope } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { pendingClinics, pendingServices, clinicAdminAppointments } from "@/lib/mock-data";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { pendingClinics, pendingServices } from "@/lib/mock-data";
 import { useAuth } from "@/lib/auth";
-import { useBookings, isUpcoming } from "@/lib/bookings";
+import { useBookings, isUpcoming, updateBookingStatus, type Booking } from "@/lib/bookings";
 import { BookingTicketCard, EmptyTicketState } from "@/components/booking-ticket-card";
 import { toast } from "sonner";
 
@@ -170,32 +177,53 @@ function PatientDashboard({ name }: { name: string }) {
 }
 
 function ClinicAdminDashboard({ name }: { name: string }) {
+  const { t } = useTranslation();
+  const { user } = useAuth();
+  const allBookings = useBookings();
+
+  // Filter to bookings for this clinic admin's clinic.
+  // For mock clinic users (no real clinic_id mapping), show all bookings as a demo.
+  const appointments = useMemo(() => {
+    if (!user) return [] as Booking[];
+    const isMockClinic = user.id?.startsWith("mock-");
+    return isMockClinic ? allBookings : allBookings.filter((b) => b.clinicId === user.id);
+  }, [allBookings, user]);
+
   const services = [
     { id: "s1", name: "Pico Laser Full Face", price: 3500, duration: 45 },
     { id: "s2", name: "Laser Hair Removal (Underarm)", price: 990, duration: 30 },
     { id: "s3", name: "Acne Laser Treatment", price: 2200, duration: 40 },
   ];
 
+  const handleStatus = (id: string, status: Booking["status"]) => {
+    updateBookingStatus(id, status);
+    if (status === "completed") toast.success(t("clinicAdmin.toastCompleted"));
+    else if (status === "cancelled") toast(t("clinicAdmin.toastCancelled"));
+    else toast(t("clinicAdmin.toastReopened"));
+  };
+
   return (
     <>
       <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
         <div>
           <div className="mb-1 flex items-center gap-2">
-            <Badge className="bg-primary/10 text-primary hover:bg-primary/15">Clinic Admin</Badge>
+            <Badge className="bg-primary/10 text-primary hover:bg-primary/15">{t("clinicAdmin.title")}</Badge>
           </div>
           <h1 className="text-3xl font-bold md:text-4xl">{name}</h1>
-          <p className="mt-1 text-muted-foreground">Manage your clinic profile, services and patient appointments.</p>
+          <p className="mt-1 text-muted-foreground">{t("clinicAdmin.subtitle")}</p>
         </div>
         <Button onClick={() => toast("Editing clinic profile…")}>
-          <Pencil className="mr-2 h-4 w-4" /> Edit Clinic Profile
+          <Pencil className="mr-2 h-4 w-4" /> {t("clinicAdmin.editProfile")}
         </Button>
       </div>
 
-      <Tabs defaultValue="profile" className="w-full">
+      <Tabs defaultValue="appointments" className="w-full">
         <TabsList className="mb-6">
-          <TabsTrigger value="profile">Clinic Profile</TabsTrigger>
-          <TabsTrigger value="services">Services</TabsTrigger>
-          <TabsTrigger value="appointments">Appointments</TabsTrigger>
+          <TabsTrigger value="profile">{t("clinicAdmin.tabProfile")}</TabsTrigger>
+          <TabsTrigger value="services">{t("clinicAdmin.tabServices")}</TabsTrigger>
+          <TabsTrigger value="appointments">
+            {t("clinicAdmin.tabAppointments")} ({appointments.length})
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="profile">
@@ -216,7 +244,9 @@ function ClinicAdminDashboard({ name }: { name: string }) {
 
         <TabsContent value="services" className="space-y-3">
           <div className="flex justify-end">
-            <Button size="sm" onClick={() => toast("New service form…")}><Plus className="mr-1 h-4 w-4" /> Add service</Button>
+            <Button size="sm" onClick={() => toast("New service form…")}>
+              <Plus className="mr-1 h-4 w-4" /> {t("clinicAdmin.addService")}
+            </Button>
           </div>
           {services.map((s) => (
             <div key={s.id} className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-border bg-card p-5">
@@ -225,31 +255,103 @@ function ClinicAdminDashboard({ name }: { name: string }) {
                 <p className="text-sm text-muted-foreground">฿{s.price.toLocaleString()} · {s.duration} min</p>
               </div>
               <div className="flex gap-2">
-                <Button size="sm" variant="outline"><Pencil className="mr-1 h-4 w-4" /> Edit</Button>
-                <Button size="sm" variant="ghost" className="text-destructive hover:text-destructive">Remove</Button>
+                <Button size="sm" variant="outline"><Pencil className="mr-1 h-4 w-4" /> {t("clinicAdmin.edit")}</Button>
+                <Button size="sm" variant="ghost" className="text-destructive hover:text-destructive">{t("clinicAdmin.remove")}</Button>
               </div>
             </div>
           ))}
         </TabsContent>
 
-        <TabsContent value="appointments" className="space-y-3">
-          {clinicAdminAppointments.map((a) => (
-            <div key={a.id} className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-border bg-card p-5">
-              <div>
-                <p className="font-semibold">{a.service}</p>
-                <div className="mt-1 flex items-center gap-3 text-sm text-muted-foreground">
-                  <span className="flex items-center gap-1"><Calendar className="h-3.5 w-3.5" /> {a.date}</span>
-                  <span className="flex items-center gap-1"><Clock className="h-3.5 w-3.5" /> {a.time}</span>
-                  <span className="flex items-center gap-1"><Users className="h-3.5 w-3.5" /> Patient #{a.id.slice(-2)}</span>
-                </div>
-              </div>
-              <Badge variant={a.status === "Confirmed" ? "default" : "secondary"}>{a.status}</Badge>
+        <TabsContent value="appointments">
+          {appointments.length === 0 ? (
+            <EmptyTicketState
+              title={t("clinicAdmin.emptyTitle")}
+              description={t("clinicAdmin.emptyDesc")}
+            />
+          ) : (
+            <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-soft">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>{t("clinicAdmin.colPatient")}</TableHead>
+                    <TableHead>{t("clinicAdmin.colService")}</TableHead>
+                    <TableHead>{t("clinicAdmin.colDateTime")}</TableHead>
+                    <TableHead>{t("clinicAdmin.colRef")}</TableHead>
+                    <TableHead>{t("clinicAdmin.colStatus")}</TableHead>
+                    <TableHead className="text-right">{t("clinicAdmin.colActions")}</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {appointments.map((b) => (
+                    <TableRow key={b.bookingId}>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          <Users className="h-3.5 w-3.5 text-muted-foreground" />
+                          <span className="font-medium">{b.patientName ?? "—"}</span>
+                        </div>
+                        {b.patientEmail && (
+                          <p className="text-xs text-muted-foreground">{b.patientEmail}</p>
+                        )}
+                      </TableCell>
+                      <TableCell>{b.serviceName}</TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-1 text-sm">
+                          <CalendarDays className="h-3.5 w-3.5 text-muted-foreground" />{b.date}
+                        </div>
+                        <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                          <Clock className="h-3 w-3" />{b.time}
+                        </div>
+                      </TableCell>
+                      <TableCell className="font-mono text-xs">{b.bookingId}</TableCell>
+                      <TableCell>
+                        <StatusBadge status={b.status} />
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button size="sm" variant="ghost"><MoreHorizontal className="h-4 w-4" /></Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            {b.status !== "completed" && (
+                              <DropdownMenuItem onClick={() => handleStatus(b.bookingId, "completed")}>
+                                <CheckCircle2 className="mr-2 h-4 w-4 text-success" />
+                                {t("clinicAdmin.actionComplete")}
+                              </DropdownMenuItem>
+                            )}
+                            {b.status !== "cancelled" && (
+                              <DropdownMenuItem onClick={() => handleStatus(b.bookingId, "cancelled")}>
+                                <XCircle className="mr-2 h-4 w-4 text-destructive" />
+                                {t("clinicAdmin.actionCancel")}
+                              </DropdownMenuItem>
+                            )}
+                            {b.status !== "upcoming" && (
+                              <DropdownMenuItem onClick={() => handleStatus(b.bookingId, "upcoming")}>
+                                <RotateCcw className="mr-2 h-4 w-4" />
+                                {t("clinicAdmin.actionReopen")}
+                              </DropdownMenuItem>
+                            )}
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
             </div>
-          ))}
+          )}
         </TabsContent>
       </Tabs>
     </>
   );
+}
+
+function StatusBadge({ status }: { status: Booking["status"] }) {
+  const { t } = useTranslation();
+  if (status === "completed")
+    return <Badge className="bg-muted text-muted-foreground hover:bg-muted">{t("clinicAdmin.statusCompleted")}</Badge>;
+  if (status === "cancelled")
+    return <Badge variant="destructive">{t("clinicAdmin.statusCancelled")}</Badge>;
+  return <Badge className="bg-success text-success-foreground hover:bg-success">{t("clinicAdmin.statusUpcoming")}</Badge>;
 }
 
 function PlatformAdminDashboard({ name }: { name: string }) {

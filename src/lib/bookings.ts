@@ -12,6 +12,9 @@ export interface Booking {
   time: string;
   status: BookingStatus;
   createdAt: string;
+  patientId?: string;
+  patientName?: string;
+  patientEmail?: string;
 }
 
 const STORAGE_KEY = "medcentral_bookings_v1";
@@ -56,6 +59,11 @@ export function addBooking(input: Omit<Booking, "bookingId" | "status" | "create
   };
   write([booking, ...read()]);
   return booking;
+}
+
+export function updateBookingStatus(bookingId: string, status: BookingStatus): void {
+  const next = read().map((b) => (b.bookingId === bookingId ? { ...b, status } : b));
+  write(next);
 }
 
 export function useBookings(): Booking[] {

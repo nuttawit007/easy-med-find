@@ -26,6 +26,7 @@ import { cn } from "@/lib/utils";
 import { getClinic, getTimeSlots } from "@/lib/mock-data";
 import { addBooking } from "@/lib/bookings";
 import { toast } from "sonner";
+import { useAuth } from "@/lib/auth";
 
 export const Route = createFileRoute("/clinic/$clinicId")({
   component: ClinicDetail,
@@ -45,6 +46,7 @@ function ClinicDetail() {
   const { clinicId } = Route.useParams();
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const { user } = useAuth();
   const clinic = getClinic(clinicId);
 
   const [date, setDate] = useState<Date>(new Date());
@@ -79,6 +81,9 @@ function ClinicDetail() {
       price: svc?.price,
       date: isoDate,
       time: selectedSlot,
+      patientId: user?.id,
+      patientName: user?.name,
+      patientEmail: user?.email,
     });
     setConfirmOpen(false);
     toast.success("Appointment confirmed!", {
