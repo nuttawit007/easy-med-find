@@ -67,9 +67,20 @@ function ClinicDetail() {
   const service = clinic.services.find((s) => s.name === selectedService);
 
   const confirmBooking = () => {
+    if (!clinic || !selectedSlot || !selectedService) return;
+    const svc = clinic.services.find((s) => s.name === selectedService);
+    const isoDate = date.toISOString().slice(0, 10);
+    const booking = addBooking({
+      clinicId: clinic.id,
+      clinicName: clinic.name,
+      serviceName: selectedService,
+      price: svc?.price,
+      date: isoDate,
+      time: selectedSlot,
+    });
     setConfirmOpen(false);
     toast.success("Appointment confirmed!", {
-      description: `${selectedService} on ${date.toDateString()} at ${selectedSlot}`,
+      description: `${booking.bookingId} · ${selectedService} · ${date.toDateString()} ${selectedSlot}`,
     });
     setSelectedSlot(null);
     navigate({ to: "/dashboard" });
