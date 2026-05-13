@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import { getClinic, getTimeSlots } from "@/lib/mock-data";
+import { addBooking } from "@/lib/bookings";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/clinic/$clinicId")({
