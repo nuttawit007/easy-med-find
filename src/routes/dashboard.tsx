@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Calendar, Clock, Gift, Trophy, Building2, Stethoscope, Users, CheckCircle2, XCircle, Pencil, Plus, ShieldCheck, Loader2, MoreHorizontal, RotateCcw, CalendarDays } from "lucide-react";
+import { Clock, Gift, Trophy, Building2, Users, CheckCircle2, XCircle, Pencil, Plus, ShieldCheck, Loader2, MoreHorizontal, RotateCcw, CalendarDays, Stethoscope } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
