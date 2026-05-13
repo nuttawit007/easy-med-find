@@ -1,13 +1,16 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect } from "react";
-import { Calendar, Clock, Gift, Star, Trophy, Building2, Stethoscope, Users, CheckCircle2, XCircle, Pencil, Plus, ShieldCheck, Loader2 } from "lucide-react";
+import { useEffect, useMemo } from "react";
+import { useTranslation } from "react-i18next";
+import { Calendar, Clock, Gift, Trophy, Building2, Stethoscope, Users, CheckCircle2, XCircle, Pencil, Plus, ShieldCheck, Loader2 } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { upcomingAppointments, bookingHistory, pendingClinics, pendingServices, clinicAdminAppointments } from "@/lib/mock-data";
+import { pendingClinics, pendingServices, clinicAdminAppointments } from "@/lib/mock-data";
 import { useAuth } from "@/lib/auth";
+import { useBookings, isUpcoming } from "@/lib/bookings";
+import { BookingTicketCard, EmptyTicketState } from "@/components/booking-ticket-card";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/dashboard")({
