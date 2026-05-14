@@ -50,6 +50,7 @@ import { pendingClinics, pendingServices } from "@/lib/mock-data";
 import { useClinics, updateClinicProfile, updateClinicServices } from "@/lib/clinics";
 import { useAuth } from "@/lib/auth";
 import { useBookings, isUpcoming, updateBookingStatus, type Booking } from "@/lib/bookings";
+import { incrementLoyaltyPoints, useLoyaltyPoints } from "@/lib/loyalty";
 import { BookingTicketCard, EmptyTicketState } from "@/components/booking-ticket-card";
 import { toast } from "sonner";
 
@@ -115,8 +116,9 @@ function EmptyState({
 
 function PatientDashboard({ name }: { name: string }) {
   const { t } = useTranslation();
+  const { user } = useAuth();
   const bookings = useBookings();
-  const points = 0;
+  const points = useLoyaltyPoints(user?.id) ?? 0;
   const nextTier = 1000;
 
   const { upcoming, history } = useMemo(() => {
@@ -135,6 +137,27 @@ function PatientDashboard({ name }: { name: string }) {
         <Button asChild>
           <Link to="/">{t("dashboard.bookVisit")}</Link>
         </Button>
+      </div>
+
+      <div className="mb-6 rounded-2xl border border-border bg-gradient-to-br from-primary-soft to-secondary p-5 shadow-soft">
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-soft">
+              <Trophy className="h-6 w-6" />
+            </div>
+            <div>
+              <p className="text-sm font-medium text-muted-foreground">
+                {t("loyalty.myRewards")}
+              </p>
+              <p className="text-2xl font-bold">
+                {t("loyalty.youHavePoints", { count: points })}
+              </p>
+            </div>
+          </div>
+          <Badge className="bg-primary/10 text-primary hover:bg-primary/15">
+            {t("loyalty.totalPoints")}: {points}
+          </Badge>
+        </div>
       </div>
 
       <Tabs defaultValue="upcoming" className="w-full">
@@ -292,9 +315,16 @@ function ClinicAdminDashboard({ name }: { name: string }) {
   }, [allBookings, user, clinic.id]);
 
   const handleStatus = (id: string, status: Booking["status"]) => {
+    const booking = allBookings.find((b) => b.bookingId === id);
+    const wasAlreadyCompleted = booking?.status === "completed";
     updateBookingStatus(id, status);
-    if (status === "completed") toast.success(t("clinicAdmin.toastCompleted"));
-    else if (status === "cancelled") toast(t("clinicAdmin.toastCancelled"));
+    if (status === "completed") {
+      // Award 1 loyalty point to the patient on completion (only if not already completed)
+      if (!wasAlreadyCompleted && booking?.patientId) {
+        incrementLoyaltyPoints(booking.patientId, 1);
+      }
+      toast.success(t("clinicAdmin.toastCompleted"));
+    } else if (status === "cancelled") toast(t("clinicAdmin.toastCancelled"));
     else toast(t("clinicAdmin.toastReopened"));
   };
 
