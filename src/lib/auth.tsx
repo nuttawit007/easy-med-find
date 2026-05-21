@@ -34,6 +34,7 @@ type AuthContextType = {
   signInWithEmail: (email: string, password: string) => Promise<void>;
   signUpWithEmail: (payload: SignUpPayload) => Promise<{ needsConfirmation: boolean }>;
   signInAsMock: (role: UserRole) => void;
+  signInAsNewClinic: () => void;
   signOut: () => Promise<void>;
 };
 
@@ -193,6 +194,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setLoading(false);
   };
 
+  const signInAsNewClinic = () => {
+    const mock: AuthUser = {
+      id: "mock-clinic-new",
+      name: "New Clinic Manager",
+      email: "newclinic@medcentral.com",
+      role: "clinic",
+      firstName: "New",
+      lastName: "Manager",
+    };
+    if (typeof window !== "undefined") {
+      localStorage.setItem(MOCK_STORAGE_KEY, JSON.stringify(mock));
+    }
+    setUser(mock);
+    setSession(null);
+    setIsMock(true);
+    setLoading(false);
+  };
+
   const signOut = async () => {
     if (isMock) {
       if (typeof window !== "undefined") localStorage.removeItem(MOCK_STORAGE_KEY);
@@ -215,6 +234,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         signInWithEmail,
         signUpWithEmail,
         signInAsMock,
+        signInAsNewClinic,
         signOut,
       }}
     >

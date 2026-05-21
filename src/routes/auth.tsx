@@ -29,6 +29,7 @@ function Auth() {
     signInWithEmail,
     signUpWithEmail,
     signInAsMock,
+    signInAsNewClinic,
   } = useAuth();
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -134,6 +135,11 @@ function Auth() {
 
   const handleMockLogin = (r: UserRole) => {
     signInAsMock(r);
+    navigate({ to: "/dashboard" });
+  };
+
+  const handleMockNewClinicLogin = () => {
+    signInAsNewClinic();
     navigate({ to: "/dashboard" });
   };
 
@@ -355,7 +361,7 @@ function Auth() {
             <ShieldAlert className="h-3.5 w-3.5" />
             {t("auth.devLogin")}
           </div>
-          <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
             <Button size="sm" variant="secondary" onClick={() => handleMockLogin("patient")}>
               {t("auth.devLoginAsPatient")}
             </Button>
@@ -364,6 +370,9 @@ function Auth() {
             </Button>
             <Button size="sm" variant="secondary" onClick={() => handleMockLogin("admin")}>
               {t("auth.devLoginAsAdmin")}
+            </Button>
+            <Button size="sm" variant="secondary" onClick={handleMockNewClinicLogin} className="border-primary/30 bg-primary/5 text-primary hover:bg-primary/10">
+              {t("auth.roleClinic")} (New)
             </Button>
           </div>
         </div>

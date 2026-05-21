@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
 import {
   Dialog,
   DialogContent,
@@ -37,6 +37,12 @@ import {
   Check,
   UserCheck,
   ShieldAlert,
+  Send,
+  AlertTriangle,
+  Clock4,
+  ClipboardCheck,
+  FileCheck2,
+  Landmark,
 } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -57,7 +63,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { type OpeningHoursEntry } from "@/lib/mock-data";
+import { type OpeningHoursEntry, CATEGORIES } from "@/lib/mock-data";
 import { useClinics, updateClinicProfile, updateClinicServices } from "@/lib/clinics";
 import { useAuth } from "@/lib/auth";
 import {
@@ -75,6 +81,13 @@ import { useBookings, isUpcoming, updateBookingStatus, type Booking } from "@/li
 import { incrementLoyaltyPoints, useLoyaltyPoints } from "@/lib/loyalty";
 import { BookingTicketCard, EmptyTicketState } from "@/components/booking-ticket-card";
 import { toast } from "sonner";
+import {
+  useMyClinicRegistration,
+  submitClinicRegistration,
+  clearRejectedRegistration,
+  type ClinicRegistrationFormData,
+} from "@/lib/clinic-registration";
+import { addPendingClinicFromRegistration } from "@/lib/admin-approvals";
 
 export const Route = createFileRoute("/dashboard")({
   component: Dashboard,
@@ -286,6 +299,9 @@ function ClinicAdminDashboard({ name }: { name: string }) {
   // Find clinic owned by the current user via ownerId
   const clinic = allClinics.find((c) => c.ownerId === user?.id);
 
+  // Check registration status for clinic managers without a linked clinic
+  const myRegistration = useMyClinicRegistration(user?.id);
+
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [editProfile, setEditProfile] = useState({ name: clinic?.name ?? "", location: clinic?.location ?? "" });
 
@@ -388,14 +404,18 @@ function ClinicAdminDashboard({ name }: { name: string }) {
     else toast(t("clinicAdmin.toastReopened"));
   };
 
-  // No clinic matched this user — show empty state
+  // No clinic matched this user — check registration status
   if (!clinic) {
-    return (
-      <EmptyState
-        title="No clinic linked to your account"
-        description="Your account is not linked to any clinic yet. Contact the platform admin to get set up."
-      />
-    );
+    // Pending registration — show waiting page
+    if (myRegistration?.status === "pending") {
+      return <PendingApprovalStatus registration={myRegistration} />;
+    }
+    // Rejected registration — show rejection notice with resubmit
+    if (myRegistration?.status === "rejected") {
+      return <RejectedRegistrationStatus userId={user?.id ?? ""} registration={myRegistration} />;
+    }
+    // No registration at all — show registration form
+    return <ClinicRegistrationForm userId={user?.id ?? ""} userName={name} />;
   }
 
   return (
@@ -1233,6 +1253,380 @@ function PlatformAdminDashboard({ name }: { name: string }) {
           )}
         </DialogContent>
       </Dialog>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────
+   CLINIC REGISTRATION FORM
+   Shown when a Clinic Manager logs in without a linked clinic
+   and has no pending/rejected registration.
+   ───────────────────────────────────────────────────────── */
+
+function ClinicRegistrationForm({ userId, userName }: { userId: string; userName: string }) {
+  const { t } = useTranslation();
+
+  const emptyForm: ClinicRegistrationFormData = {
+    name: "",
+    category: "",
+    location: "",
+    description: "",
+    licenseNumber: "",
+    registeredCompanyName: "",
+    registeredDate: "",
+    mapCoordinates: "",
+    ownerName: "",
+    ownerPhone: "",
+    ownerEmail: "",
+  };
+
+  const [form, setForm] = useState<ClinicRegistrationFormData>(emptyForm);
+
+  const set = useCallback(
+    (field: keyof ClinicRegistrationFormData, value: string) =>
+      setForm((prev) => ({ ...prev, [field]: value })),
+    [],
+  );
+
+  const handleSubmit = () => {
+    // Validate required fields
+    const required: (keyof ClinicRegistrationFormData)[] = [
+      "name", "category", "location", "licenseNumber",
+      "ownerName", "ownerPhone", "ownerEmail", "description",
+      "registeredCompanyName", "registeredDate", "mapCoordinates",
+    ];
+    const missing = required.some((key) => !form[key]?.trim());
+    if (missing) {
+      toast.error(t("clinicRegistration.errFillRequired"));
+      return;
+    }
+
+    // Submit registration
+    const registration = submitClinicRegistration(form, userId);
+
+    // Also push into admin pending queue
+    const now = new Date();
+    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const submittedDate = `${monthNames[now.getMonth()]} ${now.getDate()}, ${now.getFullYear()}`;
+
+    addPendingClinicFromRegistration(
+      {
+        name: form.name,
+        category: form.category,
+        location: form.location,
+        licenseNumber: form.licenseNumber,
+        ownerName: form.ownerName,
+        ownerPhone: form.ownerPhone,
+        ownerEmail: form.ownerEmail,
+        description: form.description,
+        mapCoordinates: form.mapCoordinates,
+        registeredCompanyName: form.registeredCompanyName,
+        registeredDate: form.registeredDate,
+        submittedBy: userId,
+      },
+      submittedDate,
+    );
+
+    toast.success(t("clinicRegistration.toastSubmitted"), {
+      description: t("clinicRegistration.toastSubmittedDesc"),
+    });
+  };
+
+  const inputCls =
+    "w-full rounded-xl border border-border bg-background px-4 py-2.5 text-sm transition focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none placeholder:text-muted-foreground/50";
+  const textareaCls =
+    "w-full rounded-xl border border-border bg-background px-4 py-3 text-sm transition focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none placeholder:text-muted-foreground/50 resize-none min-h-[80px]";
+  const labelCls = "block text-xs font-bold text-muted-foreground uppercase tracking-wider mb-1.5";
+
+  return (
+    <div className="space-y-8 animate-in fade-in duration-500">
+      {/* Header */}
+      <div className="relative overflow-hidden rounded-3xl border border-border/80 bg-gradient-to-br from-card via-card to-primary/5 p-6 md:p-8 shadow-glow">
+        <div className="absolute top-0 right-0 h-48 w-48 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
+        <div className="relative z-10">
+          <div className="mb-2 flex items-center gap-2">
+            <Badge className="bg-primary/10 text-primary hover:bg-primary/15 border-none font-bold text-xs px-2.5 py-1 rounded-full uppercase tracking-wider">
+              <Building2 className="mr-1 h-3.5 w-3.5" /> {t("clinicAdmin.title")}
+            </Badge>
+          </div>
+          <h1 className="text-3xl font-black tracking-tight text-foreground md:text-4xl">
+            {t("clinicRegistration.formTitle")}
+          </h1>
+          <p className="mt-2 text-sm text-muted-foreground max-w-xl leading-relaxed">
+            {t("clinicRegistration.formSubtitle")}
+          </p>
+        </div>
+      </div>
+
+      {/* Form Sections */}
+      <div className="space-y-6">
+        {/* Section 1: Clinic Information */}
+        <div className="rounded-3xl border border-border/80 bg-card p-6 shadow-sm">
+          <h3 className="text-xs font-extrabold uppercase tracking-widest text-muted-foreground mb-5 flex items-center gap-1.5">
+            <Building2 className="h-4 w-4 text-primary" /> {t("clinicRegistration.sectionClinicInfo")}
+          </h3>
+          <div className="grid gap-4 md:grid-cols-2">
+            <div>
+              <label className={labelCls}>{t("clinicRegistration.clinicName")} *</label>
+              <input
+                className={inputCls}
+                placeholder={t("clinicRegistration.clinicNamePlaceholder")}
+                value={form.name}
+                onChange={(e) => set("name", e.target.value)}
+              />
+            </div>
+            <div>
+              <label className={labelCls}>{t("clinicRegistration.category")} *</label>
+              <select
+                className={inputCls}
+                value={form.category}
+                onChange={(e) => set("category", e.target.value)}
+              >
+                <option value="">{t("clinicRegistration.categoryPlaceholder")}</option>
+                {CATEGORIES.map((cat) => (
+                  <option key={cat} value={cat}>{cat}</option>
+                ))}
+                <option value="Wellness">Wellness</option>
+              </select>
+            </div>
+            <div className="md:col-span-2">
+              <label className={labelCls}>{t("clinicRegistration.location")} *</label>
+              <input
+                className={inputCls}
+                placeholder={t("clinicRegistration.locationPlaceholder")}
+                value={form.location}
+                onChange={(e) => set("location", e.target.value)}
+              />
+            </div>
+            <div className="md:col-span-2">
+              <label className={labelCls}>{t("clinicRegistration.description")} *</label>
+              <textarea
+                className={textareaCls}
+                placeholder={t("clinicRegistration.descriptionPlaceholder")}
+                value={form.description}
+                onChange={(e) => set("description", e.target.value)}
+                rows={3}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Section 2: Legal & Registration Documents */}
+        <div className="rounded-3xl border border-border/80 bg-card p-6 shadow-sm">
+          <h3 className="text-xs font-extrabold uppercase tracking-widest text-muted-foreground mb-5 flex items-center gap-1.5">
+            <Landmark className="h-4 w-4 text-primary" /> {t("clinicRegistration.sectionLegalDocs")}
+          </h3>
+          <div className="grid gap-4 md:grid-cols-2">
+            <div>
+              <label className={labelCls}>{t("clinicRegistration.licenseNumber")} *</label>
+              <input
+                className={inputCls}
+                placeholder={t("clinicRegistration.licenseNumberPlaceholder")}
+                value={form.licenseNumber}
+                onChange={(e) => set("licenseNumber", e.target.value)}
+              />
+            </div>
+            <div>
+              <label className={labelCls}>{t("clinicRegistration.registeredCompanyName")} *</label>
+              <input
+                className={inputCls}
+                placeholder={t("clinicRegistration.registeredCompanyNamePlaceholder")}
+                value={form.registeredCompanyName}
+                onChange={(e) => set("registeredCompanyName", e.target.value)}
+              />
+            </div>
+            <div>
+              <label className={labelCls}>{t("clinicRegistration.registeredDate")} *</label>
+              <input
+                className={inputCls}
+                placeholder={t("clinicRegistration.registeredDatePlaceholder")}
+                value={form.registeredDate}
+                onChange={(e) => set("registeredDate", e.target.value)}
+              />
+            </div>
+            <div>
+              <label className={labelCls}>{t("clinicRegistration.mapCoordinates")} *</label>
+              <input
+                className={inputCls}
+                placeholder={t("clinicRegistration.mapCoordinatesPlaceholder")}
+                value={form.mapCoordinates}
+                onChange={(e) => set("mapCoordinates", e.target.value)}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Section 3: Owner / Medical Director */}
+        <div className="rounded-3xl border border-border/80 bg-card p-6 shadow-sm">
+          <h3 className="text-xs font-extrabold uppercase tracking-widest text-muted-foreground mb-5 flex items-center gap-1.5">
+            <UserCheck className="h-4 w-4 text-primary" /> {t("clinicRegistration.sectionOwnerInfo")}
+          </h3>
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="md:col-span-2">
+              <label className={labelCls}>{t("clinicRegistration.ownerName")} *</label>
+              <input
+                className={inputCls}
+                placeholder={t("clinicRegistration.ownerNamePlaceholder")}
+                value={form.ownerName}
+                onChange={(e) => set("ownerName", e.target.value)}
+              />
+            </div>
+            <div>
+              <label className={labelCls}>{t("clinicRegistration.ownerPhone")} *</label>
+              <input
+                className={inputCls}
+                placeholder={t("clinicRegistration.ownerPhonePlaceholder")}
+                value={form.ownerPhone}
+                onChange={(e) => set("ownerPhone", e.target.value)}
+              />
+            </div>
+            <div>
+              <label className={labelCls}>{t("clinicRegistration.ownerEmail")} *</label>
+              <input
+                className={inputCls}
+                type="email"
+                placeholder={t("clinicRegistration.ownerEmailPlaceholder")}
+                value={form.ownerEmail}
+                onChange={(e) => set("ownerEmail", e.target.value)}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Submit Button */}
+        <div className="flex justify-end">
+          <Button
+            size="lg"
+            onClick={handleSubmit}
+            className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-primary-foreground font-bold text-sm px-8 py-6 rounded-2xl shadow-glow transition duration-300"
+          >
+            <Send className="mr-2 h-5 w-5" /> {t("clinicRegistration.btnSubmit")}
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────
+   PENDING APPROVAL STATUS PAGE
+   Shown when a Clinic Manager has submitted registration
+   and is waiting for Admin verification.
+   ───────────────────────────────────────────────────────── */
+
+function PendingApprovalStatus({ registration }: { registration: { name: string; category: string; location: string; submittedAt: string; licenseNumber: string; ownerName: string; ownerEmail: string; description: string } }) {
+  const { t } = useTranslation();
+
+  return (
+    <div className="space-y-6 animate-in fade-in duration-500">
+      {/* Status Banner */}
+      <div className="relative overflow-hidden rounded-3xl border border-amber-500/20 bg-gradient-to-br from-amber-500/5 via-card to-card p-8 shadow-sm">
+        <div className="absolute top-0 right-0 h-48 w-48 bg-amber-400/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="relative z-10 flex flex-col items-center text-center">
+          <div className="mb-4 flex h-20 w-20 items-center justify-center rounded-3xl bg-amber-500/10 text-amber-500">
+            <Clock4 className="h-10 w-10 animate-pulse" />
+          </div>
+          <h1 className="text-2xl font-black tracking-tight text-foreground md:text-3xl">
+            {t("clinicRegistration.pendingTitle")}
+          </h1>
+          <p className="mt-3 text-sm text-muted-foreground max-w-lg leading-relaxed">
+            {t("clinicRegistration.pendingSubtitle")}
+          </p>
+          <div className="mt-5 flex flex-wrap items-center justify-center gap-4">
+            <div className="flex items-center gap-2 rounded-2xl border border-amber-500/20 bg-amber-500/5 px-4 py-2">
+              <CalendarDays className="h-4 w-4 text-amber-500" />
+              <span className="text-xs font-bold text-foreground">{t("clinicRegistration.pendingSubmittedOn")}: {registration.submittedAt}</span>
+            </div>
+            <div className="flex items-center gap-2 rounded-2xl border border-amber-500/20 bg-amber-500/5 px-4 py-2">
+              <ShieldAlert className="h-4 w-4 text-amber-500" />
+              <span className="text-xs font-bold text-amber-600">{t("clinicRegistration.pendingStatusValue")}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Submitted Information Summary */}
+      <div className="rounded-3xl border border-border/80 bg-card p-6 shadow-sm">
+        <h3 className="text-xs font-extrabold uppercase tracking-widest text-muted-foreground mb-5 flex items-center gap-1.5">
+          <ClipboardCheck className="h-4 w-4 text-primary" /> {t("clinicRegistration.summaryTitle")}
+        </h3>
+        <div className="grid gap-4 md:grid-cols-2">
+          <SummaryItem label={t("clinicRegistration.clinicName")} value={registration.name} />
+          <SummaryItem label={t("clinicRegistration.category")} value={registration.category} />
+          <SummaryItem label={t("clinicRegistration.location")} value={registration.location} />
+          <SummaryItem label={t("clinicRegistration.licenseNumber")} value={registration.licenseNumber} />
+          <SummaryItem label={t("clinicRegistration.ownerName")} value={registration.ownerName} />
+          <SummaryItem label={t("clinicRegistration.ownerEmail")} value={registration.ownerEmail} />
+          <div className="md:col-span-2">
+            <SummaryItem label={t("clinicRegistration.description")} value={registration.description} />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function SummaryItem({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-xl border border-border/60 bg-muted/20 p-3">
+      <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">{label}</p>
+      <p className="text-sm font-semibold text-foreground mt-1 break-words">{value}</p>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────
+   REJECTED REGISTRATION STATUS
+   Shown when Admin has rejected the registration.
+   Offers the ability to resubmit.
+   ───────────────────────────────────────────────────────── */
+
+function RejectedRegistrationStatus({ userId, registration }: { userId: string; registration: { name: string; category: string; location: string; submittedAt: string; licenseNumber: string; ownerName: string; ownerEmail: string; description: string } }) {
+  const { t } = useTranslation();
+
+  const handleResubmit = () => {
+    clearRejectedRegistration(userId);
+    // The component tree will re-render showing the registration form
+  };
+
+  return (
+    <div className="space-y-6 animate-in fade-in duration-500">
+      {/* Rejection Banner */}
+      <div className="relative overflow-hidden rounded-3xl border border-destructive/20 bg-gradient-to-br from-destructive/5 via-card to-card p-8 shadow-sm">
+        <div className="absolute top-0 right-0 h-48 w-48 bg-destructive/5 rounded-full blur-3xl pointer-events-none" />
+        <div className="relative z-10 flex flex-col items-center text-center">
+          <div className="mb-4 flex h-20 w-20 items-center justify-center rounded-3xl bg-destructive/10 text-destructive">
+            <AlertTriangle className="h-10 w-10" />
+          </div>
+          <h1 className="text-2xl font-black tracking-tight text-foreground md:text-3xl">
+            {t("clinicRegistration.rejectedTitle")}
+          </h1>
+          <p className="mt-3 text-sm text-muted-foreground max-w-lg leading-relaxed">
+            {t("clinicRegistration.rejectedSubtitle")}
+          </p>
+          <Button
+            onClick={handleResubmit}
+            className="mt-6 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-primary-foreground font-bold text-sm px-6 py-5 rounded-2xl shadow-glow transition duration-300"
+          >
+            <FileCheck2 className="mr-2 h-5 w-5" /> {t("clinicRegistration.btnResubmit")}
+          </Button>
+        </div>
+      </div>
+
+      {/* Previously Submitted Information */}
+      <div className="rounded-3xl border border-border/80 bg-card p-6 shadow-sm opacity-60">
+        <h3 className="text-xs font-extrabold uppercase tracking-widest text-muted-foreground mb-5 flex items-center gap-1.5">
+          <ClipboardCheck className="h-4 w-4 text-muted-foreground" /> {t("clinicRegistration.summaryTitle")}
+        </h3>
+        <div className="grid gap-4 md:grid-cols-2">
+          <SummaryItem label={t("clinicRegistration.clinicName")} value={registration.name} />
+          <SummaryItem label={t("clinicRegistration.category")} value={registration.category} />
+          <SummaryItem label={t("clinicRegistration.location")} value={registration.location} />
+          <SummaryItem label={t("clinicRegistration.licenseNumber")} value={registration.licenseNumber} />
+          <SummaryItem label={t("clinicRegistration.ownerName")} value={registration.ownerName} />
+          <SummaryItem label={t("clinicRegistration.ownerEmail")} value={registration.ownerEmail} />
+        </div>
+      </div>
     </div>
   );
 }
