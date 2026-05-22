@@ -69,3 +69,10 @@ export function useClinics(): Clinic[] {
     () => ssrSnapshot,
   );
 }
+
+export function addNewClinic(clinic: Clinic): void {
+  const current = read();
+  const next = [...current, clinic];
+  write(next);
+}
+
