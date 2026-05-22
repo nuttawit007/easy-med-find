@@ -1,6 +1,7 @@
 import { useSyncExternalStore } from "react";
 import { pendingClinics as mockPendingClinics, pendingServices as mockPendingServices, type Clinic } from "./mock-data";
 import { addNewClinic, updateClinicServices } from "./clinics";
+import { updateRegistrationStatusByUser } from "./clinic-registration";
 
 const CLINICS_KEY = "medcentral_pending_clinics_v1";
 const SERVICES_KEY = "medcentral_pending_services_v1";
@@ -19,6 +20,7 @@ export interface EnhancedPendingClinic {
   mapCoordinates: string;
   registeredCompanyName: string;
   registeredDate: string;
+  submittedBy?: string; // userId of the clinic manager who submitted (for linking ownerId)
 }
 
 export interface EnhancedPendingService {
@@ -249,6 +251,7 @@ export function approveClinic(id: string): void {
 
   const newClinic: Clinic = {
     id: newClinicId,
+    ownerId: target.submittedBy, // Link the clinic to the clinic manager who submitted
     name: target.name,
     category: target.category,
     rating: 5.0, // New approved clinic starts with a perfect 5.0
@@ -283,12 +286,23 @@ export function approveClinic(id: string): void {
   };
 
   addNewClinic(newClinic);
+
+  // 3. Update registration status to approved (if submitted by a clinic manager)
+  if (target.submittedBy) {
+    updateRegistrationStatusByUser(target.submittedBy, "approved");
+  }
 }
 
-// Reject a clinic: Simply removes it from pending list
+// Reject a clinic: Removes from pending list and marks registration as rejected
 export function rejectClinic(id: string): void {
   const pending = readClinics();
+  const target = pending.find((c) => c.id === id);
   writeClinics(pending.filter((c) => c.id !== id));
+
+  // Update registration status to rejected (if submitted by a clinic manager)
+  if (target?.submittedBy) {
+    updateRegistrationStatusByUser(target.submittedBy, "rejected");
+  }
 }
 
 // Approve a service: Finds target clinic by name, adds service to its service list, removes pending
@@ -319,4 +333,18 @@ export function rejectService(id: string): void {
 export function resetPendingData(): void {
   writeClinics(initialPendingClinics);
   writeServices(initialPendingServices);
+}
+
+// Add a clinic from a clinic manager's registration form to the pending queue
+export function addPendingClinicFromRegistration(
+  data: Omit<EnhancedPendingClinic, "id" | "submitted">,
+  submittedDate: string,
+): void {
+  const newEntry: EnhancedPendingClinic = {
+    id: `pc_reg_${Date.now()}`,
+    submitted: submittedDate,
+    ...data,
+  };
+  const current = readClinics();
+  writeClinics([...current, newEntry]);
 }

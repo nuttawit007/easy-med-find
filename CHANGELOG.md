@@ -2,6 +2,29 @@
 
 This document tracks all additions, updates, modifications, and bug fixes made to the **Easy Med Find (MedCentral)** project. It serves as a single source of truth for tracking progress and ensuring that we follow the `SKILL.md` guidelines for transparency and goal-driven execution.
 
+## [2026-05-20] - Clinic Registration Submission Flow
+
+### ✨ Added
+- **Clinic Registration Store (`src/lib/clinic-registration.ts`)**:
+  - Implemented a new state store for managing clinic registrations (`pending`, `approved`, `rejected`) with localStorage persistence.
+- **Clinic Manager Registration UI (`src/routes/dashboard.tsx`)**:
+  - `ClinicRegistrationForm`: Built an 11-field comprehensive registration form with premium glassmorphism design.
+  - `PendingApprovalStatus`: Created an animated waiting page for clinics under admin review.
+  - `RejectedRegistrationStatus`: Added a rejection state UI with the ability to edit and resubmit.
+- **Developer Login Enhancements (`src/lib/auth.tsx` & `src/routes/auth.tsx`)**:
+  - Added a `signInAsNewClinic` method and a **"Clinic (New)"** mock login button to test the registration flow from a clean state.
+
+### 🔄 Updated
+- **Premium Navigation Header (`src/components/site-header.tsx`)**:
+  - Completely redesigned the navigation links into a sleek, glassmorphic capsule segmented control track (`bg-muted/30 p-1 rounded-full`).
+  - Added visual cues for hover states utilizing soft backdrop scaling (`hover:bg-background/40`) and responsive tactile press animations (`active:scale-95`).
+  - Implemented an elegant glowing active indicator bar under active links that scales horizontally (`[&.active_>_span]:scale-x-100`) combined with floating card backgrounds (`[&.active]:bg-background`) and subtle shadows.
+- **Admin Approvals Integration (`src/lib/admin-approvals.ts`)**:
+  - Linked the newly registered clinics directly into the admin pending queue via `addPendingClinicFromRegistration()`.
+  - Updated `approveClinic()` to dynamically assign the `ownerId` of the approved clinic back to the clinic manager who submitted it.
+- **Multilingual Support (`src/lib/i18n.ts`)**:
+  - Added over 40 new translation keys for both English (EN) and Thai (TH) covering all aspects of the new registration flow.
+
 ## [2026-05-19] - Initial Review & Dashboard Planning
 
 ### 📝 Reviewed

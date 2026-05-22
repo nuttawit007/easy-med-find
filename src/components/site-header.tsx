@@ -47,6 +47,36 @@ export function SiteHeader() {
           </span>
         </Link>
 
+        <nav className="hidden items-center gap-x-1 text-sm font-medium md:flex bg-muted/30 backdrop-blur-sm p-1 rounded-full border border-border/40 shadow-[inset_0_1px_2px_rgba(0,0,0,0.02)]">
+          <Link
+            to="/"
+            className="relative px-5 py-1.5 text-sm font-medium transition-all duration-300 rounded-full text-muted-foreground hover:text-foreground hover:bg-background/40 active:scale-95 active:translate-y-[0.5px] flex items-center justify-center [&.active]:text-primary [&.active]:bg-background [&.active]:border-border/60 [&.active]:font-semibold [&.active]:shadow-[0_2px_8px_rgba(0,0,0,0.06)] [&.active_>_span]:opacity-100 [&.active_>_span]:scale-x-100 border border-transparent"
+            activeOptions={{ exact: true }}
+          >
+            {t("nav.discover")}
+            <span className="absolute bottom-0 left-1/2 h-[2px] w-6 -translate-x-1/2 rounded-full bg-primary opacity-0 scale-x-50 transition-all duration-300 pointer-events-none" />
+          </Link>
+          <Link
+            to="/categories"
+            className="relative px-5 py-1.5 text-sm font-medium transition-all duration-300 rounded-full text-muted-foreground hover:text-foreground hover:bg-background/40 active:scale-95 active:translate-y-[0.5px] flex items-center justify-center [&.active]:text-primary [&.active]:bg-background [&.active]:border-border/60 [&.active]:font-semibold [&.active]:shadow-[0_2px_8px_rgba(0,0,0,0.06)] [&.active_>_span]:opacity-100 [&.active_>_span]:scale-x-100 border border-transparent"
+          >
+            {t("nav.categories")}
+            <span className="absolute bottom-0 left-1/2 h-[2px] w-6 -translate-x-1/2 rounded-full bg-primary opacity-0 scale-x-50 transition-all duration-300 pointer-events-none" />
+          </Link>
+          <Link
+            to="/promotions"
+            className="relative px-5 py-1.5 text-sm font-medium transition-all duration-300 rounded-full text-muted-foreground hover:text-foreground hover:bg-background/40 active:scale-95 active:translate-y-[0.5px] flex items-center justify-center [&.active]:text-primary [&.active]:bg-background [&.active]:border-border/60 [&.active]:font-semibold [&.active]:shadow-[0_2px_8px_rgba(0,0,0,0.06)] [&.active_>_span]:opacity-100 [&.active_>_span]:scale-x-100 border border-transparent"
+          >
+            {t("nav.promotions")}
+            <span className="absolute bottom-0 left-1/2 h-[2px] w-6 -translate-x-1/2 rounded-full bg-primary opacity-0 scale-x-50 transition-all duration-300 pointer-events-none" />
+          </Link>
+          <Link
+            to="/compare"
+            className="relative px-5 py-1.5 text-sm font-medium transition-all duration-300 rounded-full text-muted-foreground hover:text-foreground hover:bg-background/40 active:scale-95 active:translate-y-[0.5px] flex items-center justify-center [&.active]:text-primary [&.active]:bg-background [&.active]:border-border/60 [&.active]:font-semibold [&.active]:shadow-[0_2px_8px_rgba(0,0,0,0.06)] [&.active_>_span]:opacity-100 [&.active_>_span]:scale-x-100 border border-transparent"
+          >
+            {t("nav.compare")}
+            <span className="absolute bottom-0 left-1/2 h-[2px] w-6 -translate-x-1/2 rounded-full bg-primary opacity-0 scale-x-50 transition-all duration-300 pointer-events-none" />
+          </Link>
         {/* Desktop nav — hidden on mobile */}
         <nav className="hidden items-center gap-x-2 text-sm font-medium md:flex">
           {navLinks.map((link) => (
