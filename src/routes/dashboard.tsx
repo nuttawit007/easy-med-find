@@ -43,7 +43,11 @@ import {
   ClipboardCheck,
   FileCheck2,
   Landmark,
+  Star,
+  UploadCloud,
 } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
 import { SiteHeader } from "@/components/site-header";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -430,44 +434,6 @@ function ClinicAdminDashboard({ name }: { name: string }) {
           <h1 className="text-3xl font-bold md:text-4xl">{name}</h1>
           <p className="mt-1 text-muted-foreground">{t("clinicAdmin.subtitle")}</p>
         </div>
-        <Button
-          onClick={() => {
-            setEditProfile({ name: clinic.name, location: clinic.location });
-            setIsProfileOpen(true);
-          }}
-        >
-          <Pencil className="mr-2 h-4 w-4" /> {t("clinicAdmin.editProfile")}
-        </Button>
-
-        <Dialog open={isProfileOpen} onOpenChange={setIsProfileOpen}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Edit Clinic Profile</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-4 py-4">
-              <div className="space-y-2">
-                <Label>Clinic Name</Label>
-                <Input
-                  value={editProfile.name}
-                  onChange={(e) => setEditProfile({ ...editProfile, name: e.target.value })}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Location</Label>
-                <Input
-                  value={editProfile.location}
-                  onChange={(e) => setEditProfile({ ...editProfile, location: e.target.value })}
-                />
-              </div>
-            </div>
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setIsProfileOpen(false)}>
-                Cancel
-              </Button>
-              <Button onClick={handleSaveProfile}>Save changes</Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
 
         <Dialog open={isServiceOpen} onOpenChange={setIsServiceOpen}>
           <DialogContent>
@@ -527,130 +493,112 @@ function ClinicAdminDashboard({ name }: { name: string }) {
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="profile">
-          <div className="rounded-2xl border border-border bg-card p-6 shadow-soft">
-            <div className="flex items-center gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-primary-foreground">
-                <Building2 className="h-6 w-6" />
+        <TabsContent value="profile" className="space-y-6">
+          {/* Advanced Profile Edit */}
+          <div className="rounded-2xl border border-border bg-card p-6 shadow-soft space-y-6">
+            <h3 className="text-lg font-semibold">Edit Clinic Profile</h3>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="clinicName">Clinic Name</Label>
+                  <Input 
+                    id="clinicName" 
+                    value={editProfile.name} 
+                    onChange={(e) => setEditProfile({ ...editProfile, name: e.target.value })} 
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="clinicLocation">Location / Address</Label>
+                  <Textarea 
+                    id="clinicLocation" 
+                    value={editProfile.location}
+                    onChange={(e) => setEditProfile({ ...editProfile, location: e.target.value })} 
+                  />
+                </div>
               </div>
-              <div>
-                <p className="font-semibold">{clinic.name}</p>
-                <p className="text-sm text-muted-foreground">
-                  {clinic.location}
-                  {clinic.verified ? " · Verified" : ""}
-                </p>
+
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label>Profile Picture / Logo</Label>
+                  <Input type="file" accept="image/*" />
+                </div>
+                <div className="space-y-2">
+                  <Label>Clinic Gallery</Label>
+                  <div className="border-2 border-dashed rounded-xl p-6 flex flex-col items-center justify-center text-muted-foreground cursor-pointer hover:bg-muted/50 transition-colors">
+                    <UploadCloud className="h-6 w-6 mb-2" />
+                    <span className="text-xs text-center">Drag & Drop or Click to Upload Multiple Photos</span>
+                    <Input type="file" className="hidden" multiple accept="image/*" />
+                  </div>
+                </div>
               </div>
             </div>
-            <div className="mt-5 grid gap-3 sm:grid-cols-2">
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setEditProfile({ name: clinic.name, location: clinic.location });
-                  setIsProfileOpen(true);
-                }}
-              >
-                <Pencil className="mr-2 h-4 w-4" /> Update details
-              </Button>
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setEditContact({
-                    phone: clinic.phone ?? "",
-                    email: clinic.email ?? "",
-                    website: clinic.website ?? "",
-                    openingHours: clinic.openingHours ?? defaultHours(),
-                  });
-                  setIsContactOpen(true);
-                }}
-              >
-                <Pencil className="mr-2 h-4 w-4" /> Update contact & hours
-              </Button>
+            <Button onClick={handleSaveProfile}>Save Profile Changes</Button>
+          </div>
 
-              {/* Contact & Hours Dialog */}
-              <Dialog open={isContactOpen} onOpenChange={setIsContactOpen}>
-                <DialogContent className="max-h-[90vh] max-w-lg overflow-y-auto">
-                  <DialogHeader>
-                    <DialogTitle>Contact & Opening Hours</DialogTitle>
-                  </DialogHeader>
-                  <div className="space-y-5 py-2">
-                    {/* Contact */}
-                    <div className="space-y-3">
-                      <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Contact</p>
-                      <div className="space-y-2">
-                        <Label className="flex items-center gap-1.5"><Phone className="h-3.5 w-3.5" /> Phone</Label>
-                        <Input
-                          placeholder="+66 2 000 0000"
-                          value={editContact.phone}
-                          onChange={(e) => setEditContact((p) => ({ ...p, phone: e.target.value }))}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label className="flex items-center gap-1.5"><Mail className="h-3.5 w-3.5" /> Email</Label>
-                        <Input
-                          type="email"
-                          placeholder="hello@clinic.com"
-                          value={editContact.email}
-                          onChange={(e) => setEditContact((p) => ({ ...p, email: e.target.value }))}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label className="flex items-center gap-1.5"><Globe className="h-3.5 w-3.5" /> Website</Label>
-                        <Input
-                          placeholder="https://clinic.com"
-                          value={editContact.website}
-                          onChange={(e) => setEditContact((p) => ({ ...p, website: e.target.value }))}
-                        />
-                      </div>
+          {/* User-Friendly Business Hours & Contact */}
+          <div className="rounded-2xl border border-border bg-card p-6 shadow-soft space-y-6 mt-6">
+            <h3 className="text-lg font-semibold">Contact & Business Hours</h3>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label className="flex items-center gap-1.5"><Phone className="h-3.5 w-3.5" /> Phone</Label>
+                  <Input
+                    placeholder="+66 2 000 0000"
+                    value={editContact.phone}
+                    onChange={(e) => setEditContact((p) => ({ ...p, phone: e.target.value }))}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label className="flex items-center gap-1.5"><Mail className="h-3.5 w-3.5" /> Email</Label>
+                  <Input
+                    type="email"
+                    placeholder="hello@clinic.com"
+                    value={editContact.email}
+                    onChange={(e) => setEditContact((p) => ({ ...p, email: e.target.value }))}
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                {editContact.openingHours.map((entry, i) => (
+                  <div key={entry.day} className="flex items-center justify-between p-2 border rounded-lg bg-muted/20">
+                    <div className="flex items-center gap-3 w-1/3">
+                      <Switch 
+                        id={`switch-${entry.day}`} 
+                        checked={entry.isOpen}
+                        onCheckedChange={(checked) => updateHoursEntry(i, { isOpen: checked })}
+                      />
+                      <Label htmlFor={`switch-${entry.day}`} className="font-medium text-sm">{entry.day.slice(0, 3)}</Label>
                     </div>
-
-                    {/* Opening Hours */}
-                    <div className="space-y-3">
-                      <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Opening Hours</p>
-                      <div className="space-y-2">
-                        {editContact.openingHours.map((entry, i) => (
-                          <div key={entry.day} className="grid grid-cols-[80px_1fr] items-center gap-2">
-                            <button
-                              type="button"
-                              onClick={() => updateHoursEntry(i, { isOpen: !entry.isOpen })}
-                              className={`rounded-lg border px-2 py-1 text-xs font-medium transition ${
-                                entry.isOpen
-                                  ? "border-primary bg-primary text-primary-foreground"
-                                  : "border-border bg-muted text-muted-foreground"
-                              }`}
-                            >
-                              {entry.day.slice(0, 3)}
-                            </button>
-                            {entry.isOpen ? (
-                              <div className="flex items-center gap-1">
-                                <Input
-                                  type="time"
-                                  value={entry.open}
-                                  className="h-8 px-2 text-xs"
-                                  onChange={(e) => updateHoursEntry(i, { open: e.target.value })}
-                                />
-                                <span className="text-xs text-muted-foreground">–</span>
-                                <Input
-                                  type="time"
-                                  value={entry.close}
-                                  className="h-8 px-2 text-xs"
-                                  onChange={(e) => updateHoursEntry(i, { close: e.target.value })}
-                                />
-                              </div>
-                            ) : (
-                              <span className="text-xs text-muted-foreground">Closed</span>
-                            )}
-                          </div>
-                        ))}
-                      </div>
+                    
+                    <div className="flex items-center gap-2 w-2/3 justify-end">
+                      {entry.isOpen ? (
+                        <>
+                          <Input
+                            type="time"
+                            value={entry.open}
+                            className="w-28 h-8 text-xs"
+                            onChange={(e) => updateHoursEntry(i, { open: e.target.value })}
+                          />
+                          <span className="text-muted-foreground">-</span>
+                          <Input
+                            type="time"
+                            value={entry.close}
+                            className="w-28 h-8 text-xs"
+                            onChange={(e) => updateHoursEntry(i, { close: e.target.value })}
+                          />
+                        </>
+                      ) : (
+                        <span className="text-xs font-semibold text-muted-foreground w-[240px] text-center bg-muted/50 py-1.5 rounded">Closed</span>
+                      )}
                     </div>
                   </div>
-                  <DialogFooter>
-                    <Button variant="outline" onClick={() => setIsContactOpen(false)}>Cancel</Button>
-                    <Button onClick={handleSaveContact}>Save changes</Button>
-                  </DialogFooter>
-                </DialogContent>
-              </Dialog>
+                ))}
+              </div>
             </div>
+            <Button onClick={handleSaveContact}>Save Contact & Hours</Button>
           </div>
         </TabsContent>
 
