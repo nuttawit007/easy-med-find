@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate, useSearch } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Loader2, ShieldAlert } from "lucide-react";
+import { Loader2, ShieldAlert, FileCode2 } from "lucide-react";
 import { MedCentralLogo } from "@/components/medcentral-logo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -371,9 +371,26 @@ function Auth() {
             <Button size="sm" variant="secondary" onClick={() => handleMockLogin("admin")}>
               {t("auth.devLoginAsAdmin")}
             </Button>
-            <Button size="sm" variant="secondary" onClick={handleMockNewClinicLogin} className="border-primary/30 bg-primary/5 text-primary hover:bg-primary/10">
+            <Button
+              size="sm"
+              variant="secondary"
+              onClick={handleMockNewClinicLogin}
+              className="border-primary/30 bg-primary/5 text-primary hover:bg-primary/10"
+            >
               {t("auth.roleClinic")} (New)
             </Button>
+          </div>
+          <div className="mt-2 border-t border-border/60 pt-2">
+            <Link to="/api-docs">
+              <Button
+                size="sm"
+                variant="outline"
+                className="w-full gap-2 text-xs font-semibold border-dashed border-muted-foreground/30 hover:border-primary/50 hover:bg-primary/5 hover:text-primary"
+              >
+                <FileCode2 className="h-3.5 w-3.5" />
+                {t("auth.devApiDocs")}
+              </Button>
+            </Link>
           </div>
         </div>
       </div>
