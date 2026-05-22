@@ -17,6 +17,8 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as ApiDocsRouteImport } from './routes/api-docs'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ClinicClinicIdRouteImport } from './routes/clinic.$clinicId'
+import { Route as ApiPublicClinicsRouteImport } from './routes/api/public/clinics'
+import { Route as ApiPublicBookingsRouteImport } from './routes/api/public/bookings'
 
 const PromotionsRoute = PromotionsRouteImport.update({
   id: '/promotions',
@@ -58,6 +60,16 @@ const ClinicClinicIdRoute = ClinicClinicIdRouteImport.update({
   path: '/clinic/$clinicId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicClinicsRoute = ApiPublicClinicsRouteImport.update({
+  id: '/api/public/clinics',
+  path: '/api/public/clinics',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicBookingsRoute = ApiPublicBookingsRouteImport.update({
+  id: '/api/public/bookings',
+  path: '/api/public/bookings',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -68,6 +80,8 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof DashboardRoute
   '/promotions': typeof PromotionsRoute
   '/clinic/$clinicId': typeof ClinicClinicIdRoute
+  '/api/public/bookings': typeof ApiPublicBookingsRoute
+  '/api/public/clinics': typeof ApiPublicClinicsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -78,6 +92,8 @@ export interface FileRoutesByTo {
   '/dashboard': typeof DashboardRoute
   '/promotions': typeof PromotionsRoute
   '/clinic/$clinicId': typeof ClinicClinicIdRoute
+  '/api/public/bookings': typeof ApiPublicBookingsRoute
+  '/api/public/clinics': typeof ApiPublicClinicsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -89,6 +105,8 @@ export interface FileRoutesById {
   '/dashboard': typeof DashboardRoute
   '/promotions': typeof PromotionsRoute
   '/clinic/$clinicId': typeof ClinicClinicIdRoute
+  '/api/public/bookings': typeof ApiPublicBookingsRoute
+  '/api/public/clinics': typeof ApiPublicClinicsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -101,6 +119,8 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/promotions'
     | '/clinic/$clinicId'
+    | '/api/public/bookings'
+    | '/api/public/clinics'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -111,6 +131,8 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/promotions'
     | '/clinic/$clinicId'
+    | '/api/public/bookings'
+    | '/api/public/clinics'
   id:
     | '__root__'
     | '/'
@@ -121,6 +143,8 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/promotions'
     | '/clinic/$clinicId'
+    | '/api/public/bookings'
+    | '/api/public/clinics'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -132,6 +156,8 @@ export interface RootRouteChildren {
   DashboardRoute: typeof DashboardRoute
   PromotionsRoute: typeof PromotionsRoute
   ClinicClinicIdRoute: typeof ClinicClinicIdRoute
+  ApiPublicBookingsRoute: typeof ApiPublicBookingsRoute
+  ApiPublicClinicsRoute: typeof ApiPublicClinicsRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -192,6 +218,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ClinicClinicIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/clinics': {
+      id: '/api/public/clinics'
+      path: '/api/public/clinics'
+      fullPath: '/api/public/clinics'
+      preLoaderRoute: typeof ApiPublicClinicsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/bookings': {
+      id: '/api/public/bookings'
+      path: '/api/public/bookings'
+      fullPath: '/api/public/bookings'
+      preLoaderRoute: typeof ApiPublicBookingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -204,17 +244,9 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardRoute: DashboardRoute,
   PromotionsRoute: PromotionsRoute,
   ClinicClinicIdRoute: ClinicClinicIdRoute,
+  ApiPublicBookingsRoute: ApiPublicBookingsRoute,
+  ApiPublicClinicsRoute: ApiPublicClinicsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
