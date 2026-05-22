@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Star, MapPin, ArrowLeft, Calendar as CalendarIcon, Check, Phone, Mail, Globe, Clock } from "lucide-react";
+import { Star, MapPin, ArrowLeft, Calendar as CalendarIcon, Check, Phone, Mail, Globe, Clock, ImagePlus, UploadCloud } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
 import { ClinicChatWidget } from "@/components/clinic-chat-widget";
 import { Button } from "@/components/ui/button";
@@ -11,9 +11,10 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
+  DialogFooter, 
+  DialogHeader, 
+  DialogTitle, 
+  DialogTrigger
 } from "@/components/ui/dialog";
 import {
   Select,
@@ -28,6 +29,10 @@ import { useClinics } from "@/lib/clinics";
 import { addBooking } from "@/lib/bookings";
 import { toast } from "sonner";
 import { useAuth } from "@/lib/auth";
+import { Textarea } from "@/components/ui/textarea";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export const Route = createFileRoute("/clinic/$clinicId")({
   component: ClinicDetail,
@@ -48,6 +53,10 @@ function ClinicDetail() {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const { user } = useAuth();
+  const isPatient = user?.role === 'patient';
+  const [rating, setRating] = useState(0);
+  const [reviewText, setReviewText] = useState("");
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
   const allClinics = useClinics();
   const clinic = allClinics.find((c) => c.id === clinicId);
@@ -222,24 +231,72 @@ function ClinicDetail() {
           </div>
 
           {/* Reviews */}
-          <div className="mt-6">
-            <h2 className="mb-3 text-lg font-semibold">Recent reviews</h2>
-            <div className="space-y-3">
-              {clinic.reviewList.map((r, i) => (
-                <div key={i} className="rounded-xl border border-border bg-card p-4">
-                  <div className="flex items-center justify-between">
-                    <p className="font-medium">{r.user}</p>
-                    <span className="text-xs text-muted-foreground">{r.date}</span>
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-bold">{t('clinic.reviews', 'Reviews')}</h2>
+            
+            {isPatient && (
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button className="shadow-soft">
+                    <Star className="mr-2 h-4 w-4" />
+                    {t('clinic.writeReview', 'Write a Review')}
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[500px]">
+                  <DialogHeader>
+                    <DialogTitle>{t('clinic.reviewModalTitle', 'Rate your experience')}</DialogTitle>
+                  </DialogHeader>
+                  <div className="grid gap-4 py-4">
+                    
+                    {/* Star Rating */}
+                    <div className="flex justify-center gap-2">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <Star
+                          key={star}
+                          className={`h-8 w-8 cursor-pointer transition-colors ${rating >= star ? 'fill-primary text-primary' : 'text-muted-foreground'}`}
+                          onClick={() => setRating(star)}
+                        />
+                      ))}
+                    </div>
+
+                    {/* Tags */}
+                    <div className="space-y-2">
+                      <Label>{t('clinic.reviewTags', 'What stood out?')}</Label>
+                      <ToggleGroup type="multiple" value={selectedTags} onValueChange={setSelectedTags} className="flex flex-wrap justify-start gap-2">
+                        <ToggleGroupItem value="clean" className="border">✨ Cleanliness</ToggleGroupItem>
+                        <ToggleGroupItem value="friendly" className="border">👋 Friendly Staff</ToggleGroupItem>
+                        <ToggleGroupItem value="professional" className="border">👩‍⚕️ Professional</ToggleGroupItem>
+                        <ToggleGroupItem value="fast" className="border">⚡ Short Wait</ToggleGroupItem>
+                      </ToggleGroup>
+                    </div>
+
+                    {/* Text Description */}
+                    <div className="space-y-2">
+                      <Label>{t('clinic.reviewComment', 'Your Comment')}</Label>
+                      <Textarea 
+                        placeholder={t('clinic.reviewPlaceholder', 'Tell us about your visit...')}
+                        value={reviewText}
+                        onChange={(e) => setReviewText(e.target.value)}
+                      />
+                    </div>
+
+                    {/* Image Upload Placeholder */}
+                    <div className="space-y-2">
+                      <Label>{t('clinic.reviewImages', 'Attach Photos (Optional)')}</Label>
+                      <div className="border-2 border-dashed rounded-lg p-6 flex flex-col items-center justify-center text-muted-foreground cursor-pointer hover:bg-muted/50 transition-colors">
+                        <ImagePlus className="h-8 w-8 mb-2" />
+                        <span className="text-sm">Click to upload images</span>
+                        <Input type="file" className="hidden" multiple accept="image/*" />
+                      </div>
+                    </div>
+                    
                   </div>
-                  <div className="mt-1 flex">
-                    {Array.from({ length: r.rating }).map((_, j) => (
-                      <Star key={j} className="h-3.5 w-3.5 fill-warning text-warning" />
-                    ))}
-                  </div>
-                  <p className="mt-2 text-sm text-muted-foreground">{r.comment}</p>
-                </div>
-              ))}
-            </div>
+                  <Button className="w-full" onClick={() => console.log('Submit to Supabase:', {rating, selectedTags, reviewText})}>
+                    {t('common.submit', 'Submit Review')}
+                  </Button>
+                </DialogContent>
+              </Dialog>
+            )}
           </div>
 
           {/* Contact & Hours — only shown when clinic has set this info */}
