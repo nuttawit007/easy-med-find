@@ -29,6 +29,7 @@ export function SiteHeader() {
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
 
+  // Centralized nav links to keep the desktop and mobile menus perfectly in sync
   const navLinks = [
     { to: "/", label: t("nav.discover"), exact: true },
     { to: "/categories", label: t("nav.categories") },
@@ -47,56 +48,26 @@ export function SiteHeader() {
           </span>
         </Link>
 
+        {/* Desktop Nav - Retains the beautiful animated styles from snippet 1 */}
         <nav className="hidden items-center gap-x-1 text-sm font-medium md:flex bg-muted/30 backdrop-blur-sm p-1 rounded-full border border-border/40 shadow-[inset_0_1px_2px_rgba(0,0,0,0.02)]">
-          <Link
-            to="/"
-            className="relative px-5 py-1.5 text-sm font-medium transition-all duration-300 rounded-full text-muted-foreground hover:text-foreground hover:bg-background/40 active:scale-95 active:translate-y-[0.5px] flex items-center justify-center [&.active]:text-primary [&.active]:bg-background [&.active]:border-border/60 [&.active]:font-semibold [&.active]:shadow-[0_2px_8px_rgba(0,0,0,0.06)] [&.active_>_span]:opacity-100 [&.active_>_span]:scale-x-100 border border-transparent"
-            activeOptions={{ exact: true }}
-          >
-            {t("nav.discover")}
-            <span className="absolute bottom-0 left-1/2 h-[2px] w-6 -translate-x-1/2 rounded-full bg-primary opacity-0 scale-x-50 transition-all duration-300 pointer-events-none" />
-          </Link>
-          <Link
-            to="/categories"
-            className="relative px-5 py-1.5 text-sm font-medium transition-all duration-300 rounded-full text-muted-foreground hover:text-foreground hover:bg-background/40 active:scale-95 active:translate-y-[0.5px] flex items-center justify-center [&.active]:text-primary [&.active]:bg-background [&.active]:border-border/60 [&.active]:font-semibold [&.active]:shadow-[0_2px_8px_rgba(0,0,0,0.06)] [&.active_>_span]:opacity-100 [&.active_>_span]:scale-x-100 border border-transparent"
-          >
-            {t("nav.categories")}
-            <span className="absolute bottom-0 left-1/2 h-[2px] w-6 -translate-x-1/2 rounded-full bg-primary opacity-0 scale-x-50 transition-all duration-300 pointer-events-none" />
-          </Link>
-          <Link
-            to="/promotions"
-            className="relative px-5 py-1.5 text-sm font-medium transition-all duration-300 rounded-full text-muted-foreground hover:text-foreground hover:bg-background/40 active:scale-95 active:translate-y-[0.5px] flex items-center justify-center [&.active]:text-primary [&.active]:bg-background [&.active]:border-border/60 [&.active]:font-semibold [&.active]:shadow-[0_2px_8px_rgba(0,0,0,0.06)] [&.active_>_span]:opacity-100 [&.active_>_span]:scale-x-100 border border-transparent"
-          >
-            {t("nav.promotions")}
-            <span className="absolute bottom-0 left-1/2 h-[2px] w-6 -translate-x-1/2 rounded-full bg-primary opacity-0 scale-x-50 transition-all duration-300 pointer-events-none" />
-          </Link>
-          <Link
-            to="/compare"
-            className="relative px-5 py-1.5 text-sm font-medium transition-all duration-300 rounded-full text-muted-foreground hover:text-foreground hover:bg-background/40 active:scale-95 active:translate-y-[0.5px] flex items-center justify-center [&.active]:text-primary [&.active]:bg-background [&.active]:border-border/60 [&.active]:font-semibold [&.active]:shadow-[0_2px_8px_rgba(0,0,0,0.06)] [&.active_>_span]:opacity-100 [&.active_>_span]:scale-x-100 border border-transparent"
-          >
-            {t("nav.compare")}
-            <span className="absolute bottom-0 left-1/2 h-[2px] w-6 -translate-x-1/2 rounded-full bg-primary opacity-0 scale-x-50 transition-all duration-300 pointer-events-none" />
-          </Link>
-        {/* Desktop nav — hidden on mobile */}
-        <nav className="hidden items-center gap-x-2 text-sm font-medium md:flex">
           {navLinks.map((link) => (
             <Link
               key={link.to}
               to={link.to}
-              className="inline-block min-w-[100px] text-center text-muted-foreground transition-colors hover:text-foreground"
-              activeProps={{ className: "text-foreground" }}
+              className="relative px-5 py-1.5 text-sm font-medium transition-all duration-300 rounded-full text-muted-foreground hover:text-foreground hover:bg-background/40 active:scale-95 active:translate-y-[0.5px] flex items-center justify-center [&.active]:text-primary [&.active]:bg-background [&.active]:border-border/60 [&.active]:font-semibold [&.active]:shadow-[0_2px_8px_rgba(0,0,0,0.06)] [&.active_>_span]:opacity-100 [&.active_>_span]:scale-x-100 border border-transparent"
               activeOptions={"exact" in link ? { exact: true } : undefined}
             >
               {link.label}
+              <span className="absolute bottom-0 left-1/2 h-[2px] w-6 -translate-x-1/2 rounded-full bg-primary opacity-0 scale-x-50 transition-all duration-300 pointer-events-none" />
             </Link>
           ))}
         </nav>
 
-        {/* Right side */}
+        {/* Right Actions */}
         <div className="flex items-center gap-x-2">
           <LanguageToggle />
 
-          {/* Desktop auth / user menu — hidden on mobile */}
+          {/* Desktop Auth / User Menu - Hidden on mobile screens */}
           {!user ? (
             <>
               <Button asChild variant="ghost" size="sm" className="hidden w-28 md:inline-flex">
@@ -109,8 +80,8 @@ export function SiteHeader() {
               </Button>
             </>
           ) : (
-            <>
-              <Button asChild variant="ghost" size="sm" className="hidden sm:inline-flex">
+            <div className="hidden md:flex items-center gap-x-2">
+              <Button asChild variant="ghost" size="sm">
                 <Link to="/dashboard">
                   <LayoutDashboard className="mr-1 h-4 w-4" /> {t("nav.dashboard")}
                 </Link>
@@ -156,10 +127,10 @@ export function SiteHeader() {
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
-            </>
+            </div>
           )}
 
-          {/* Mobile hamburger — md:hidden */}
+          {/* Mobile Hamburger Menu Trigger */}
           <Button
             variant="ghost"
             size="icon"
@@ -172,7 +143,7 @@ export function SiteHeader() {
         </div>
       </div>
 
-      {/* Mobile drawer (Sheet from right) */}
+      {/* Mobile Drawer (Sheet) - Retains full mobile functionality from snippet 2 */}
       <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
         <SheetContent side="right" className="flex w-72 flex-col p-0">
           <SheetHeader className="border-b border-border/60 px-6 pb-4 pt-6">
@@ -184,7 +155,6 @@ export function SiteHeader() {
             </SheetTitle>
           </SheetHeader>
 
-          {/* Nav links */}
           <nav className="flex flex-1 flex-col gap-1 px-4 py-4">
             {navLinks.map((link) => (
               <SheetClose key={link.to} asChild>
@@ -204,7 +174,7 @@ export function SiteHeader() {
 
             <div className="my-3 border-t border-border/60" />
 
-            {/* Auth section */}
+            {/* Mobile Auth section */}
             {!user ? (
               <div className="flex flex-col gap-2">
                 <SheetClose asChild>
@@ -222,7 +192,6 @@ export function SiteHeader() {
               </div>
             ) : (
               <div className="flex flex-col gap-1">
-                {/* User info card */}
                 <div className="mb-1 flex items-center gap-3 rounded-lg bg-muted/50 px-3 py-2">
                   <Avatar className="h-8 w-8 shrink-0">
                     {user.avatar && <AvatarImage src={user.avatar} alt={user.name} />}
