@@ -32,12 +32,7 @@ import { useClinics } from "@/lib/clinics";
 import { useAuth } from "@/lib/auth";
 import { toast } from "sonner";
 
-// Stable production URL — safe for Postman / Botnoi / cron / webhooks.
-// The preview URL also works during development but may change.
-const BASE_URL =
-  typeof window !== "undefined" && window.location.origin
-    ? window.location.origin
-    : "https://easy-med-find.lovable.app";
+const BASE_URL = "https://easy-med-find.lovable.app";
 
 const CLINICS_PATH = "/api/public/clinics";
 const BOOKINGS_PATH = "/api/public/bookings";
@@ -63,7 +58,7 @@ function CodeBlock({ code, maxH = "400px" }: { code: string; maxH?: string }) {
       <button
         type="button"
         onClick={handleCopy}
-        className="absolute right-2 top-2 z-10 rounded-md border border-white/10 bg-white/5 p-1.5 text-white/60 transition hover:bg-white/10 hover:text-white"
+        className="absolute right-2 top-2 z-10 cursor-pointer rounded-md border border-white/10 bg-white/5 p-1.5 text-white/60 transition hover:bg-white/10 hover:text-white"
         title="Copy"
       >
         {copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
@@ -93,20 +88,25 @@ function MethodBadge({ method }: { method: "GET" | "POST" }) {
 }
 
 function FieldTable({ rows, showRequired = false }: { rows: string[][]; showRequired?: boolean }) {
+  const { t } = useTranslation();
   return (
     <div className="overflow-hidden rounded-xl border border-border">
       <table className="w-full text-sm">
         <thead>
           <tr className="border-b border-border bg-muted/40">
-            <th className="px-4 py-2 text-left text-xs font-bold text-muted-foreground">Field</th>
-            <th className="px-4 py-2 text-left text-xs font-bold text-muted-foreground">Type</th>
+            <th className="px-4 py-2 text-left text-xs font-bold text-muted-foreground">
+              {t("apiDocs.fieldLabel")}
+            </th>
+            <th className="px-4 py-2 text-left text-xs font-bold text-muted-foreground">
+              {t("apiDocs.typeLabel")}
+            </th>
             {showRequired && (
               <th className="px-4 py-2 text-left text-xs font-bold text-muted-foreground">
-                Required
+                {t("apiDocs.requiredLabel")}
               </th>
             )}
             <th className="px-4 py-2 text-left text-xs font-bold text-muted-foreground">
-              Description
+              {t("apiDocs.descriptionCol")}
             </th>
           </tr>
         </thead>
@@ -137,9 +137,41 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
   );
 }
 
+function UrlBlock({ method, path }: { method: "GET" | "POST"; path: string }) {
+  const { t } = useTranslation();
+  const [copied, setCopied] = useState(false);
+  const handleCopy = async () => {
+    await navigator.clipboard.writeText(`${BASE_URL}${path}`);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+  return (
+    <div className="flex items-center gap-2">
+      <code className="flex-1 min-w-0 rounded-lg border border-border bg-muted/50 px-4 py-2.5 text-sm font-mono">
+        <span className={`font-bold ${method === "GET" ? "text-emerald-500" : "text-blue-500"}`}>
+          {method}
+        </span>{" "}
+        <span className="text-foreground">
+          {BASE_URL}
+          {path}
+        </span>
+      </code>
+      <button
+        type="button"
+        onClick={handleCopy}
+        className="shrink-0 cursor-pointer rounded-lg border border-border bg-muted/50 p-2.5 text-muted-foreground transition hover:bg-muted hover:text-foreground"
+        title={t("apiDocs.copyUrl")}
+      >
+        {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+      </button>
+    </div>
+  );
+}
+
 // ─── GET /api/public/clinics ──────────────────────────────────────────────────
 
 function GetClinicsPanel() {
+  const { t } = useTranslation();
   const [result, setResult] = useState<string | null>(null);
   const [statusCode, setStatusCode] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
@@ -167,28 +199,25 @@ function GetClinicsPanel() {
     setLoading(false);
   };
 
-  const curlExample = `curl -X GET "${BASE_URL}${CLINICS_PATH}" \\
-  -H "Accept: application/json"`;
-
   const queryRows = [
-    ["category", "string", "–", "Filter by category (Laser, Dental, Acne, Facial, Skin, Hair)"],
-    ["q", "string", "–", "Free-text search across clinic name and location"],
+    ["category", "string", "–", "กรองตามหมวดหมู่ (Laser, Dental, Acne, Facial, Skin, Hair)"],
+    ["q", "string", "–", "ค้นหาข้อความจากชื่อคลินิกและที่ตั้ง"],
   ];
 
   const responseFields = [
-    ["clinics", "array", "List of clinics"],
-    ["clinics[].id", "string", "Clinic ID (e.g. c1, c2)"],
-    ["clinics[].name", "string", "Clinic name"],
-    ["clinics[].category", "string", "Category"],
-    ["clinics[].rating", "number", "Average rating (1–5)"],
-    ["clinics[].reviews", "number", "Number of reviews"],
-    ["clinics[].location", "string", "Location text"],
-    ["clinics[].startingPrice", "number", "Starting price (THB)"],
-    ["clinics[].promo", "string|null", "Promotion text, or null"],
-    ["clinics[].verified", "boolean", "Whether the clinic is verified"],
-    ["clinics[].services", "array", "Services with name, price, durationMin"],
-    ["clinics[].openingHours", "array", "Opening hours per day"],
-    ["total", "number", "Total clinics returned"],
+    ["clinics", "array", "รายการคลินิก"],
+    ["clinics[].id", "string", "รหัสคลินิก (เช่น c1, c2)"],
+    ["clinics[].name", "string", "ชื่อคลินิก"],
+    ["clinics[].category", "string", "หมวดหมู่"],
+    ["clinics[].rating", "number", "คะแนนเฉลี่ย (1–5)"],
+    ["clinics[].reviews", "number", "จำนวนรีวิว"],
+    ["clinics[].location", "string", "ที่ตั้ง"],
+    ["clinics[].startingPrice", "number", "ราคาเริ่มต้น (THB)"],
+    ["clinics[].promo", "string|null", "ข้อความโปรโมชั่น หรือ null"],
+    ["clinics[].verified", "boolean", "คลินิกได้รับการยืนยันแล้ว"],
+    ["clinics[].services", "array", "บริการ พร้อมชื่อ ราคา และระยะเวลา"],
+    ["clinics[].openingHours", "array", "ชั่วโมงทำการแต่ละวัน"],
+    ["total", "number", "จำนวนคลินิกทั้งหมดที่ได้"],
   ];
 
   const exampleResponse = `{
@@ -221,59 +250,44 @@ function GetClinicsPanel() {
   return (
     <div className="space-y-5 pt-1">
       <div>
-        <SectionLabel>Description</SectionLabel>
-        <p className="text-sm text-foreground leading-relaxed">
-          Returns the list of clinics available on MedCentral. Public endpoint — no
-          authentication required. Safe to call from Postman, Botnoi.ai, n8n, Zapier, or
-          any HTTP client.
-        </p>
+        <SectionLabel>{t("apiDocs.descLabel")}</SectionLabel>
+        <p className="text-sm text-foreground leading-relaxed">{t("apiDocs.getClinicsDesc")}</p>
       </div>
 
       <div>
-        <SectionLabel>Endpoint</SectionLabel>
-        <code className="block rounded-lg border border-border bg-muted/50 px-4 py-2.5 text-sm font-mono">
-          <span className="font-bold text-emerald-500">GET</span>{" "}
-          <span className="text-foreground">{BASE_URL}{CLINICS_PATH}</span>
-        </code>
+        <SectionLabel>{t("apiDocs.endpointLabel")}</SectionLabel>
+        <UrlBlock method="GET" path={CLINICS_PATH} />
       </div>
 
       <div>
-        <SectionLabel>Headers</SectionLabel>
-        <p className="text-xs text-muted-foreground mb-2">
-          No authentication required. <code className="font-mono">Accept: application/json</code> is
-          recommended but optional.
-        </p>
+        <SectionLabel>{t("apiDocs.headers")}</SectionLabel>
+        <p className="text-xs text-muted-foreground">{t("apiDocs.noAuthNote")}</p>
       </div>
 
       <div>
-        <SectionLabel>Query Parameters (optional)</SectionLabel>
+        <SectionLabel>{t("apiDocs.queryParamsLabel")}</SectionLabel>
         <FieldTable rows={queryRows} showRequired />
       </div>
 
       <div>
-        <SectionLabel>cURL example (Postman → Import → Raw text)</SectionLabel>
-        <CodeBlock code={curlExample} />
-      </div>
-
-      <div>
-        <SectionLabel>Response (200 OK)</SectionLabel>
+        <SectionLabel>{t("apiDocs.response200")}</SectionLabel>
         <FieldTable rows={responseFields} />
       </div>
 
       <div>
-        <SectionLabel>Example response body</SectionLabel>
+        <SectionLabel>{t("apiDocs.exampleResponseBody")}</SectionLabel>
         <CodeBlock code={exampleResponse} />
       </div>
 
       {/* Live test */}
       <div className="rounded-2xl border border-emerald-500/20 bg-emerald-500/5 p-4 space-y-3">
         <p className="text-xs font-bold uppercase tracking-wider text-emerald-600">
-          Live test (real request)
+          {t("apiDocs.liveTest")}
         </p>
         <div className="flex flex-wrap items-center gap-3">
           <Input
             className="h-9 text-xs flex-1 min-w-[180px]"
-            placeholder="category (optional)"
+            placeholder={t("apiDocs.categoryOptional")}
             value={category}
             onChange={(e) => setCategory(e.target.value)}
           />
@@ -284,12 +298,12 @@ function GetClinicsPanel() {
             {loading ? (
               <>
                 <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
-                Sending…
+                {t("apiDocs.sendingLabel")}
               </>
             ) : (
               <>
                 <Send className="mr-1.5 h-3.5 w-3.5" />
-                Send request
+                {t("apiDocs.sendRequest")}
               </>
             )}
           </Button>
@@ -311,7 +325,7 @@ function GetClinicsPanel() {
               >
                 {statusCode ?? "ERR"}
               </span>
-              <span className="text-xs text-muted-foreground">— response from server</span>
+              <span className="text-xs text-muted-foreground">{t("apiDocs.responseFromServer")}</span>
             </div>
             <CodeBlock code={result} maxH="320px" />
           </div>
@@ -324,6 +338,7 @@ function GetClinicsPanel() {
 // ─── POST /api/public/bookings ────────────────────────────────────────────────
 
 function PostBookingPanel() {
+  const { t } = useTranslation();
   const clinics = useClinics();
   const { user } = useAuth();
 
@@ -342,7 +357,7 @@ function PostBookingPanel() {
 
   const handleTest = async () => {
     if (!selectedClinicId || !selectedService || !date || !time || !patientName || !patientEmail) {
-      toast.error("Please fill in all required fields");
+      toast.error(t("apiDocs.fillAllFields"));
       return;
     }
     setLoading(true);
@@ -371,7 +386,7 @@ function PostBookingPanel() {
       } catch {
         setResult(text);
       }
-      if (res.status === 201) toast.success("Booking created!");
+      if (res.status === 201) toast.success(t("apiDocs.bookingSuccess"));
       else toast.error(`Request failed: ${res.status}`);
     } catch (err) {
       setStatusCode(0);
@@ -385,11 +400,11 @@ function PostBookingPanel() {
   "serviceName": "Laser Hair Removal (Underarm)",
   "date": "2026-06-01",
   "time": "10:00",
-  "patientName": "Somchai K.",
+  "patientName": "สมชาย ก.",
   "patientEmail": "somchai@example.com",
   "patientPhone": "+66812345678",
   "price": 990,
-  "note": "First visit"
+  "note": "ครั้งแรก"
 }`;
 
   const exampleResponse = `{
@@ -401,89 +416,77 @@ function PostBookingPanel() {
   "date": "2026-06-01",
   "time": "10:00",
   "price": 990,
-  "patientName": "Somchai K.",
+  "patientName": "สมชาย ก.",
   "patientEmail": "somchai@example.com",
   "patientPhone": "+66812345678",
-  "note": "First visit",
+  "note": "ครั้งแรก",
   "createdAt": "2026-06-01T03:00:00.000Z"
 }`;
 
-  const curlExample = `curl -X POST "${BASE_URL}${BOOKINGS_PATH}" \\
-  -H "Content-Type: application/json" \\
-  -H "Accept: application/json" \\
-  -d '${exampleRequest.replace(/\n/g, "")}'`;
-
   const headerRows = [
-    ["Content-Type", "application/json", "✓", "Required for the JSON body to be parsed"],
-    ["Accept", "application/json", "–", "Recommended"],
+    ["Content-Type", "application/json", "✓", "จำเป็นสำหรับการส่ง JSON body"],
+    ["Accept", "application/json", "–", "แนะนำ"],
   ];
 
   const bodyRows = [
-    ["clinicId", "string", "✓", "Clinic ID — must match one returned by GET /api/public/clinics"],
-    ["serviceName", "string", "✓", "Must match an entry in clinic.services[].name exactly"],
-    ["date", "string", "✓", "Appointment date in YYYY-MM-DD"],
-    ["time", "string", "✓", "Appointment time in 24h HH:MM"],
-    ["patientName", "string", "✓", "Patient full name (max 255)"],
-    ["patientEmail", "string", "✓", "Valid email address"],
-    ["patientPhone", "string", "–", "Optional phone number (max 32 chars)"],
-    ["price", "number", "–", "Override price in THB. Defaults to the service price."],
-    ["note", "string", "–", "Optional note for the clinic (max 1000 chars)"],
+    ["clinicId", "string", "✓", "รหัสคลินิก — ต้องตรงกับ id จาก GET /api/public/clinics"],
+    ["serviceName", "string", "✓", "ต้องตรงกับ clinic.services[].name ทุกตัวอักษร"],
+    ["date", "string", "✓", "วันที่นัดหมาย รูปแบบ YYYY-MM-DD"],
+    ["time", "string", "✓", "เวลานัดหมาย รูปแบบ 24 ชั่วโมง HH:MM"],
+    ["patientName", "string", "✓", "ชื่อ-นามสกุลผู้ป่วย (สูงสุด 255 ตัวอักษร)"],
+    ["patientEmail", "string", "✓", "อีเมลที่ถูกต้อง"],
+    ["patientPhone", "string", "–", "เบอร์โทรศัพท์ (ไม่บังคับ)"],
+    ["price", "number", "–", "ราคา THB — ถ้าไม่ส่งจะใช้ราคาของบริการ"],
+    ["note", "string", "–", "หมายเหตุให้คลินิก (ไม่บังคับ)"],
   ];
 
   const responseRows = [
-    ["bookingId", "string", "Generated booking reference (MC-XXXXXXXX)"],
-    ["status", "string", "Always 'upcoming' for new bookings"],
-    ["clinicId", "string", "Echo of clinic ID"],
-    ["clinicName", "string", "Resolved clinic name"],
-    ["serviceName", "string", "Resolved service name"],
-    ["date", "string", "Echo of date"],
-    ["time", "string", "Echo of time"],
-    ["price", "number", "Resolved price in THB"],
-    ["createdAt", "string", "Creation timestamp (ISO 8601 UTC)"],
+    ["bookingId", "string", "รหัสการจอง (MC-XXXXXXXX)"],
+    ["status", "string", "สถานะ: upcoming เสมอสำหรับการจองใหม่"],
+    ["clinicId", "string", "รหัสคลินิกที่จอง"],
+    ["clinicName", "string", "ชื่อคลินิกที่จอง"],
+    ["serviceName", "string", "ชื่อบริการที่จอง"],
+    ["date", "string", "วันที่นัดหมาย"],
+    ["time", "string", "เวลานัดหมาย"],
+    ["price", "number", "ราคา (THB)"],
+    ["createdAt", "string", "เวลาสร้างการจอง (ISO 8601 UTC)"],
   ];
 
   const errorRows = [
-    ["400", "Invalid JSON body, or Zod validation failed. Response: { error, issues[] }"],
-    ["404", "Unknown clinicId, or serviceName not offered by that clinic"],
-    ["500", "Server error"],
+    ["400", "JSON body ไม่ถูกต้อง หรือ validation ล้มเหลว ดูที่ error.issues[]"],
+    ["404", "ไม่พบ clinicId หรือ serviceName ไม่ตรงกับบริการของคลินิกนั้น"],
+    ["500", "เซิร์ฟเวอร์ error"],
   ];
 
   return (
     <div className="space-y-5 pt-1">
       <div>
-        <SectionLabel>Description</SectionLabel>
-        <p className="text-sm text-foreground leading-relaxed">
-          Create a new appointment booking. Public endpoint — no authentication required.
-          Validates the clinic and service against the live MedCentral catalog and returns the
-          generated booking reference.
-        </p>
+        <SectionLabel>{t("apiDocs.descLabel")}</SectionLabel>
+        <p className="text-sm text-foreground leading-relaxed">{t("apiDocs.postBookingDesc")}</p>
       </div>
 
       <div>
-        <SectionLabel>Endpoint</SectionLabel>
-        <code className="block rounded-lg border border-border bg-muted/50 px-4 py-2.5 text-sm font-mono">
-          <span className="font-bold text-blue-500">POST</span>{" "}
-          <span className="text-foreground">{BASE_URL}{BOOKINGS_PATH}</span>
-        </code>
+        <SectionLabel>{t("apiDocs.endpointLabel")}</SectionLabel>
+        <UrlBlock method="POST" path={BOOKINGS_PATH} />
       </div>
 
       <div>
-        <SectionLabel>Headers</SectionLabel>
+        <SectionLabel>{t("apiDocs.headers")}</SectionLabel>
         <div className="overflow-hidden rounded-xl border border-border">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-border bg-muted/40">
                 <th className="px-4 py-2 text-left text-xs font-bold text-muted-foreground">
-                  Header
+                  {t("apiDocs.headerCol")}
                 </th>
                 <th className="px-4 py-2 text-left text-xs font-bold text-muted-foreground">
-                  Value
+                  {t("apiDocs.valueCol")}
                 </th>
                 <th className="px-4 py-2 text-left text-xs font-bold text-muted-foreground">
-                  Required
+                  {t("apiDocs.requiredLabel")}
                 </th>
                 <th className="px-4 py-2 text-left text-xs font-bold text-muted-foreground">
-                  Notes
+                  {t("apiDocs.notesCol")}
                 </th>
               </tr>
             </thead>
@@ -502,41 +505,36 @@ function PostBookingPanel() {
       </div>
 
       <div>
-        <SectionLabel>Request body (JSON)</SectionLabel>
+        <SectionLabel>{t("apiDocs.requestBodyJson")}</SectionLabel>
         <FieldTable rows={bodyRows} showRequired />
       </div>
 
       <div>
-        <SectionLabel>Example request body</SectionLabel>
+        <SectionLabel>{t("apiDocs.exampleRequestBody")}</SectionLabel>
         <CodeBlock code={exampleRequest} />
       </div>
 
       <div>
-        <SectionLabel>cURL example (Postman → Import → Raw text)</SectionLabel>
-        <CodeBlock code={curlExample} />
-      </div>
-
-      <div>
-        <SectionLabel>Response (201 Created)</SectionLabel>
+        <SectionLabel>{t("apiDocs.response201")}</SectionLabel>
         <FieldTable rows={responseRows} />
       </div>
 
       <div>
-        <SectionLabel>Example response body</SectionLabel>
+        <SectionLabel>{t("apiDocs.exampleResponseBody")}</SectionLabel>
         <CodeBlock code={exampleResponse} />
       </div>
 
       <div>
-        <SectionLabel>Error responses</SectionLabel>
+        <SectionLabel>{t("apiDocs.errorResponses")}</SectionLabel>
         <div className="overflow-hidden rounded-xl border border-border">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-border bg-muted/40">
                 <th className="px-4 py-2 text-left text-xs font-bold text-muted-foreground">
-                  Status
+                  {t("apiDocs.statusCol")}
                 </th>
                 <th className="px-4 py-2 text-left text-xs font-bold text-muted-foreground">
-                  Meaning
+                  {t("apiDocs.meaningCol")}
                 </th>
               </tr>
             </thead>
@@ -555,7 +553,7 @@ function PostBookingPanel() {
       {/* Live test */}
       <div className="rounded-2xl border border-blue-500/20 bg-blue-500/5 p-4 space-y-4">
         <p className="text-xs font-bold uppercase tracking-wider text-blue-600">
-          Live test (real request)
+          {t("apiDocs.liveTest")}
         </p>
         <div className="grid gap-3 sm:grid-cols-2">
           <div className="space-y-1.5">
@@ -567,8 +565,8 @@ function PostBookingPanel() {
                 setSelectedService("");
               }}
             >
-              <SelectTrigger className="h-9 text-xs">
-                <SelectValue placeholder="Select a clinic" />
+              <SelectTrigger className="h-9 cursor-pointer text-xs">
+                <SelectValue placeholder={t("apiDocs.selectClinic")} />
               </SelectTrigger>
               <SelectContent>
                 {clinics.map((c) => (
@@ -587,8 +585,8 @@ function PostBookingPanel() {
               onValueChange={setSelectedService}
               disabled={!selectedClinicId}
             >
-              <SelectTrigger className="h-9 text-xs">
-                <SelectValue placeholder="Select a service" />
+              <SelectTrigger className="h-9 cursor-pointer text-xs">
+                <SelectValue placeholder={t("apiDocs.selectService")} />
               </SelectTrigger>
               <SelectContent>
                 {selectedClinic?.services.map((s) => (
@@ -624,7 +622,7 @@ function PostBookingPanel() {
             <Label className="text-xs font-semibold">patientName *</Label>
             <Input
               className="h-9 text-xs"
-              placeholder="e.g. Somchai K."
+              placeholder="เช่น สมชาย ก."
               value={patientName}
               onChange={(e) => setPatientName(e.target.value)}
             />
@@ -635,7 +633,7 @@ function PostBookingPanel() {
             <Input
               type="email"
               className="h-9 text-xs"
-              placeholder="e.g. somchai@example.com"
+              placeholder="เช่น somchai@example.com"
               value={patientEmail}
               onChange={(e) => setPatientEmail(e.target.value)}
             />
@@ -651,12 +649,12 @@ function PostBookingPanel() {
           {loading ? (
             <>
               <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
-              Sending…
+              {t("apiDocs.sendingLabel")}
             </>
           ) : (
             <>
               <Send className="mr-1.5 h-3.5 w-3.5" />
-              Send request
+              {t("apiDocs.sendRequest")}
             </>
           )}
         </Button>
@@ -676,7 +674,7 @@ function PostBookingPanel() {
               >
                 {statusCode ?? "ERR"} {statusCode === 201 ? "Created" : ""}
               </span>
-              <span className="text-xs text-muted-foreground">— response from server</span>
+              <span className="text-xs text-muted-foreground">{t("apiDocs.responseFromServer")}</span>
             </div>
             <CodeBlock code={result} maxH="280px" />
           </div>
@@ -708,65 +706,37 @@ function ApiDocs() {
               <Code2 className="h-5 w-5" />
             </div>
             <h1 className="text-3xl font-black tracking-tight text-foreground">
-              API Documentation
+              {t("apiDocs.title")}
             </h1>
             <Badge className="border-none bg-primary/10 text-primary hover:bg-primary/15 font-bold text-xs">
-              Public · No auth
+              {t("apiDocs.publicBadge")}
             </Badge>
           </div>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Real, externally-callable REST endpoints. Tested with Postman and Botnoi.ai. CORS is
-            enabled (<code className="font-mono">*</code>) so requests work from any origin.
-          </p>
+          <p className="mt-2 text-sm text-muted-foreground">{t("apiDocs.subtitle")}</p>
         </div>
 
         {/* Base URL */}
-        <div className="mb-6 rounded-2xl border border-border bg-card p-5 shadow-sm">
+        <div className="mb-8 rounded-2xl border border-border bg-card p-5 shadow-sm">
           <p className="mb-2 text-xs font-bold uppercase tracking-wider text-muted-foreground">
-            Base URL
+            {t("apiDocs.baseUrlLabel")}
           </p>
           <code className="block rounded-xl border border-border bg-muted/50 px-4 py-3 text-sm font-mono text-foreground">
             {BASE_URL}
           </code>
-          <p className="mt-2 text-xs text-muted-foreground">
-            For production integrations (Postman collections, Botnoi.ai webhooks, cron) use the
-            stable URL: <code className="font-mono">https://easy-med-find.lovable.app</code>
-          </p>
-        </div>
-
-        {/* Quick-start for Botnoi / Postman */}
-        <div className="mb-8 rounded-2xl border border-border bg-card p-5 shadow-sm space-y-3">
-          <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-            Quick start
-          </p>
-          <ol className="list-decimal pl-5 text-sm text-foreground space-y-1.5">
-            <li>
-              <strong>Postman:</strong> New → HTTP Request → paste the cURL example below into
-              Import → Raw text.
-            </li>
-            <li>
-              <strong>Botnoi.ai:</strong> Add an <em>HTTP Request</em> action. Method = POST,
-              URL = <code className="font-mono">{BASE_URL}{BOOKINGS_PATH}</code>, Header
-              <code className="font-mono"> Content-Type: application/json</code>, paste the JSON
-              body, map dynamic values to chatbot variables.
-            </li>
-            <li>
-              No API key, no bearer token, no signature required for these public endpoints.
-            </li>
-          </ol>
+          <p className="mt-2 text-xs text-muted-foreground">{t("apiDocs.baseUrlNote")}</p>
         </div>
 
         {/* API Endpoints */}
-        <Accordion type="multiple" defaultValue={["get-clinics", "post-booking"]} className="space-y-3">
+        <Accordion type="multiple" defaultValue={[]} className="space-y-3">
           <AccordionItem
             value="get-clinics"
             className="overflow-hidden rounded-2xl border border-border bg-card px-0 shadow-sm"
           >
-            <AccordionTrigger className="px-5 py-4 hover:no-underline hover:bg-muted/30 transition-colors data-[state=open]:bg-muted/20">
+            <AccordionTrigger className="cursor-pointer px-5 py-4 hover:no-underline hover:bg-muted/30 transition-colors data-[state=open]:bg-muted/20">
               <div className="flex items-center gap-3 text-left">
                 <MethodBadge method="GET" />
                 <div>
-                  <p className="font-bold text-foreground">List clinics</p>
+                  <p className="font-bold text-foreground">{t("apiDocs.listClinicsTitle")}</p>
                   <p className="mt-0.5 font-mono text-xs text-muted-foreground">{CLINICS_PATH}</p>
                 </div>
               </div>
@@ -780,11 +750,11 @@ function ApiDocs() {
             value="post-booking"
             className="overflow-hidden rounded-2xl border border-border bg-card px-0 shadow-sm"
           >
-            <AccordionTrigger className="px-5 py-4 hover:no-underline hover:bg-muted/30 transition-colors data-[state=open]:bg-muted/20">
+            <AccordionTrigger className="cursor-pointer px-5 py-4 hover:no-underline hover:bg-muted/30 transition-colors data-[state=open]:bg-muted/20">
               <div className="flex items-center gap-3 text-left">
                 <MethodBadge method="POST" />
                 <div>
-                  <p className="font-bold text-foreground">Create booking</p>
+                  <p className="font-bold text-foreground">{t("apiDocs.createBookingTitle")}</p>
                   <p className="mt-0.5 font-mono text-xs text-muted-foreground">{BOOKINGS_PATH}</p>
                 </div>
               </div>
