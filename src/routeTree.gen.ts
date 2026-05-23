@@ -20,6 +20,7 @@ import { Route as ClinicClinicIdRouteImport } from './routes/clinic.$clinicId'
 import { Route as ApiPublicClinicsRouteImport } from './routes/api/public/clinics'
 import { Route as ApiPublicBookingsRouteImport } from './routes/api/public/bookings'
 import { Route as ApiPublicClinicsClinicIdRouteImport } from './routes/api/public/clinics.$clinicId'
+import { Route as ApiPublicClinicClinicIdRouteImport } from './routes/api/public/clinic.$clinicId'
 
 const PromotionsRoute = PromotionsRouteImport.update({
   id: '/promotions',
@@ -77,6 +78,11 @@ const ApiPublicClinicsClinicIdRoute =
     path: '/$clinicId',
     getParentRoute: () => ApiPublicClinicsRoute,
   } as any)
+const ApiPublicClinicClinicIdRoute = ApiPublicClinicClinicIdRouteImport.update({
+  id: '/api/public/clinic/$clinicId',
+  path: '/api/public/clinic/$clinicId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -89,6 +95,7 @@ export interface FileRoutesByFullPath {
   '/clinic/$clinicId': typeof ClinicClinicIdRoute
   '/api/public/bookings': typeof ApiPublicBookingsRoute
   '/api/public/clinics': typeof ApiPublicClinicsRouteWithChildren
+  '/api/public/clinic/$clinicId': typeof ApiPublicClinicClinicIdRoute
   '/api/public/clinics/$clinicId': typeof ApiPublicClinicsClinicIdRoute
 }
 export interface FileRoutesByTo {
@@ -102,6 +109,7 @@ export interface FileRoutesByTo {
   '/clinic/$clinicId': typeof ClinicClinicIdRoute
   '/api/public/bookings': typeof ApiPublicBookingsRoute
   '/api/public/clinics': typeof ApiPublicClinicsRouteWithChildren
+  '/api/public/clinic/$clinicId': typeof ApiPublicClinicClinicIdRoute
   '/api/public/clinics/$clinicId': typeof ApiPublicClinicsClinicIdRoute
 }
 export interface FileRoutesById {
@@ -116,6 +124,7 @@ export interface FileRoutesById {
   '/clinic/$clinicId': typeof ClinicClinicIdRoute
   '/api/public/bookings': typeof ApiPublicBookingsRoute
   '/api/public/clinics': typeof ApiPublicClinicsRouteWithChildren
+  '/api/public/clinic/$clinicId': typeof ApiPublicClinicClinicIdRoute
   '/api/public/clinics/$clinicId': typeof ApiPublicClinicsClinicIdRoute
 }
 export interface FileRouteTypes {
@@ -131,6 +140,7 @@ export interface FileRouteTypes {
     | '/clinic/$clinicId'
     | '/api/public/bookings'
     | '/api/public/clinics'
+    | '/api/public/clinic/$clinicId'
     | '/api/public/clinics/$clinicId'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -144,6 +154,7 @@ export interface FileRouteTypes {
     | '/clinic/$clinicId'
     | '/api/public/bookings'
     | '/api/public/clinics'
+    | '/api/public/clinic/$clinicId'
     | '/api/public/clinics/$clinicId'
   id:
     | '__root__'
@@ -157,6 +168,7 @@ export interface FileRouteTypes {
     | '/clinic/$clinicId'
     | '/api/public/bookings'
     | '/api/public/clinics'
+    | '/api/public/clinic/$clinicId'
     | '/api/public/clinics/$clinicId'
   fileRoutesById: FileRoutesById
 }
@@ -171,6 +183,7 @@ export interface RootRouteChildren {
   ClinicClinicIdRoute: typeof ClinicClinicIdRoute
   ApiPublicBookingsRoute: typeof ApiPublicBookingsRoute
   ApiPublicClinicsRoute: typeof ApiPublicClinicsRouteWithChildren
+  ApiPublicClinicClinicIdRoute: typeof ApiPublicClinicClinicIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -252,6 +265,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicClinicsClinicIdRouteImport
       parentRoute: typeof ApiPublicClinicsRoute
     }
+    '/api/public/clinic/$clinicId': {
+      id: '/api/public/clinic/$clinicId'
+      path: '/api/public/clinic/$clinicId'
+      fullPath: '/api/public/clinic/$clinicId'
+      preLoaderRoute: typeof ApiPublicClinicClinicIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -277,6 +297,7 @@ const rootRouteChildren: RootRouteChildren = {
   ClinicClinicIdRoute: ClinicClinicIdRoute,
   ApiPublicBookingsRoute: ApiPublicBookingsRoute,
   ApiPublicClinicsRoute: ApiPublicClinicsRouteWithChildren,
+  ApiPublicClinicClinicIdRoute: ApiPublicClinicClinicIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
