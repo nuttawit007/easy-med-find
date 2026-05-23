@@ -8,9 +8,35 @@ export const Route = createFileRoute("/api/public/clinics")({
       OPTIONS: async () => new Response(null, { status: 204, headers: CORS_HEADERS }),
       GET: async ({ request }) => {
         const url = new URL(request.url);
+        const id = url.searchParams.get("id");
         const category = url.searchParams.get("category");
         const q = url.searchParams.get("q")?.toLowerCase();
 
+        // Single clinic lookup by ?id=
+        if (id) {
+          const clinic = clinics.find((c) => c.id === id);
+          if (!clinic) {
+            return jsonResponse({ error: `Clinic not found: ${id}` }, 404);
+          }
+          return jsonResponse({
+            id: clinic.id,
+            name: clinic.name,
+            category: clinic.category,
+            rating: clinic.rating,
+            reviews: clinic.reviews,
+            location: clinic.location,
+            distanceKm: clinic.distanceKm,
+            startingPrice: clinic.startingPrice,
+            promo: clinic.promo ?? null,
+            verified: clinic.verified ?? false,
+            phone: clinic.phone ?? null,
+            email: clinic.email ?? null,
+            services: clinic.services,
+            openingHours: clinic.openingHours ?? [],
+          });
+        }
+
+        // List clinics with optional filters
         let list = clinics;
         if (category) list = list.filter((c) => c.category.toLowerCase() === category.toLowerCase());
         if (q) list = list.filter((c) => c.name.toLowerCase().includes(q) || c.location.toLowerCase().includes(q));
