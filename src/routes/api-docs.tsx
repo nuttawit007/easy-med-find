@@ -35,7 +35,6 @@ import { toast } from "sonner";
 const BASE_URL = "https://easy-med-find.lovable.app";
 
 const CLINICS_PATH = "/api/public/clinics";
-const CLINIC_BY_ID_PATH = "/api/public/clinics/$clinicId";
 const BOOKINGS_PATH = "/api/public/bookings";
 
 export const Route = createFileRoute("/api-docs")({
@@ -336,7 +335,7 @@ function GetClinicsPanel() {
   );
 }
 
-// ─── GET /api/public/clinics/:clinicId ───────────────────────────────────────
+// ─── GET /api/public/clinics?clinicId={id} ──────────────────────────────────
 
 function GetClinicByIdPanel() {
   const { t } = useTranslation();
@@ -346,7 +345,7 @@ function GetClinicByIdPanel() {
   const [statusCode, setStatusCode] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const resolvedPath = CLINIC_BY_ID_PATH.replace("$clinicId", clinicId || "$clinicId");
+  const resolvedPath = `${CLINICS_PATH}?clinicId=${encodeURIComponent(clinicId)}`;
   const url = `${BASE_URL}${resolvedPath}`;
 
   const handleTest = async () => {
@@ -372,7 +371,7 @@ function GetClinicByIdPanel() {
     setLoading(false);
   };
 
-  const pathRows = [
+  const queryRows = [
     ["clinicId", "string", "✓", t("apiDocs.clinicIdParamDesc")],
   ];
 
@@ -426,7 +425,7 @@ function GetClinicByIdPanel() {
 
       <div>
         <SectionLabel>{t("apiDocs.endpointLabel")}</SectionLabel>
-        <UrlBlock method="GET" path={clinicId ? resolvedPath : "/api/public/clinics/:clinicId"} />
+        <UrlBlock method="GET" path={clinicId ? resolvedPath : `${CLINICS_PATH}?clinicId={clinicId}`} />
       </div>
 
       <div>
@@ -435,8 +434,8 @@ function GetClinicByIdPanel() {
       </div>
 
       <div>
-        <SectionLabel>{t("apiDocs.pathParamsLabel")}</SectionLabel>
-        <FieldTable rows={pathRows} showRequired />
+        <SectionLabel>{t("apiDocs.queryParamsLabel")}</SectionLabel>
+        <FieldTable rows={queryRows} showRequired />
       </div>
 
       <div>
@@ -957,7 +956,7 @@ function ApiDocs() {
                 <MethodBadge method="GET" />
                 <div>
                   <p className="font-bold text-foreground">{t("apiDocs.getClinicByIdTitle")}</p>
-                  <p className="mt-0.5 font-mono text-xs text-muted-foreground">/api/public/clinics/:clinicId</p>
+                  <p className="mt-0.5 font-mono text-xs text-muted-foreground">{CLINICS_PATH}?clinicId={"{"}clinicId{"}"}</p>
                 </div>
               </div>
             </AccordionTrigger>
