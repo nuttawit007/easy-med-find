@@ -35,6 +35,7 @@ import { toast } from "sonner";
 const BASE_URL = "https://easy-med-find.lovable.app";
 
 const CLINICS_PATH = "/api/public/clinics";
+const CLINIC_BY_ID_PATH = "/api/public/clinics/$clinicId";
 const BOOKINGS_PATH = "/api/public/bookings";
 
 export const Route = createFileRoute("/api-docs")({
@@ -291,6 +292,207 @@ function GetClinicsPanel() {
             value={category}
             onChange={(e) => setCategory(e.target.value)}
           />
+          <code className="min-w-0 flex-1 truncate rounded-lg border border-border bg-background px-3 py-2 text-xs font-mono text-muted-foreground">
+            GET {url}
+          </code>
+          <Button size="sm" onClick={handleTest} disabled={loading} className="shrink-0">
+            {loading ? (
+              <>
+                <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
+                {t("apiDocs.sendingLabel")}
+              </>
+            ) : (
+              <>
+                <Send className="mr-1.5 h-3.5 w-3.5" />
+                {t("apiDocs.sendRequest")}
+              </>
+            )}
+          </Button>
+        </div>
+        {result && (
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
+              {statusCode && statusCode >= 200 && statusCode < 300 ? (
+                <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+              ) : (
+                <AlertCircle className="h-4 w-4 text-destructive" />
+              )}
+              <span
+                className={`text-xs font-bold ${
+                  statusCode && statusCode >= 200 && statusCode < 300
+                    ? "text-emerald-500"
+                    : "text-destructive"
+                }`}
+              >
+                {statusCode ?? "ERR"}
+              </span>
+              <span className="text-xs text-muted-foreground">{t("apiDocs.responseFromServer")}</span>
+            </div>
+            <CodeBlock code={result} maxH="320px" />
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ─── GET /api/public/clinics/:clinicId ───────────────────────────────────────
+
+function GetClinicByIdPanel() {
+  const { t } = useTranslation();
+  const clinics = useClinics();
+  const [clinicId, setClinicId] = useState("c1");
+  const [result, setResult] = useState<string | null>(null);
+  const [statusCode, setStatusCode] = useState<number | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  const resolvedPath = CLINIC_BY_ID_PATH.replace("$clinicId", clinicId || "$clinicId");
+  const url = `${BASE_URL}${resolvedPath}`;
+
+  const handleTest = async () => {
+    if (!clinicId.trim()) {
+      return;
+    }
+    setLoading(true);
+    setResult(null);
+    setStatusCode(null);
+    try {
+      const res = await fetch(url, { method: "GET", headers: { Accept: "application/json" } });
+      setStatusCode(res.status);
+      const text = await res.text();
+      try {
+        setResult(JSON.stringify(JSON.parse(text), null, 2));
+      } catch {
+        setResult(text);
+      }
+    } catch (err) {
+      setStatusCode(0);
+      setResult(JSON.stringify({ error: String(err) }, null, 2));
+    }
+    setLoading(false);
+  };
+
+  const pathRows = [
+    ["clinicId", "string", "✓", t("apiDocs.clinicIdParamDesc")],
+  ];
+
+  const responseFields = [
+    ["id", "string", "รหัสคลินิก (เช่น c1, c2)"],
+    ["name", "string", "ชื่อคลินิก"],
+    ["category", "string", "หมวดหมู่"],
+    ["rating", "number", "คะแนนเฉลี่ย (1–5)"],
+    ["reviews", "number", "จำนวนรีวิว"],
+    ["location", "string", "ที่ตั้ง"],
+    ["startingPrice", "number", "ราคาเริ่มต้น (THB)"],
+    ["promo", "string|null", "ข้อความโปรโมชั่น หรือ null"],
+    ["verified", "boolean", "คลินิกได้รับการยืนยันแล้ว"],
+    ["services", "array", "บริการ พร้อมชื่อ ราคา และระยะเวลา"],
+    ["openingHours", "array", "ชั่วโมงทำการแต่ละวัน"],
+  ];
+
+  const exampleResponse = `{
+  "id": "c1",
+  "name": "Aura Skin & Laser Clinic",
+  "category": "Laser",
+  "rating": 4.8,
+  "reviews": 1284,
+  "location": "Sukhumvit, Bangkok",
+  "distanceKm": 1.2,
+  "startingPrice": 990,
+  "promo": "30% off first laser session",
+  "verified": true,
+  "phone": null,
+  "email": null,
+  "services": [
+    { "name": "Laser Hair Removal (Underarm)", "price": 990, "durationMin": 30 },
+    { "name": "Pico Laser Full Face", "price": 3500, "durationMin": 45 }
+  ],
+  "openingHours": [
+    { "day": "Monday", "isOpen": true, "open": "09:00", "close": "18:00" }
+  ]
+}`;
+
+  const errorRows = [
+    ["404", t("apiDocs.clinicNotFound")],
+    ["500", "เซิร์ฟเวอร์ error"],
+  ];
+
+  return (
+    <div className="space-y-5 pt-1">
+      <div>
+        <SectionLabel>{t("apiDocs.descLabel")}</SectionLabel>
+        <p className="text-sm text-foreground leading-relaxed">{t("apiDocs.getClinicByIdDesc")}</p>
+      </div>
+
+      <div>
+        <SectionLabel>{t("apiDocs.endpointLabel")}</SectionLabel>
+        <UrlBlock method="GET" path={clinicId ? resolvedPath : "/api/public/clinics/:clinicId"} />
+      </div>
+
+      <div>
+        <SectionLabel>{t("apiDocs.headers")}</SectionLabel>
+        <p className="text-xs text-muted-foreground">{t("apiDocs.noAuthNote")}</p>
+      </div>
+
+      <div>
+        <SectionLabel>{t("apiDocs.pathParamsLabel")}</SectionLabel>
+        <FieldTable rows={pathRows} showRequired />
+      </div>
+
+      <div>
+        <SectionLabel>{t("apiDocs.response200")}</SectionLabel>
+        <FieldTable rows={responseFields} />
+      </div>
+
+      <div>
+        <SectionLabel>{t("apiDocs.exampleResponseBody")}</SectionLabel>
+        <CodeBlock code={exampleResponse} />
+      </div>
+
+      <div>
+        <SectionLabel>{t("apiDocs.errorResponses")}</SectionLabel>
+        <div className="overflow-hidden rounded-xl border border-border">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-border bg-muted/40">
+                <th className="px-4 py-2 text-left text-xs font-bold text-muted-foreground">
+                  {t("apiDocs.statusCol")}
+                </th>
+                <th className="px-4 py-2 text-left text-xs font-bold text-muted-foreground">
+                  {t("apiDocs.meaningCol")}
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {errorRows.map(([code, msg]) => (
+                <tr key={code} className="border-b border-border/60 last:border-0">
+                  <td className="px-4 py-2.5 font-mono text-xs text-destructive font-bold">{code}</td>
+                  <td className="px-4 py-2.5 text-xs text-muted-foreground">{msg}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* Live test */}
+      <div className="rounded-2xl border border-emerald-500/20 bg-emerald-500/5 p-4 space-y-3">
+        <p className="text-xs font-bold uppercase tracking-wider text-emerald-600">
+          {t("apiDocs.liveTest")}
+        </p>
+        <div className="flex flex-wrap items-center gap-3">
+          <Select value={clinicId} onValueChange={setClinicId}>
+            <SelectTrigger className="h-9 cursor-pointer text-xs w-[220px]">
+              <SelectValue placeholder={t("apiDocs.selectClinic")} />
+            </SelectTrigger>
+            <SelectContent>
+              {clinics.map((c) => (
+                <SelectItem key={c.id} value={c.id} className="text-xs">
+                  [{c.id}] {c.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
           <code className="min-w-0 flex-1 truncate rounded-lg border border-border bg-background px-3 py-2 text-xs font-mono text-muted-foreground">
             GET {url}
           </code>
@@ -743,6 +945,24 @@ function ApiDocs() {
             </AccordionTrigger>
             <AccordionContent className="px-5 pb-6">
               <GetClinicsPanel />
+            </AccordionContent>
+          </AccordionItem>
+
+          <AccordionItem
+            value="get-clinic-by-id"
+            className="overflow-hidden rounded-2xl border border-border bg-card px-0 shadow-sm"
+          >
+            <AccordionTrigger className="cursor-pointer px-5 py-4 hover:no-underline hover:bg-muted/30 transition-colors data-[state=open]:bg-muted/20">
+              <div className="flex items-center gap-3 text-left">
+                <MethodBadge method="GET" />
+                <div>
+                  <p className="font-bold text-foreground">{t("apiDocs.getClinicByIdTitle")}</p>
+                  <p className="mt-0.5 font-mono text-xs text-muted-foreground">/api/public/clinics/:clinicId</p>
+                </div>
+              </div>
+            </AccordionTrigger>
+            <AccordionContent className="px-5 pb-6">
+              <GetClinicByIdPanel />
             </AccordionContent>
           </AccordionItem>
 
