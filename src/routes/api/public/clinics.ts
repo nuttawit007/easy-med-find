@@ -14,9 +14,9 @@ export const Route = createFileRoute("/api/public/clinics")({
 
         // Single clinic lookup by ?clinicId=
         if (clinicId) {
-          const clinic = clinics.find((c) => c.id === id);
+          const clinic = clinics.find((c) => c.id === clinicId);
           if (!clinic) {
-            return jsonResponse({ error: `Clinic not found: ${id}` }, 404);
+            return jsonResponse({ error: `Clinic not found: ${clinicId}` }, 404);
           }
           return jsonResponse({
             id: clinic.id,
