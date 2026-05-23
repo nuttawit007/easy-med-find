@@ -19,7 +19,6 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as ClinicClinicIdRouteImport } from './routes/clinic.$clinicId'
 import { Route as ApiPublicClinicsRouteImport } from './routes/api/public/clinics'
 import { Route as ApiPublicBookingsRouteImport } from './routes/api/public/bookings'
-import { Route as ApiPublicClinicsClinicIdRouteImport } from './routes/api/public/clinics.$clinicId'
 
 const PromotionsRoute = PromotionsRouteImport.update({
   id: '/promotions',
@@ -71,12 +70,6 @@ const ApiPublicBookingsRoute = ApiPublicBookingsRouteImport.update({
   path: '/api/public/bookings',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiPublicClinicsClinicIdRoute =
-  ApiPublicClinicsClinicIdRouteImport.update({
-    id: '/$clinicId',
-    path: '/$clinicId',
-    getParentRoute: () => ApiPublicClinicsRoute,
-  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -88,8 +81,7 @@ export interface FileRoutesByFullPath {
   '/promotions': typeof PromotionsRoute
   '/clinic/$clinicId': typeof ClinicClinicIdRoute
   '/api/public/bookings': typeof ApiPublicBookingsRoute
-  '/api/public/clinics': typeof ApiPublicClinicsRouteWithChildren
-  '/api/public/clinics/$clinicId': typeof ApiPublicClinicsClinicIdRoute
+  '/api/public/clinics': typeof ApiPublicClinicsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -101,8 +93,7 @@ export interface FileRoutesByTo {
   '/promotions': typeof PromotionsRoute
   '/clinic/$clinicId': typeof ClinicClinicIdRoute
   '/api/public/bookings': typeof ApiPublicBookingsRoute
-  '/api/public/clinics': typeof ApiPublicClinicsRouteWithChildren
-  '/api/public/clinics/$clinicId': typeof ApiPublicClinicsClinicIdRoute
+  '/api/public/clinics': typeof ApiPublicClinicsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -115,8 +106,7 @@ export interface FileRoutesById {
   '/promotions': typeof PromotionsRoute
   '/clinic/$clinicId': typeof ClinicClinicIdRoute
   '/api/public/bookings': typeof ApiPublicBookingsRoute
-  '/api/public/clinics': typeof ApiPublicClinicsRouteWithChildren
-  '/api/public/clinics/$clinicId': typeof ApiPublicClinicsClinicIdRoute
+  '/api/public/clinics': typeof ApiPublicClinicsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -131,7 +121,6 @@ export interface FileRouteTypes {
     | '/clinic/$clinicId'
     | '/api/public/bookings'
     | '/api/public/clinics'
-    | '/api/public/clinics/$clinicId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -144,7 +133,6 @@ export interface FileRouteTypes {
     | '/clinic/$clinicId'
     | '/api/public/bookings'
     | '/api/public/clinics'
-    | '/api/public/clinics/$clinicId'
   id:
     | '__root__'
     | '/'
@@ -157,7 +145,6 @@ export interface FileRouteTypes {
     | '/clinic/$clinicId'
     | '/api/public/bookings'
     | '/api/public/clinics'
-    | '/api/public/clinics/$clinicId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -170,7 +157,7 @@ export interface RootRouteChildren {
   PromotionsRoute: typeof PromotionsRoute
   ClinicClinicIdRoute: typeof ClinicClinicIdRoute
   ApiPublicBookingsRoute: typeof ApiPublicBookingsRoute
-  ApiPublicClinicsRoute: typeof ApiPublicClinicsRouteWithChildren
+  ApiPublicClinicsRoute: typeof ApiPublicClinicsRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -245,26 +232,8 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicBookingsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/clinics/$clinicId': {
-      id: '/api/public/clinics/$clinicId'
-      path: '/$clinicId'
-      fullPath: '/api/public/clinics/$clinicId'
-      preLoaderRoute: typeof ApiPublicClinicsClinicIdRouteImport
-      parentRoute: typeof ApiPublicClinicsRoute
-    }
   }
 }
-
-interface ApiPublicClinicsRouteChildren {
-  ApiPublicClinicsClinicIdRoute: typeof ApiPublicClinicsClinicIdRoute
-}
-
-const ApiPublicClinicsRouteChildren: ApiPublicClinicsRouteChildren = {
-  ApiPublicClinicsClinicIdRoute: ApiPublicClinicsClinicIdRoute,
-}
-
-const ApiPublicClinicsRouteWithChildren =
-  ApiPublicClinicsRoute._addFileChildren(ApiPublicClinicsRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -276,7 +245,7 @@ const rootRouteChildren: RootRouteChildren = {
   PromotionsRoute: PromotionsRoute,
   ClinicClinicIdRoute: ClinicClinicIdRoute,
   ApiPublicBookingsRoute: ApiPublicBookingsRoute,
-  ApiPublicClinicsRoute: ApiPublicClinicsRouteWithChildren,
+  ApiPublicClinicsRoute: ApiPublicClinicsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
