@@ -353,9 +353,6 @@ function Auth() {
                         <TabsTrigger value="clinic" className="cursor-pointer text-xs">
                           {t("auth.roleClinic")}
                         </TabsTrigger>
-                        <TabsTrigger value="admin" className="cursor-pointer text-xs">
-                          {t("auth.roleAdmin")}
-                        </TabsTrigger>
                       </TabsList>
                     </Tabs>
                   </div>
