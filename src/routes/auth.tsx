@@ -346,7 +346,7 @@ function Auth() {
                   <div className="space-y-1">
                     <Label className="text-xs font-medium">{t("auth.accountType")}</Label>
                     <Tabs value={role} onValueChange={(v) => setRole(v as UserRole)}>
-                      <TabsList className="grid h-8 w-full grid-cols-3">
+                      <TabsList className="grid h-8 w-full grid-cols-2">
                         <TabsTrigger value="patient" className="cursor-pointer text-xs">
                           {t("auth.rolePatient")}
                         </TabsTrigger>
