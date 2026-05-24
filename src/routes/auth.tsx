@@ -366,8 +366,7 @@ function Auth() {
           </div>
         </div>
 
-        {/* Developer mode — only available in dev builds */}
-        {import.meta.env.DEV && (
+        {/* Developer mode */}
         <div className="mt-3 rounded-2xl border border-dashed border-border/60 bg-card/70 p-3 backdrop-blur-sm">
           <div className="mb-2 flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
             <ShieldAlert className="h-3 w-3" /> {t("auth.devLogin")}
@@ -418,7 +417,6 @@ function Auth() {
             </Link>
           </div>
         </div>
-        )}
       </div>
     </div>
   );
