@@ -198,8 +198,6 @@ function PatientDashboard({ name }: { name: string }) {
               <Trophy className="h-7 w-7" />
             </div>
             <div>
-              <p className="text-sm font-medium text-muted-foreground">{t("loyalty.myRewards")}</p>
-              <p className="text-2xl font-bold">{t("loyalty.youHavePoints", { count: points })}</p>
               <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                 {t("loyalty.myRewards")}
               </p>
