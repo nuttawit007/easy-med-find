@@ -61,7 +61,10 @@ function toAuthUser(u: User | null | undefined): AuthUser | null {
     (meta.display_name as string) ||
     (u.email ? u.email.split("@")[0] : "User");
   const avatar = (meta.avatar_url as string) || (meta.picture as string) || undefined;
-  const role = ((meta.role as UserRole) || "patient") as UserRole;
+  // SECURITY: never trust admin from user_metadata — it is user-supplied at sign-up.
+  // Admin must be granted server-side (e.g. via a roles table). Demote any client-claimed admin to patient.
+  const rawRole = (meta.role as UserRole) || "patient";
+  const role = (rawRole === "admin" ? "patient" : rawRole) as UserRole;
   return {
     id: u.id,
     name,
