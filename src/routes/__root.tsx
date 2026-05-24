@@ -107,6 +107,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         content:
           "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/2de4d964-20e2-4f37-b76d-2068d83b45dd/id-preview-2120a787--32e4a208-f1f6-4c07-ad29-e48b49d271c3.lovable.app-1778224969274.png",
       },
+      { name: "description", content: "MedCentral helps users find, compare, and book clinic appointments with an AI assistant." },
+      { property: "og:description", content: "MedCentral helps users find, compare, and book clinic appointments with an AI assistant." },
+      { name: "twitter:description", content: "MedCentral helps users find, compare, and book clinic appointments with an AI assistant." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/87d9bab6-2570-443b-bc9c-cc273cfd1fdf/id-preview-c960b337--32e4a208-f1f6-4c07-ad29-e48b49d271c3.lovable.app-1779621451846.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/87d9bab6-2570-443b-bc9c-cc273cfd1fdf/id-preview-c960b337--32e4a208-f1f6-4c07-ad29-e48b49d271c3.lovable.app-1779621451846.png" },
     ],
     links: [
       {
