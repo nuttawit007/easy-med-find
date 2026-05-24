@@ -39,7 +39,7 @@ import {
 import { cn } from "@/lib/utils";
 import { getClinic, getTimeSlots } from "@/lib/mock-data";
 import { useClinics } from "@/lib/clinics";
-import { addBooking } from "@/lib/bookings";
+import { addBooking, BookingConflictError } from "@/lib/bookings";
 import { toast } from "sonner";
 import { useAuth } from "@/lib/auth";
 import { Textarea } from "@/components/ui/textarea";
