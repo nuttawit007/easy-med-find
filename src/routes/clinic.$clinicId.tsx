@@ -12,6 +12,7 @@ import {
   Globe,
   Clock,
   ImagePlus,
+  UploadCloud,
   ShieldCheck,
   Tag,
 } from "lucide-react";
@@ -268,6 +269,10 @@ function ClinicDetail() {
             </div>
           </div>
 
+          {/* Reviews */}
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-bold">{t("clinic.reviews", "Reviews")}</h2>
+
           {/* ── Reviews ── */}
           <div className="mt-6 flex items-center justify-between">
             <h2 className="text-xl font-bold">{t("clinic.reviews")}</h2>
@@ -276,11 +281,15 @@ function ClinicDetail() {
                 <DialogTrigger asChild>
                   <Button className="cursor-pointer rounded-xl font-semibold shadow-soft">
                     <Star className="mr-2 h-4 w-4" />
+                    {t("clinic.writeReview", "Write a Review")}
                     {t("clinic.writeReview")}
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="rounded-3xl sm:max-w-[500px]">
                   <DialogHeader>
+                    <DialogTitle>
+                      {t("clinic.reviewModalTitle", "Rate your experience")}
+                    </DialogTitle>
                     <DialogTitle>{t("clinic.reviewModalTitle")}</DialogTitle>
                   </DialogHeader>
                   <div className="grid gap-4 py-4">
@@ -289,6 +298,7 @@ function ClinicDetail() {
                       {[1, 2, 3, 4, 5].map((star) => (
                         <Star
                           key={star}
+                          className={`h-8 w-8 cursor-pointer transition-colors ${rating >= star ? "fill-primary text-primary" : "text-muted-foreground"}`}
                           className={`h-8 w-8 cursor-pointer transition-all duration-150 hover:scale-110 ${
                             rating >= star ? "fill-primary text-primary" : "text-muted-foreground"
                           }`}
@@ -298,6 +308,7 @@ function ClinicDetail() {
                     </div>
                     {/* Tags */}
                     <div className="space-y-2">
+                      <Label>{t("clinic.reviewTags", "What stood out?")}</Label>
                       <Label>{t("clinic.reviewTags")}</Label>
                       <ToggleGroup
                         type="multiple"
@@ -305,6 +316,17 @@ function ClinicDetail() {
                         onValueChange={setSelectedTags}
                         className="flex flex-wrap justify-start gap-2"
                       >
+                        <ToggleGroupItem value="clean" className="border">
+                          ✨ Cleanliness
+                        </ToggleGroupItem>
+                        <ToggleGroupItem value="friendly" className="border">
+                          👋 Friendly Staff
+                        </ToggleGroupItem>
+                        <ToggleGroupItem value="professional" className="border">
+                          👩‍⚕️ Professional
+                        </ToggleGroupItem>
+                        <ToggleGroupItem value="fast" className="border">
+                          ⚡ Short Wait
                         <ToggleGroupItem
                           value="clean"
                           className="cursor-pointer rounded-full border text-xs"
@@ -333,6 +355,9 @@ function ClinicDetail() {
                     </div>
                     {/* Comment */}
                     <div className="space-y-2">
+                      <Label>{t("clinic.reviewComment", "Your Comment")}</Label>
+                      <Textarea
+                        placeholder={t("clinic.reviewPlaceholder", "Tell us about your visit...")}
                       <Label>{t("clinic.reviewComment")}</Label>
                       <Textarea
                         placeholder={t("clinic.reviewPlaceholder")}
@@ -343,6 +368,8 @@ function ClinicDetail() {
                     </div>
                     {/* Image Upload */}
                     <div className="space-y-2">
+                      <Label>{t("clinic.reviewImages", "Attach Photos (Optional)")}</Label>
+                      <div className="border-2 border-dashed rounded-lg p-6 flex flex-col items-center justify-center text-muted-foreground cursor-pointer hover:bg-muted/50 transition-colors">
                       <Label>{t("clinic.reviewImages")}</Label>
                       <div className="cursor-pointer rounded-2xl border-2 border-dashed border-border p-6 flex flex-col items-center justify-center text-muted-foreground transition-colors hover:border-primary/40 hover:bg-primary/5">
                         <ImagePlus className="h-8 w-8 mb-2" />
@@ -352,11 +379,13 @@ function ClinicDetail() {
                     </div>
                   </div>
                   <Button
+                    className="w-full"
                     className="w-full cursor-pointer rounded-xl shadow-soft"
                     onClick={() =>
                       console.log("Submit to Supabase:", { rating, selectedTags, reviewText })
                     }
                   >
+                    {t("common.submit", "Submit Review")}
                     {t("common.submit")}
                   </Button>
                 </DialogContent>
@@ -429,6 +458,19 @@ function ClinicDetail() {
                         </a>
                       )}
                     </div>
+                    <div className="space-y-1">
+                      {clinic.openingHours.map((entry) => (
+                        <div key={entry.day} className="flex items-center justify-between text-sm">
+                          <span className="text-muted-foreground w-24">{entry.day}</span>
+                          {entry.isOpen ? (
+                            <span className="font-medium">
+                              {entry.open} – {entry.close}
+                            </span>
+                          ) : (
+                            <span className="text-muted-foreground">Closed</span>
+                          )}
+                        </div>
+                      ))}
                   )}
 
                   {clinic.openingHours && clinic.openingHours.length > 0 && (
@@ -500,6 +542,22 @@ function ClinicDetail() {
                 </Select>
               </div>
 
+            <div className="mt-4">
+              <label className="text-xs font-medium text-muted-foreground">
+                {t("booking.selectDate")}
+              </label>
+              <Calendar
+                mode="single"
+                selected={date}
+                onSelect={(d) => {
+                  if (!d) return;
+                  setDate(d);
+                  setSelectedSlot(null);
+                }}
+                disabled={(d) => d < new Date(new Date().setHours(0, 0, 0, 0)) || isClosedDay(d)}
+                className={cn("mt-1 rounded-lg border border-border p-2 pointer-events-auto")}
+              />
+            </div>
               {/* Date */}
               <div className="mt-5">
                 <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
