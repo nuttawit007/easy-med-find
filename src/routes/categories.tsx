@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useTranslation } from "react-i18next";
 import { SiteHeader } from "@/components/site-header";
 import { ClinicCard } from "@/components/clinic-card";
 import { CATEGORIES } from "@/lib/mock-data";
@@ -17,6 +18,7 @@ export const Route = createFileRoute("/categories")({
 });
 
 function CategoriesPage() {
+  const { t } = useTranslation();
   const clinics = useClinics();
   const [active, setActive] = useState<string>("all");
   const list = active === "all" ? clinics : clinics.filter((c) => c.category === active);
@@ -25,25 +27,27 @@ function CategoriesPage() {
     <div className="min-h-screen bg-background">
       <SiteHeader />
       <section className="container mx-auto px-4 py-10">
-        <h1 className="text-3xl font-bold md:text-4xl">Browse by category</h1>
-        <p className="mt-1 text-muted-foreground">Explore clinics by the treatment you need.</p>
+        <h1 className="text-3xl font-bold md:text-4xl">{t("categories.title")}</h1>
+        <p className="mt-1 text-muted-foreground">{t("categories.subtitle")}</p>
 
         <div className="mt-6 flex flex-wrap gap-2">
           <Button
             variant={active === "all" ? "default" : "outline"}
             size="sm"
+            className="cursor-pointer rounded-xl"
             onClick={() => setActive("all")}
           >
-            All
+            {t("common.all")}
           </Button>
           {CATEGORIES.map((c) => (
             <Button
               key={c}
               variant={active === c ? "default" : "outline"}
               size="sm"
+              className="cursor-pointer rounded-xl"
               onClick={() => setActive(c)}
             >
-              {c}
+              {t(`cat.${c}`)}
             </Button>
           ))}
         </div>
@@ -55,9 +59,9 @@ function CategoriesPage() {
         </div>
 
         <div className="mt-10 text-sm text-muted-foreground">
-          Looking for something specific?{" "}
-          <Link to="/" className="text-primary underline">
-            Use AI search
+          {t("categories.lookingFor")}{" "}
+          <Link to="/" className="cursor-pointer text-primary underline">
+            {t("categories.useAiSearch")}
           </Link>
           .
         </div>

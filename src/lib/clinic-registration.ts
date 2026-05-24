@@ -24,7 +24,10 @@ export interface ClinicRegistration {
   registeredDate: string;
 }
 
-export type ClinicRegistrationFormData = Omit<ClinicRegistration, "id" | "submittedBy" | "status" | "submittedAt">;
+export type ClinicRegistrationFormData = Omit<
+  ClinicRegistration,
+  "id" | "submittedBy" | "status" | "submittedAt"
+>;
 
 // --- Internal store ---
 const listeners = new Set<() => void>();
@@ -86,7 +89,20 @@ export function submitClinicRegistration(
   userId: string,
 ): ClinicRegistration {
   const now = new Date();
-  const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const monthNames = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
   const submitted = `${monthNames[now.getMonth()]} ${now.getDate()}, ${now.getFullYear()}`;
 
   const registration: ClinicRegistration = {
@@ -108,9 +124,7 @@ export function submitClinicRegistration(
 /** Update the status of a registration (called by admin-approvals). */
 export function updateRegistrationStatus(registrationId: string, status: RegistrationStatus): void {
   const current = read();
-  const next = current.map((r) =>
-    r.id === registrationId ? { ...r, status } : r,
-  );
+  const next = current.map((r) => (r.id === registrationId ? { ...r, status } : r));
   write(next);
 }
 

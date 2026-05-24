@@ -1,7 +1,7 @@
 export type OpeningHoursEntry = {
   day: string;
   isOpen: boolean;
-  open: string;  // "09:00"
+  open: string; // "09:00"
   close: string; // "18:00"
 };
 
@@ -30,7 +30,6 @@ export type Clinic = {
   openingHours?: OpeningHoursEntry[];
 };
 
-
 const img = (seed: string, w = 800, h = 500) =>
   `https://images.unsplash.com/photo-${seed}?auto=format&fit=crop&w=${w}&h=${h}&q=80`;
 
@@ -47,15 +46,15 @@ export const clinics: Clinic[] = [
     startingPrice: 990,
     location: "Sukhumvit, Bangkok",
     distanceKm: 1.2,
-    promo: "30% off first laser session",
+    promo: "ลด 30% สำหรับเลเซอร์ครั้งแรก",
     thumbnail: img("1629909613654-28e377c37b09"),
     banner: img("1629909613654-28e377c37b09", 1600, 600),
     description:
-      "Award-winning aesthetic clinic specializing in laser hair removal, pigmentation treatments, and rejuvenation with FDA-approved devices.",
+      "คลินิกความงามรางวัลเลิศ เชี่ยวชาญด้านเลเซอร์กำจัดขน รักษาจุดด่างดำ และฟื้นฟูผิวด้วยเครื่องมือที่ผ่านการรับรอง FDA",
     services: [
-      { name: "Laser Hair Removal (Underarm)", price: 990, durationMin: 30 },
-      { name: "Pico Laser Full Face", price: 3500, durationMin: 45 },
-      { name: "Acne Laser Treatment", price: 2200, durationMin: 40 },
+      { name: "กำจัดขนด้วยเลเซอร์ (รักแร้)", price: 990, durationMin: 30 },
+      { name: "Pico Laser เต็มใบหน้า", price: 3500, durationMin: 45 },
+      { name: "รักษาสิวด้วยเลเซอร์", price: 2200, durationMin: 40 },
     ],
     gallery: [
       img("1576091160550-2173dba999ef"),
@@ -86,15 +85,15 @@ export const clinics: Clinic[] = [
     startingPrice: 500,
     location: "Silom, Bangkok",
     distanceKm: 2.8,
-    promo: "Free whitening with cleaning",
+    promo: "ฟอกสีฟันฟรีเมื่อขูดหินปูน",
     thumbnail: img("1606811841689-23dfddce3e95"),
     banner: img("1606811841689-23dfddce3e95", 1600, 600),
     description:
-      "Modern dental studio offering preventive, cosmetic and orthodontic care with English-speaking dentists.",
+      "คลินิกทันตกรรมสมัยใหม่ บริการครบวงจรทั้งทันตกรรมป้องกัน เสริมความงาม และจัดฟัน โดยทันตแพทย์ผู้เชี่ยวชาญ",
     services: [
-      { name: "Dental Cleaning", price: 800, durationMin: 45 },
-      { name: "Teeth Whitening", price: 4500, durationMin: 60 },
-      { name: "Cavity Filling", price: 1200, durationMin: 30 },
+      { name: "ขูดหินปูน", price: 800, durationMin: 45 },
+      { name: "ฟอกสีฟัน", price: 4500, durationMin: 60 },
+      { name: "อุดฟัน", price: 1200, durationMin: 30 },
     ],
     gallery: [
       img("1588776814546-1ffcf47267a5"),
@@ -114,14 +113,14 @@ export const clinics: Clinic[] = [
     startingPrice: 1200,
     location: "Thonglor, Bangkok",
     distanceKm: 3.4,
-    promo: "Buy 1 facial, get 1 50%",
+    promo: "ซื้อ 1 Facial รับส่วนลด 50% ครั้งที่ 2",
     thumbnail: img("1570172619644-dfd03ed5d881"),
     banner: img("1570172619644-dfd03ed5d881", 1600, 600),
     description:
-      "Boutique aesthetic center known for signature hydrating facials and brightening treatments.",
+      "ศูนย์ความงามบูทีค ขึ้นชื่อด้าน Hydrafacial สูตรพิเศษ และการรักษาเพื่อผิวกระจ่างใส",
     services: [
-      { name: "Signature Hydrafacial", price: 2500, durationMin: 60 },
-      { name: "Brightening Mask", price: 1200, durationMin: 45 },
+      { name: "Hydrafacial สูตรพิเศษ", price: 2500, durationMin: 60 },
+      { name: "มาสก์ผิวกระจ่างใส", price: 1200, durationMin: 45 },
     ],
     gallery: [img("1522337360788-8b13dee7a37e"), img("1556228720-195a672e8a03")],
     reviewList: [
@@ -142,13 +141,13 @@ export const clinics: Clinic[] = [
     startingPrice: 700,
     location: "Asoke, Bangkok",
     distanceKm: 1.9,
-    promo: "Free consult this month",
+    promo: "ปรึกษาฟรีตลอดเดือนนี้",
     thumbnail: img("1612349317150-e413f6a5b16d"),
     banner: img("1612349317150-e413f6a5b16d", 1600, 600),
     description:
-      "Dermatologist-led clinic focused on acne, scarring and long-term skin health programs.",
+      "คลินิกนำโดยแพทย์ผิวหนัง เชี่ยวชาญด้านสิว รอยแผลเป็น และโปรแกรมดูแลสุขภาพผิวระยะยาว",
     services: [
-      { name: "Acne Consult + Plan", price: 700, durationMin: 30 },
+      { name: "ปรึกษาและวางแผนรักษาสิว", price: 700, durationMin: 30 },
       { name: "Chemical Peel", price: 1800, durationMin: 40 },
     ],
     gallery: [img("1559757148-5c350d0d3c56"), img("1556228453-efd6c1ff04f6")],
@@ -167,10 +166,10 @@ export const clinics: Clinic[] = [
     distanceKm: 5.1,
     thumbnail: img("1559599101-f09722fb4948"),
     banner: img("1559599101-f09722fb4948", 1600, 600),
-    description: "Specialists in scalp health, hair regrowth therapy and PRP treatments.",
+    description: "ผู้เชี่ยวชาญด้านสุขภาพหนังศีรษะ การรักษาผมร่วง และการบำบัดด้วย PRP",
     services: [
-      { name: "Scalp Detox Treatment", price: 1500, durationMin: 45 },
-      { name: "PRP Hair Therapy", price: 6500, durationMin: 60 },
+      { name: "บำบัดหนังศีรษะ Detox", price: 1500, durationMin: 45 },
+      { name: "การรักษาผมด้วย PRP", price: 6500, durationMin: 60 },
     ],
     gallery: [img("1522337094846-8a818192de1f")],
     reviewList: [
@@ -190,7 +189,13 @@ export function getClinic(id: string) {
 
 // Maps JS Date.getDay() (0=Sun, 1=Mon, ... 6=Sat) to the full day names used in openingHours
 const JS_DAY_TO_NAME = [
-  "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday",
+  "Sunday",
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
 ] as const;
 
 /**
@@ -212,7 +217,16 @@ function fromMinutes(mins: number): string {
 
 export function getTimeSlots(clinicId: string, date: Date, openingHours?: OpeningHoursEntry[]) {
   // Default slot list (used when no openingHours are set)
-  let slotTimes: string[] = ["09:00", "10:00", "11:00", "13:00", "14:00", "15:00", "16:00", "17:00"];
+  let slotTimes: string[] = [
+    "09:00",
+    "10:00",
+    "11:00",
+    "13:00",
+    "14:00",
+    "15:00",
+    "16:00",
+    "17:00",
+  ];
 
   if (openingHours && openingHours.length > 0) {
     const dayName = JS_DAY_TO_NAME[date.getDay()];
@@ -239,8 +253,6 @@ export function getTimeSlots(clinicId: string, date: Date, openingHours?: Openin
     available: (i + seed) % 3 !== 0,
   }));
 }
-
-
 
 export type Appointment = {
   id: string;

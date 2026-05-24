@@ -38,8 +38,12 @@ export const Route = createFileRoute("/api/public/clinics")({
 
         // List clinics with optional filters
         let list = clinics;
-        if (category) list = list.filter((c) => c.category.toLowerCase() === category.toLowerCase());
-        if (q) list = list.filter((c) => c.name.toLowerCase().includes(q) || c.location.toLowerCase().includes(q));
+        if (category)
+          list = list.filter((c) => c.category.toLowerCase() === category.toLowerCase());
+        if (q)
+          list = list.filter(
+            (c) => c.name.toLowerCase().includes(q) || c.location.toLowerCase().includes(q),
+          );
 
         const payload = {
           clinics: list.map((c) => ({

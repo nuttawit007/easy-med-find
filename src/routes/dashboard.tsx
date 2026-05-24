@@ -168,43 +168,67 @@ function PatientDashboard({ name }: { name: string }) {
   }, [bookings, user?.id]);
 
   return (
-    <>
-      <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold md:text-4xl">Hi, {name} 👋</h1>
-          <p className="mt-1 text-muted-foreground">{t("dashboard.subtitle")}</p>
+    <div className="space-y-6">
+      {/* ── Greeting header ── */}
+      <div className="relative overflow-hidden rounded-3xl border border-border/60 bg-gradient-to-br from-primary-soft via-card to-secondary/30 p-6 shadow-soft md:p-8">
+        <div className="pointer-events-none absolute -top-8 -right-8 h-40 w-40 rounded-full bg-primary/6 blur-3xl" />
+        <div className="pointer-events-none absolute bottom-0 left-0 h-24 w-48 rounded-full bg-secondary/15 blur-2xl" />
+        <div className="relative flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+              {t("dashboard.welcomeBack")}
+            </p>
+            <h1 className="mt-1 text-3xl font-extrabold tracking-tight md:text-4xl">
+              Hi, {name} 👋
+            </h1>
+            <p className="mt-1.5 text-muted-foreground">{t("dashboard.subtitle")}</p>
+          </div>
+          <Button asChild size="lg" className="cursor-pointer rounded-2xl shadow-glow font-bold">
+            <Link to="/">{t("dashboard.bookVisit")}</Link>
+          </Button>
         </div>
-        <Button asChild>
-          <Link to="/">{t("dashboard.bookVisit")}</Link>
-        </Button>
       </div>
 
-      <div className="mb-6 rounded-2xl border border-border bg-gradient-to-br from-primary-soft to-secondary p-5 shadow-soft">
-        <div className="flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-soft">
-              <Trophy className="h-6 w-6" />
+      {/* ── Loyalty banner ── */}
+      <div className="relative overflow-hidden rounded-3xl border border-primary/20 bg-gradient-to-br from-primary-soft to-secondary/40 p-5 shadow-soft">
+        <div className="pointer-events-none absolute top-0 right-0 h-32 w-32 rounded-full bg-primary/8 blur-2xl" />
+        <div className="relative flex items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-glow">
+              <Trophy className="h-7 w-7" />
             </div>
             <div>
-              <p className="text-sm font-medium text-muted-foreground">
+              <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                 {t("loyalty.myRewards")}
               </p>
-              <p className="text-2xl font-bold">
+              <p className="text-2xl font-extrabold text-foreground">
                 {t("loyalty.youHavePoints", { count: points })}
               </p>
             </div>
           </div>
-          <Badge className="bg-primary/10 text-primary hover:bg-primary/15">
+          <Badge className="shrink-0 rounded-full border border-primary/20 bg-primary/10 px-3 py-1.5 text-sm font-bold text-primary hover:bg-primary/15">
             {t("loyalty.totalPoints")}: {points}
           </Badge>
         </div>
       </div>
 
+      {/* ── Tabs ── */}
       <Tabs defaultValue="upcoming" className="w-full">
-        <TabsList className="mb-6">
-          <TabsTrigger value="upcoming">{t("dashboard.tabUpcoming")}</TabsTrigger>
-          <TabsTrigger value="history">{t("dashboard.tabHistory")}</TabsTrigger>
-          <TabsTrigger value="rewards">{t("dashboard.tabRewards")}</TabsTrigger>
+        <TabsList className="mb-6 w-full justify-start gap-1 rounded-2xl border border-border/50 bg-muted/40 p-1 sm:w-auto">
+          <TabsTrigger value="upcoming" className="cursor-pointer rounded-xl font-semibold">
+            {t("dashboard.tabUpcoming")}
+            {upcoming.length > 0 && (
+              <span className="ml-2 rounded-full bg-primary px-1.5 py-0.5 text-[10px] font-bold text-primary-foreground">
+                {upcoming.length}
+              </span>
+            )}
+          </TabsTrigger>
+          <TabsTrigger value="history" className="cursor-pointer rounded-xl font-semibold">
+            {t("dashboard.tabHistory")}
+          </TabsTrigger>
+          <TabsTrigger value="rewards" className="cursor-pointer rounded-xl font-semibold">
+            {t("dashboard.tabRewards")}
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="upcoming" className="space-y-4">
@@ -213,7 +237,7 @@ function PatientDashboard({ name }: { name: string }) {
               title={t("dashboard.emptyUpcomingTitle")}
               description={t("dashboard.emptyUpcomingDesc")}
               action={
-                <Button asChild>
+                <Button asChild className="cursor-pointer rounded-2xl shadow-soft font-semibold">
                   <Link to="/">{t("dashboard.discoverClinics")}</Link>
                 </Button>
               }
@@ -237,60 +261,79 @@ function PatientDashboard({ name }: { name: string }) {
         </TabsContent>
 
         <TabsContent value="rewards">
-          <div className="rounded-2xl border border-border bg-gradient-to-br from-primary-soft to-secondary p-6 shadow-soft">
-            <div className="flex items-center gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-soft">
-                <Trophy className="h-6 w-6" />
+          {/* Loyalty progress card */}
+          <div className="relative overflow-hidden rounded-3xl border border-primary/20 bg-gradient-to-br from-primary-soft to-secondary/40 p-6 shadow-soft">
+            <div className="pointer-events-none absolute -top-6 -right-6 h-32 w-32 rounded-full bg-primary/8 blur-2xl" />
+            <div className="relative flex items-center gap-4">
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-glow">
+                <Trophy className="h-7 w-7" />
               </div>
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Your loyalty balance</p>
-                <p className="text-3xl font-bold">{points} pts</p>
+                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  {t("dashboard.loyaltyBalance")}
+                </p>
+                <p className="text-3xl font-extrabold text-foreground">
+                  {points} {t("loyalty.points")}
+                </p>
               </div>
             </div>
             <div className="mt-5">
               <div className="mb-2 flex items-center justify-between text-sm">
-                <span className="text-muted-foreground">Progress to Gold</span>
-                <span className="font-medium">
+                <span className="font-medium text-muted-foreground">
+                  {t("dashboard.progressToGold")}
+                </span>
+                <span className="font-bold">
                   {points} / {nextTier}
                 </span>
               </div>
-              <Progress value={(points / nextTier) * 100} />
+              <Progress value={(points / nextTier) * 100} className="h-2.5 rounded-full" />
               <p className="mt-2 text-xs text-muted-foreground">
-                Earn {nextTier - points} more points to unlock 15% off all bookings.
+                {t("dashboard.earnMorePoints", { count: nextTier - points })}
               </p>
             </div>
           </div>
 
+          {/* Rewards grid */}
           <div className="mt-5 grid gap-3 sm:grid-cols-2">
-            {[
-              { title: "฿200 off voucher", cost: 500 },
-              { title: "Free facial add-on", cost: 800 },
-              { title: "Birthday surprise", cost: 1000 },
-            ].map((r) => (
+            {(
+              [
+                { titleKey: "loyalty.rewardVoucher", cost: 500, emoji: "🎟️" },
+                { titleKey: "loyalty.rewardFacial", cost: 800, emoji: "✨" },
+                { titleKey: "loyalty.rewardBirthday", cost: 1000, emoji: "🎂" },
+              ] as const
+            ).map((r) => (
               <div
-                key={r.title}
-                className="flex items-center justify-between rounded-2xl border border-border bg-card p-4"
+                key={r.titleKey}
+                className="group flex cursor-pointer items-center justify-between rounded-2xl border border-border/60 bg-card p-4
+                  transition-all duration-200 hover:border-primary/30 hover:bg-primary/5 hover:shadow-soft"
               >
                 <div className="flex items-center gap-3">
-                  <Gift className="h-5 w-5 text-primary" />
+                  <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-primary-soft text-xl transition-colors group-hover:bg-primary/15">
+                    {r.emoji}
+                  </div>
                   <div>
-                    <p className="font-medium">{r.title}</p>
-                    <p className="text-xs text-muted-foreground">{r.cost} pts</p>
+                    <p className="font-semibold text-foreground transition-colors group-hover:text-primary">
+                      {t(r.titleKey)}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {r.cost} {t("loyalty.ptsRequired")}
+                    </p>
                   </div>
                 </div>
                 <Button
                   size="sm"
                   disabled={points < r.cost}
                   variant={points >= r.cost ? "default" : "outline"}
+                  className={`cursor-pointer rounded-xl font-semibold ${points >= r.cost ? "shadow-soft" : ""}`}
                 >
-                  Redeem
+                  {t("loyalty.redeem")}
                 </Button>
               </div>
             ))}
           </div>
         </TabsContent>
       </Tabs>
-    </>
+    </div>
   );
 }
 
@@ -307,7 +350,10 @@ function ClinicAdminDashboard({ name }: { name: string }) {
   const myRegistration = useMyClinicRegistration(user?.id);
 
   const [isProfileOpen, setIsProfileOpen] = useState(false);
-  const [editProfile, setEditProfile] = useState({ name: clinic?.name ?? "", location: clinic?.location ?? "" });
+  const [editProfile, setEditProfile] = useState({
+    name: clinic?.name ?? "",
+    location: clinic?.location ?? "",
+  });
 
   const [isContactOpen, setIsContactOpen] = useState(false);
   const defaultHours = (): OpeningHoursEntry[] =>
@@ -497,23 +543,23 @@ function ClinicAdminDashboard({ name }: { name: string }) {
           {/* Advanced Profile Edit */}
           <div className="rounded-2xl border border-border bg-card p-6 shadow-soft space-y-6">
             <h3 className="text-lg font-semibold">Edit Clinic Profile</h3>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="clinicName">Clinic Name</Label>
-                  <Input 
-                    id="clinicName" 
-                    value={editProfile.name} 
-                    onChange={(e) => setEditProfile({ ...editProfile, name: e.target.value })} 
+                  <Input
+                    id="clinicName"
+                    value={editProfile.name}
+                    onChange={(e) => setEditProfile({ ...editProfile, name: e.target.value })}
                   />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="clinicLocation">Location / Address</Label>
-                  <Textarea 
-                    id="clinicLocation" 
+                  <Textarea
+                    id="clinicLocation"
                     value={editProfile.location}
-                    onChange={(e) => setEditProfile({ ...editProfile, location: e.target.value })} 
+                    onChange={(e) => setEditProfile({ ...editProfile, location: e.target.value })}
                   />
                 </div>
               </div>
@@ -527,7 +573,9 @@ function ClinicAdminDashboard({ name }: { name: string }) {
                   <Label>Clinic Gallery</Label>
                   <div className="border-2 border-dashed rounded-xl p-6 flex flex-col items-center justify-center text-muted-foreground cursor-pointer hover:bg-muted/50 transition-colors">
                     <UploadCloud className="h-6 w-6 mb-2" />
-                    <span className="text-xs text-center">Drag & Drop or Click to Upload Multiple Photos</span>
+                    <span className="text-xs text-center">
+                      Drag & Drop or Click to Upload Multiple Photos
+                    </span>
                     <Input type="file" className="hidden" multiple accept="image/*" />
                   </div>
                 </div>
@@ -539,11 +587,13 @@ function ClinicAdminDashboard({ name }: { name: string }) {
           {/* User-Friendly Business Hours & Contact */}
           <div className="rounded-2xl border border-border bg-card p-6 shadow-soft space-y-6 mt-6">
             <h3 className="text-lg font-semibold">Contact & Business Hours</h3>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label className="flex items-center gap-1.5"><Phone className="h-3.5 w-3.5" /> Phone</Label>
+                  <Label className="flex items-center gap-1.5">
+                    <Phone className="h-3.5 w-3.5" /> Phone
+                  </Label>
                   <Input
                     placeholder="+66 2 000 0000"
                     value={editContact.phone}
@@ -551,7 +601,9 @@ function ClinicAdminDashboard({ name }: { name: string }) {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label className="flex items-center gap-1.5"><Mail className="h-3.5 w-3.5" /> Email</Label>
+                  <Label className="flex items-center gap-1.5">
+                    <Mail className="h-3.5 w-3.5" /> Email
+                  </Label>
                   <Input
                     type="email"
                     placeholder="hello@clinic.com"
@@ -563,16 +615,21 @@ function ClinicAdminDashboard({ name }: { name: string }) {
 
               <div className="space-y-3">
                 {editContact.openingHours.map((entry, i) => (
-                  <div key={entry.day} className="flex items-center justify-between p-2 border rounded-lg bg-muted/20">
+                  <div
+                    key={entry.day}
+                    className="flex items-center justify-between p-2 border rounded-lg bg-muted/20"
+                  >
                     <div className="flex items-center gap-3 w-1/3">
-                      <Switch 
-                        id={`switch-${entry.day}`} 
+                      <Switch
+                        id={`switch-${entry.day}`}
                         checked={entry.isOpen}
                         onCheckedChange={(checked) => updateHoursEntry(i, { isOpen: checked })}
                       />
-                      <Label htmlFor={`switch-${entry.day}`} className="font-medium text-sm">{entry.day.slice(0, 3)}</Label>
+                      <Label htmlFor={`switch-${entry.day}`} className="font-medium text-sm">
+                        {entry.day.slice(0, 3)}
+                      </Label>
                     </div>
-                    
+
                     <div className="flex items-center gap-2 w-2/3 justify-end">
                       {entry.isOpen ? (
                         <>
@@ -591,7 +648,9 @@ function ClinicAdminDashboard({ name }: { name: string }) {
                           />
                         </>
                       ) : (
-                        <span className="text-xs font-semibold text-muted-foreground w-[240px] text-center bg-muted/50 py-1.5 rounded">Closed</span>
+                        <span className="text-xs font-semibold text-muted-foreground w-[240px] text-center bg-muted/50 py-1.5 rounded">
+                          Closed
+                        </span>
                       )}
                     </div>
                   </div>
@@ -790,7 +849,8 @@ function PlatformAdminDashboard({ name }: { name: string }) {
     }
   }, [selectedClinic]);
 
-  const allChecked = checklist.licenseValid && checklist.addressVerified && checklist.ownerIdentified;
+  const allChecked =
+    checklist.licenseValid && checklist.addressVerified && checklist.ownerIdentified;
 
   const handleApproveClinic = (id: string) => {
     approveClinic(id);
@@ -834,28 +894,35 @@ function PlatformAdminDashboard({ name }: { name: string }) {
                 <ShieldCheck className="mr-1 h-3.5 w-3.5" /> {t("platformAdmin.badge")}
               </Badge>
               <span className="flex items-center gap-1 text-[10px] text-emerald-500 font-bold bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20 uppercase tracking-widest animate-pulse">
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" /> {t("platformAdmin.liveAuditNode")}
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />{" "}
+                {t("platformAdmin.liveAuditNode")}
               </span>
             </div>
-            <h1 className="text-3xl font-black tracking-tight text-foreground md:text-4xl">{t("platformAdmin.controlCenter")}</h1>
+            <h1 className="text-3xl font-black tracking-tight text-foreground md:text-4xl">
+              {t("platformAdmin.controlCenter")}
+            </h1>
             <p className="mt-2 text-sm text-muted-foreground max-w-xl leading-relaxed">
               {t("platformAdmin.subtitle")}
             </p>
           </div>
-          
+
           {/* Quick Metrics & Controls */}
           <div className="flex flex-wrap items-center gap-4">
             <div className="flex gap-4">
               <div className="rounded-2xl border border-border bg-card p-4 text-center min-w-[100px] shadow-sm">
-                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{t("platformAdmin.pendingClinics")}</p>
+                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
+                  {t("platformAdmin.pendingClinics")}
+                </p>
                 <p className="text-2xl font-black text-primary mt-1">{pendingClinics.length}</p>
               </div>
               <div className="rounded-2xl border border-border bg-card p-4 text-center min-w-[100px] shadow-sm">
-                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{t("platformAdmin.pendingServices")}</p>
+                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
+                  {t("platformAdmin.pendingServices")}
+                </p>
                 <p className="text-2xl font-black text-secondary mt-1">{pendingServices.length}</p>
               </div>
             </div>
-            
+
             <Button
               size="sm"
               variant="outline"
@@ -874,10 +941,16 @@ function PlatformAdminDashboard({ name }: { name: string }) {
       {/* Tabs Layout */}
       <Tabs defaultValue="clinics" className="w-full">
         <TabsList className="grid grid-cols-2 max-w-md bg-muted/65 p-1 rounded-2xl mb-8 border border-border/40">
-          <TabsTrigger value="clinics" className="rounded-xl font-bold py-2.5 text-xs tracking-wide">
+          <TabsTrigger
+            value="clinics"
+            className="rounded-xl font-bold py-2.5 text-xs tracking-wide"
+          >
             {t("platformAdmin.tabClinics", { count: pendingClinics.length })}
           </TabsTrigger>
-          <TabsTrigger value="services" className="rounded-xl font-bold py-2.5 text-xs tracking-wide">
+          <TabsTrigger
+            value="services"
+            className="rounded-xl font-bold py-2.5 text-xs tracking-wide"
+          >
             {t("platformAdmin.tabServices", { count: pendingServices.length })}
           </TabsTrigger>
         </TabsList>
@@ -889,8 +962,12 @@ function PlatformAdminDashboard({ name }: { name: string }) {
               <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-muted text-muted-foreground mb-4">
                 <Building2 className="h-6 w-6" />
               </div>
-              <h3 className="text-base font-bold text-foreground">{t("platformAdmin.emptyClinicsTitle")}</h3>
-              <p className="text-xs text-muted-foreground mt-1 max-w-xs">{t("platformAdmin.emptyClinicsDesc")}</p>
+              <h3 className="text-base font-bold text-foreground">
+                {t("platformAdmin.emptyClinicsTitle")}
+              </h3>
+              <p className="text-xs text-muted-foreground mt-1 max-w-xs">
+                {t("platformAdmin.emptyClinicsDesc")}
+              </p>
             </div>
           ) : (
             <div className="grid gap-4 md:grid-cols-2">
@@ -904,7 +981,9 @@ function PlatformAdminDashboard({ name }: { name: string }) {
                       <Building2 className="h-5 w-5" />
                     </div>
                     <div>
-                      <p className="font-extrabold text-foreground group-hover:text-primary transition duration-200">{c.name}</p>
+                      <p className="font-extrabold text-foreground group-hover:text-primary transition duration-200">
+                        {c.name}
+                      </p>
                       <p className="text-xs text-muted-foreground mt-1 flex flex-wrap items-center gap-1.5 font-medium">
                         <span className="text-secondary font-bold">{c.category}</span>
                         <span>•</span>
@@ -934,8 +1013,12 @@ function PlatformAdminDashboard({ name }: { name: string }) {
               <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-muted text-muted-foreground mb-4">
                 <Stethoscope className="h-6 w-6" />
               </div>
-              <h3 className="text-base font-bold text-foreground">{t("platformAdmin.emptyServicesTitle")}</h3>
-              <p className="text-xs text-muted-foreground mt-1 max-w-xs">{t("platformAdmin.emptyServicesDesc")}</p>
+              <h3 className="text-base font-bold text-foreground">
+                {t("platformAdmin.emptyServicesTitle")}
+              </h3>
+              <p className="text-xs text-muted-foreground mt-1 max-w-xs">
+                {t("platformAdmin.emptyServicesDesc")}
+              </p>
             </div>
           ) : (
             <div className="grid gap-4">
@@ -953,9 +1036,13 @@ function PlatformAdminDashboard({ name }: { name: string }) {
                       <p className="text-xs text-muted-foreground mt-1.5 flex flex-wrap items-center gap-2 font-semibold">
                         <span className="text-primary font-black">฿{s.price.toLocaleString()}</span>
                         <span className="text-muted-foreground/60">•</span>
-                        <span className="bg-muted px-2 py-0.5 rounded text-[10px] font-bold text-foreground">{s.clinicName}</span>
+                        <span className="bg-muted px-2 py-0.5 rounded text-[10px] font-bold text-foreground">
+                          {s.clinicName}
+                        </span>
                         <span className="text-muted-foreground/60">•</span>
-                        <span className="text-[10px] text-muted-foreground/70 font-medium">Submitted {s.submitted}</span>
+                        <span className="text-[10px] text-muted-foreground/70 font-medium">
+                          Submitted {s.submitted}
+                        </span>
                       </p>
                     </div>
                   </div>
@@ -1012,28 +1099,45 @@ function PlatformAdminDashboard({ name }: { name: string }) {
                 <div className="space-y-4">
                   <div>
                     <h3 className="text-xs font-extrabold uppercase tracking-widest text-muted-foreground mb-3 flex items-center gap-1.5">
-                      <FileText className="h-4 w-4 text-primary" /> {t("platformAdmin.dossierTitle")}
+                      <FileText className="h-4 w-4 text-primary" />{" "}
+                      {t("platformAdmin.dossierTitle")}
                     </h3>
                     <div className="rounded-2xl border border-border bg-muted/30 p-4 space-y-3">
                       <div>
-                        <p className="text-[10px] font-bold text-muted-foreground uppercase">{t("platformAdmin.licenseId")}</p>
+                        <p className="text-[10px] font-bold text-muted-foreground uppercase">
+                          {t("platformAdmin.licenseId")}
+                        </p>
                         <p className="text-sm font-mono font-bold text-foreground flex items-center justify-between mt-0.5">
                           {selectedClinic.licenseNumber}
-                          <span className="text-[9px] font-bold text-emerald-500 bg-emerald-500/10 px-1.5 py-0.5 rounded uppercase tracking-wider">{t("platformAdmin.healthMinistryRegistered")}</span>
+                          <span className="text-[9px] font-bold text-emerald-500 bg-emerald-500/10 px-1.5 py-0.5 rounded uppercase tracking-wider">
+                            {t("platformAdmin.healthMinistryRegistered")}
+                          </span>
                         </p>
                       </div>
                       <div>
-                        <p className="text-[10px] font-bold text-muted-foreground uppercase">{t("platformAdmin.registeredCorp")}</p>
-                        <p className="text-xs font-semibold text-foreground mt-0.5">{selectedClinic.registeredCompanyName}</p>
+                        <p className="text-[10px] font-bold text-muted-foreground uppercase">
+                          {t("platformAdmin.registeredCorp")}
+                        </p>
+                        <p className="text-xs font-semibold text-foreground mt-0.5">
+                          {selectedClinic.registeredCompanyName}
+                        </p>
                       </div>
                       <div className="grid grid-cols-2 gap-2 pt-1.5 border-t border-border/50">
                         <div>
-                          <p className="text-[10px] font-bold text-muted-foreground uppercase">{t("platformAdmin.incorporation")}</p>
-                          <p className="text-xs font-medium text-foreground mt-0.5">{selectedClinic.registeredDate}</p>
+                          <p className="text-[10px] font-bold text-muted-foreground uppercase">
+                            {t("platformAdmin.incorporation")}
+                          </p>
+                          <p className="text-xs font-medium text-foreground mt-0.5">
+                            {selectedClinic.registeredDate}
+                          </p>
                         </div>
                         <div>
-                          <p className="text-[10px] font-bold text-muted-foreground uppercase">{t("platformAdmin.category")}</p>
-                          <p className="text-xs font-bold text-secondary mt-0.5">{selectedClinic.category}</p>
+                          <p className="text-[10px] font-bold text-muted-foreground uppercase">
+                            {t("platformAdmin.category")}
+                          </p>
+                          <p className="text-xs font-bold text-secondary mt-0.5">
+                            {selectedClinic.category}
+                          </p>
                         </div>
                       </div>
                     </div>
@@ -1046,21 +1150,69 @@ function PlatformAdminDashboard({ name }: { name: string }) {
                     <div className="rounded-2xl border border-border bg-muted/30 p-4 space-y-3">
                       {/* SVG Radar Map representation */}
                       <div className="relative overflow-hidden rounded-xl border border-border/80 bg-black/45 p-2 flex items-center justify-center">
-                        <svg className="w-full h-24 rounded-lg overflow-hidden" viewBox="0 0 100 100">
-                          <line x1="0" y1="50" x2="100" y2="50" stroke="rgba(255,255,255,0.06)" strokeWidth="0.5" />
-                          <line x1="50" y1="0" x2="50" y2="100" stroke="rgba(255,255,255,0.06)" strokeWidth="0.5" />
-                          <circle cx="50" cy="50" r="20" fill="none" stroke="rgba(59,130,246,0.1)" strokeWidth="0.5" />
-                          <circle cx="50" cy="50" r="35" fill="none" stroke="rgba(255,255,255,0.03)" strokeWidth="0.5" />
-                          <circle cx="50" cy="50" r="4" fill="currentColor" className="text-primary animate-pulse" />
-                          <circle cx="45" cy="35" r="2.5" fill="currentColor" className="text-secondary" />
+                        <svg
+                          className="w-full h-24 rounded-lg overflow-hidden"
+                          viewBox="0 0 100 100"
+                        >
+                          <line
+                            x1="0"
+                            y1="50"
+                            x2="100"
+                            y2="50"
+                            stroke="rgba(255,255,255,0.06)"
+                            strokeWidth="0.5"
+                          />
+                          <line
+                            x1="50"
+                            y1="0"
+                            x2="50"
+                            y2="100"
+                            stroke="rgba(255,255,255,0.06)"
+                            strokeWidth="0.5"
+                          />
+                          <circle
+                            cx="50"
+                            cy="50"
+                            r="20"
+                            fill="none"
+                            stroke="rgba(59,130,246,0.1)"
+                            strokeWidth="0.5"
+                          />
+                          <circle
+                            cx="50"
+                            cy="50"
+                            r="35"
+                            fill="none"
+                            stroke="rgba(255,255,255,0.03)"
+                            strokeWidth="0.5"
+                          />
+                          <circle
+                            cx="50"
+                            cy="50"
+                            r="4"
+                            fill="currentColor"
+                            className="text-primary animate-pulse"
+                          />
+                          <circle
+                            cx="45"
+                            cy="35"
+                            r="2.5"
+                            fill="currentColor"
+                            className="text-secondary"
+                          />
                         </svg>
                         <div className="absolute bottom-2 left-2 flex items-center gap-1 bg-black/60 px-2 py-0.5 rounded text-[9px] font-mono text-emerald-400 font-bold border border-emerald-500/20">
-                          <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" /> {t("platformAdmin.matchPerfect")}
+                          <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />{" "}
+                          {t("platformAdmin.matchPerfect")}
                         </div>
                       </div>
                       <div>
-                        <p className="text-[10px] font-bold text-muted-foreground uppercase">{t("platformAdmin.gpsCoordinates")}</p>
-                        <p className="text-xs font-mono font-medium text-foreground mt-0.5">{selectedClinic.mapCoordinates}</p>
+                        <p className="text-[10px] font-bold text-muted-foreground uppercase">
+                          {t("platformAdmin.gpsCoordinates")}
+                        </p>
+                        <p className="text-xs font-mono font-medium text-foreground mt-0.5">
+                          {selectedClinic.mapCoordinates}
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -1071,21 +1223,34 @@ function PlatformAdminDashboard({ name }: { name: string }) {
                   <div className="space-y-4">
                     <div>
                       <h3 className="text-xs font-extrabold uppercase tracking-widest text-muted-foreground mb-3 flex items-center gap-1.5">
-                        <UserCheck className="h-4 w-4 text-primary" /> {t("platformAdmin.ownerTitle")}
+                        <UserCheck className="h-4 w-4 text-primary" />{" "}
+                        {t("platformAdmin.ownerTitle")}
                       </h3>
                       <div className="rounded-2xl border border-border bg-muted/30 p-4 space-y-2.5">
                         <div>
-                          <p className="text-[10px] font-bold text-muted-foreground uppercase">{t("platformAdmin.ownerName")}</p>
-                          <p className="text-xs font-extrabold text-foreground mt-0.5">{selectedClinic.ownerName}</p>
+                          <p className="text-[10px] font-bold text-muted-foreground uppercase">
+                            {t("platformAdmin.ownerName")}
+                          </p>
+                          <p className="text-xs font-extrabold text-foreground mt-0.5">
+                            {selectedClinic.ownerName}
+                          </p>
                         </div>
                         <div className="grid grid-cols-2 gap-2 text-xs pt-1.5 border-t border-border/50">
                           <div>
-                            <p className="text-[10px] font-bold text-muted-foreground uppercase">{t("platformAdmin.ownerPhone")}</p>
-                            <p className="font-semibold text-foreground truncate mt-0.5">{selectedClinic.ownerPhone}</p>
+                            <p className="text-[10px] font-bold text-muted-foreground uppercase">
+                              {t("platformAdmin.ownerPhone")}
+                            </p>
+                            <p className="font-semibold text-foreground truncate mt-0.5">
+                              {selectedClinic.ownerPhone}
+                            </p>
                           </div>
                           <div>
-                            <p className="text-[10px] font-bold text-muted-foreground uppercase">{t("platformAdmin.ownerEmail")}</p>
-                            <p className="font-semibold text-foreground truncate mt-0.5">{selectedClinic.ownerEmail}</p>
+                            <p className="text-[10px] font-bold text-muted-foreground uppercase">
+                              {t("platformAdmin.ownerEmail")}
+                            </p>
+                            <p className="font-semibold text-foreground truncate mt-0.5">
+                              {selectedClinic.ownerEmail}
+                            </p>
                           </div>
                         </div>
                       </div>
@@ -1099,66 +1264,102 @@ function PlatformAdminDashboard({ name }: { name: string }) {
                       <div className="space-y-2">
                         <button
                           type="button"
-                          onClick={() => setChecklist(prev => ({ ...prev, licenseValid: !prev.licenseValid }))}
+                          onClick={() =>
+                            setChecklist((prev) => ({ ...prev, licenseValid: !prev.licenseValid }))
+                          }
                           className={`w-full flex items-center justify-between rounded-xl border p-3 text-left transition ${
-                            checklist.licenseValid 
-                              ? "bg-emerald-500/10 border-emerald-500/30 text-foreground animate-none" 
+                            checklist.licenseValid
+                              ? "bg-emerald-500/10 border-emerald-500/30 text-foreground animate-none"
                               : "bg-card border-border hover:border-primary/45 text-muted-foreground hover:text-foreground"
                           }`}
                         >
                           <div className="flex gap-2.5 items-center">
-                            <span className={`flex h-5 w-5 shrink-0 items-center justify-center rounded transition ${
-                              checklist.licenseValid ? "bg-emerald-500 text-white" : "border border-border bg-muted"
-                            }`}>
+                            <span
+                              className={`flex h-5 w-5 shrink-0 items-center justify-center rounded transition ${
+                                checklist.licenseValid
+                                  ? "bg-emerald-500 text-white"
+                                  : "border border-border bg-muted"
+                              }`}
+                            >
                               {checklist.licenseValid && <Check className="h-3.5 w-3.5" />}
                             </span>
                             <div>
-                              <p className="text-xs font-bold text-foreground">{t("platformAdmin.checklistLicense")}</p>
-                              <p className="text-[9px] text-muted-foreground mt-0.5">{t("platformAdmin.checklistLicenseSub")}</p>
+                              <p className="text-xs font-bold text-foreground">
+                                {t("platformAdmin.checklistLicense")}
+                              </p>
+                              <p className="text-[9px] text-muted-foreground mt-0.5">
+                                {t("platformAdmin.checklistLicenseSub")}
+                              </p>
                             </div>
                           </div>
                         </button>
 
                         <button
                           type="button"
-                          onClick={() => setChecklist(prev => ({ ...prev, addressVerified: !prev.addressVerified }))}
+                          onClick={() =>
+                            setChecklist((prev) => ({
+                              ...prev,
+                              addressVerified: !prev.addressVerified,
+                            }))
+                          }
                           className={`w-full flex items-center justify-between rounded-xl border p-3 text-left transition ${
-                            checklist.addressVerified 
-                              ? "bg-emerald-500/10 border-emerald-500/30 text-foreground" 
+                            checklist.addressVerified
+                              ? "bg-emerald-500/10 border-emerald-500/30 text-foreground"
                               : "bg-card border-border hover:border-primary/45 text-muted-foreground hover:text-foreground"
                           }`}
                         >
                           <div className="flex gap-2.5 items-center">
-                            <span className={`flex h-5 w-5 shrink-0 items-center justify-center rounded transition ${
-                              checklist.addressVerified ? "bg-emerald-500 text-white" : "border border-border bg-muted"
-                            }`}>
+                            <span
+                              className={`flex h-5 w-5 shrink-0 items-center justify-center rounded transition ${
+                                checklist.addressVerified
+                                  ? "bg-emerald-500 text-white"
+                                  : "border border-border bg-muted"
+                              }`}
+                            >
                               {checklist.addressVerified && <Check className="h-3.5 w-3.5" />}
                             </span>
                             <div>
-                              <p className="text-xs font-bold text-foreground">{t("platformAdmin.checklistGeospatial")}</p>
-                              <p className="text-[9px] text-muted-foreground mt-0.5">{t("platformAdmin.checklistGeospatialSub")}</p>
+                              <p className="text-xs font-bold text-foreground">
+                                {t("platformAdmin.checklistGeospatial")}
+                              </p>
+                              <p className="text-[9px] text-muted-foreground mt-0.5">
+                                {t("platformAdmin.checklistGeospatialSub")}
+                              </p>
                             </div>
                           </div>
                         </button>
 
                         <button
                           type="button"
-                          onClick={() => setChecklist(prev => ({ ...prev, ownerIdentified: !prev.ownerIdentified }))}
+                          onClick={() =>
+                            setChecklist((prev) => ({
+                              ...prev,
+                              ownerIdentified: !prev.ownerIdentified,
+                            }))
+                          }
                           className={`w-full flex items-center justify-between rounded-xl border p-3 text-left transition ${
-                            checklist.ownerIdentified 
-                              ? "bg-emerald-500/10 border-emerald-500/30 text-foreground" 
+                            checklist.ownerIdentified
+                              ? "bg-emerald-500/10 border-emerald-500/30 text-foreground"
                               : "bg-card border-border hover:border-primary/45 text-muted-foreground hover:text-foreground"
                           }`}
                         >
                           <div className="flex gap-2.5 items-center">
-                            <span className={`flex h-5 w-5 shrink-0 items-center justify-center rounded transition ${
-                              checklist.ownerIdentified ? "bg-emerald-500 text-white" : "border border-border bg-muted"
-                            }`}>
+                            <span
+                              className={`flex h-5 w-5 shrink-0 items-center justify-center rounded transition ${
+                                checklist.ownerIdentified
+                                  ? "bg-emerald-500 text-white"
+                                  : "border border-border bg-muted"
+                              }`}
+                            >
                               {checklist.ownerIdentified && <Check className="h-3.5 w-3.5" />}
                             </span>
                             <div>
-                              <p className="text-xs font-bold text-foreground">{t("platformAdmin.checklistKyc")}</p>
-                              <p className="text-[9px] text-muted-foreground mt-0.5">{t("platformAdmin.checklistKycSub")}</p>
+                              <p className="text-xs font-bold text-foreground">
+                                {t("platformAdmin.checklistKyc")}
+                              </p>
+                              <p className="text-[9px] text-muted-foreground mt-0.5">
+                                {t("platformAdmin.checklistKycSub")}
+                              </p>
                             </div>
                           </div>
                         </button>
@@ -1179,8 +1380,8 @@ function PlatformAdminDashboard({ name }: { name: string }) {
                       disabled={!allChecked}
                       onClick={() => handleApproveClinic(selectedClinic.id)}
                       className={`flex-1 py-5 rounded-xl font-bold text-xs shadow-glow transition duration-300 ${
-                        allChecked 
-                          ? "bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white border-none shadow-emerald-500/20" 
+                        allChecked
+                          ? "bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white border-none shadow-emerald-500/20"
                           : "bg-muted text-muted-foreground border-border hover:bg-muted"
                       }`}
                     >
@@ -1190,7 +1391,14 @@ function PlatformAdminDashboard({ name }: { name: string }) {
                         </span>
                       ) : (
                         <span className="flex items-center justify-center gap-1 text-muted-foreground/60">
-                          <Lock className="h-4 w-4" /> {t("platformAdmin.btnLocked", { count: [checklist.licenseValid, checklist.addressVerified, checklist.ownerIdentified].filter(Boolean).length })}
+                          <Lock className="h-4 w-4" />{" "}
+                          {t("platformAdmin.btnLocked", {
+                            count: [
+                              checklist.licenseValid,
+                              checklist.addressVerified,
+                              checklist.ownerIdentified,
+                            ].filter(Boolean).length,
+                          })}
                         </span>
                       )}
                     </Button>
@@ -1239,9 +1447,17 @@ function ClinicRegistrationForm({ userId, userName }: { userId: string; userName
   const handleSubmit = () => {
     // Validate required fields
     const required: (keyof ClinicRegistrationFormData)[] = [
-      "name", "category", "location", "licenseNumber",
-      "ownerName", "ownerPhone", "ownerEmail", "description",
-      "registeredCompanyName", "registeredDate", "mapCoordinates",
+      "name",
+      "category",
+      "location",
+      "licenseNumber",
+      "ownerName",
+      "ownerPhone",
+      "ownerEmail",
+      "description",
+      "registeredCompanyName",
+      "registeredDate",
+      "mapCoordinates",
     ];
     const missing = required.some((key) => !form[key]?.trim());
     if (missing) {
@@ -1254,7 +1470,20 @@ function ClinicRegistrationForm({ userId, userName }: { userId: string; userName
 
     // Also push into admin pending queue
     const now = new Date();
-    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const monthNames = [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+    ];
     const submittedDate = `${monthNames[now.getMonth()]} ${now.getDate()}, ${now.getFullYear()}`;
 
     addPendingClinicFromRegistration(
@@ -1311,7 +1540,8 @@ function ClinicRegistrationForm({ userId, userName }: { userId: string; userName
         {/* Section 1: Clinic Information */}
         <div className="rounded-3xl border border-border/80 bg-card p-6 shadow-sm">
           <h3 className="text-xs font-extrabold uppercase tracking-widest text-muted-foreground mb-5 flex items-center gap-1.5">
-            <Building2 className="h-4 w-4 text-primary" /> {t("clinicRegistration.sectionClinicInfo")}
+            <Building2 className="h-4 w-4 text-primary" />{" "}
+            {t("clinicRegistration.sectionClinicInfo")}
           </h3>
           <div className="grid gap-4 md:grid-cols-2">
             <div>
@@ -1332,7 +1562,9 @@ function ClinicRegistrationForm({ userId, userName }: { userId: string; userName
               >
                 <option value="">{t("clinicRegistration.categoryPlaceholder")}</option>
                 {CATEGORIES.map((cat) => (
-                  <option key={cat} value={cat}>{cat}</option>
+                  <option key={cat} value={cat}>
+                    {cat}
+                  </option>
                 ))}
                 <option value="Wellness">Wellness</option>
               </select>
@@ -1407,7 +1639,8 @@ function ClinicRegistrationForm({ userId, userName }: { userId: string; userName
         {/* Section 3: Owner / Medical Director */}
         <div className="rounded-3xl border border-border/80 bg-card p-6 shadow-sm">
           <h3 className="text-xs font-extrabold uppercase tracking-widest text-muted-foreground mb-5 flex items-center gap-1.5">
-            <UserCheck className="h-4 w-4 text-primary" /> {t("clinicRegistration.sectionOwnerInfo")}
+            <UserCheck className="h-4 w-4 text-primary" />{" "}
+            {t("clinicRegistration.sectionOwnerInfo")}
           </h3>
           <div className="grid gap-4 md:grid-cols-2">
             <div className="md:col-span-2">
@@ -1462,7 +1695,20 @@ function ClinicRegistrationForm({ userId, userName }: { userId: string; userName
    and is waiting for Admin verification.
    ───────────────────────────────────────────────────────── */
 
-function PendingApprovalStatus({ registration }: { registration: { name: string; category: string; location: string; submittedAt: string; licenseNumber: string; ownerName: string; ownerEmail: string; description: string } }) {
+function PendingApprovalStatus({
+  registration,
+}: {
+  registration: {
+    name: string;
+    category: string;
+    location: string;
+    submittedAt: string;
+    licenseNumber: string;
+    ownerName: string;
+    ownerEmail: string;
+    description: string;
+  };
+}) {
   const { t } = useTranslation();
 
   return (
@@ -1483,11 +1729,15 @@ function PendingApprovalStatus({ registration }: { registration: { name: string;
           <div className="mt-5 flex flex-wrap items-center justify-center gap-4">
             <div className="flex items-center gap-2 rounded-2xl border border-amber-500/20 bg-amber-500/5 px-4 py-2">
               <CalendarDays className="h-4 w-4 text-amber-500" />
-              <span className="text-xs font-bold text-foreground">{t("clinicRegistration.pendingSubmittedOn")}: {registration.submittedAt}</span>
+              <span className="text-xs font-bold text-foreground">
+                {t("clinicRegistration.pendingSubmittedOn")}: {registration.submittedAt}
+              </span>
             </div>
             <div className="flex items-center gap-2 rounded-2xl border border-amber-500/20 bg-amber-500/5 px-4 py-2">
               <ShieldAlert className="h-4 w-4 text-amber-500" />
-              <span className="text-xs font-bold text-amber-600">{t("clinicRegistration.pendingStatusValue")}</span>
+              <span className="text-xs font-bold text-amber-600">
+                {t("clinicRegistration.pendingStatusValue")}
+              </span>
             </div>
           </div>
         </div>
@@ -1502,11 +1752,17 @@ function PendingApprovalStatus({ registration }: { registration: { name: string;
           <SummaryItem label={t("clinicRegistration.clinicName")} value={registration.name} />
           <SummaryItem label={t("clinicRegistration.category")} value={registration.category} />
           <SummaryItem label={t("clinicRegistration.location")} value={registration.location} />
-          <SummaryItem label={t("clinicRegistration.licenseNumber")} value={registration.licenseNumber} />
+          <SummaryItem
+            label={t("clinicRegistration.licenseNumber")}
+            value={registration.licenseNumber}
+          />
           <SummaryItem label={t("clinicRegistration.ownerName")} value={registration.ownerName} />
           <SummaryItem label={t("clinicRegistration.ownerEmail")} value={registration.ownerEmail} />
           <div className="md:col-span-2">
-            <SummaryItem label={t("clinicRegistration.description")} value={registration.description} />
+            <SummaryItem
+              label={t("clinicRegistration.description")}
+              value={registration.description}
+            />
           </div>
         </div>
       </div>
@@ -1517,7 +1773,9 @@ function PendingApprovalStatus({ registration }: { registration: { name: string;
 function SummaryItem({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-xl border border-border/60 bg-muted/20 p-3">
-      <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">{label}</p>
+      <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+        {label}
+      </p>
       <p className="text-sm font-semibold text-foreground mt-1 break-words">{value}</p>
     </div>
   );
@@ -1529,7 +1787,22 @@ function SummaryItem({ label, value }: { label: string; value: string }) {
    Offers the ability to resubmit.
    ───────────────────────────────────────────────────────── */
 
-function RejectedRegistrationStatus({ userId, registration }: { userId: string; registration: { name: string; category: string; location: string; submittedAt: string; licenseNumber: string; ownerName: string; ownerEmail: string; description: string } }) {
+function RejectedRegistrationStatus({
+  userId,
+  registration,
+}: {
+  userId: string;
+  registration: {
+    name: string;
+    category: string;
+    location: string;
+    submittedAt: string;
+    licenseNumber: string;
+    ownerName: string;
+    ownerEmail: string;
+    description: string;
+  };
+}) {
   const { t } = useTranslation();
 
   const handleResubmit = () => {
@@ -1564,13 +1837,17 @@ function RejectedRegistrationStatus({ userId, registration }: { userId: string; 
       {/* Previously Submitted Information */}
       <div className="rounded-3xl border border-border/80 bg-card p-6 shadow-sm opacity-60">
         <h3 className="text-xs font-extrabold uppercase tracking-widest text-muted-foreground mb-5 flex items-center gap-1.5">
-          <ClipboardCheck className="h-4 w-4 text-muted-foreground" /> {t("clinicRegistration.summaryTitle")}
+          <ClipboardCheck className="h-4 w-4 text-muted-foreground" />{" "}
+          {t("clinicRegistration.summaryTitle")}
         </h3>
         <div className="grid gap-4 md:grid-cols-2">
           <SummaryItem label={t("clinicRegistration.clinicName")} value={registration.name} />
           <SummaryItem label={t("clinicRegistration.category")} value={registration.category} />
           <SummaryItem label={t("clinicRegistration.location")} value={registration.location} />
-          <SummaryItem label={t("clinicRegistration.licenseNumber")} value={registration.licenseNumber} />
+          <SummaryItem
+            label={t("clinicRegistration.licenseNumber")}
+            value={registration.licenseNumber}
+          />
           <SummaryItem label={t("clinicRegistration.ownerName")} value={registration.ownerName} />
           <SummaryItem label={t("clinicRegistration.ownerEmail")} value={registration.ownerEmail} />
         </div>
