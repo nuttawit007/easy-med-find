@@ -21,6 +21,16 @@ const STORAGE_KEY = "medcentral_bookings_v1";
 const listeners = new Set<() => void>();
 let cache: Booking[] | null = null;
 
+if (typeof window !== "undefined") {
+  // Cross-tab/role sync: invalidate cache when another tab writes
+  window.addEventListener("storage", (e) => {
+    if (e.key === STORAGE_KEY) {
+      cache = null;
+      listeners.forEach((l) => l());
+    }
+  });
+}
+
 function read(): Booking[] {
   if (cache) return cache;
   if (typeof window === "undefined") {
@@ -50,9 +60,35 @@ export function generateBookingId(): string {
   return `MC-${ts}${rand}`;
 }
 
+export class BookingConflictError extends Error {
+  constructor(message = "This slot is already booked. Please pick another time.") {
+    super(message);
+    this.name = "BookingConflictError";
+  }
+}
+
+export function findSlotConflict(
+  clinicId: string,
+  serviceName: string,
+  date: string,
+  time: string,
+): Booking | undefined {
+  return read().find(
+    (b) =>
+      b.status !== "cancelled" &&
+      b.clinicId === clinicId &&
+      b.serviceName === serviceName &&
+      b.date === date &&
+      b.time === time,
+  );
+}
+
 export function addBooking(
   input: Omit<Booking, "bookingId" | "status" | "createdAt"> & { status?: BookingStatus },
 ): Booking {
+  if (findSlotConflict(input.clinicId, input.serviceName, input.date, input.time)) {
+    throw new BookingConflictError();
+  }
   const booking: Booking = {
     bookingId: generateBookingId(),
     status: input.status ?? "upcoming",

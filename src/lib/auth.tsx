@@ -46,6 +46,7 @@ const REDIRECT_URL =
   typeof window !== "undefined"
     ? `${window.location.origin}/`
     : "https://easy-med-find.lovable.app/";
+void REDIRECT_URL;
 
 function toAuthUser(u: User | null | undefined): AuthUser | null {
   if (!u) return null;
@@ -144,11 +145,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const signInWithGoogle = async () => {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: { redirectTo: REDIRECT_URL },
+    const { lovable } = await import("@/integrations/lovable/index");
+    const result = await lovable.auth.signInWithOAuth("google", {
+      redirect_uri: typeof window !== "undefined" ? window.location.origin : undefined,
     });
-    if (error) throw error;
+    if (result.error) throw result.error instanceof Error ? result.error : new Error(String(result.error));
   };
 
   const signInWithLine = async () => {
