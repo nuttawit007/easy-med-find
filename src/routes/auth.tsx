@@ -417,7 +417,6 @@ function Auth() {
             </Link>
           </div>
         </div>
-        )}
       </div>
     </div>
   );
