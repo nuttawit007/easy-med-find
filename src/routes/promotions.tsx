@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 import { SiteHeader } from "@/components/site-header";
 import { ClinicCard } from "@/components/clinic-card";
-import { useClinics } from "@/lib/clinics";
+import { useLocalizedClinics } from "@/lib/clinics";
 
 export const Route = createFileRoute("/promotions")({
   component: PromotionsPage,
@@ -16,7 +16,7 @@ export const Route = createFileRoute("/promotions")({
 
 function PromotionsPage() {
   const { t } = useTranslation();
-  const allClinics = useClinics();
+  const allClinics = useLocalizedClinics();
   const promos = allClinics.filter((c) => c.promo);
 
   return (

@@ -15,7 +15,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { CATEGORIES } from "@/lib/mock-data";
-import { useClinics } from "@/lib/clinics";
+import { useLocalizedClinics } from "@/lib/clinics";
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -32,7 +32,7 @@ export const Route = createFileRoute("/")({
 
 function Index() {
   const { t } = useTranslation();
-  const clinics = useClinics();
+  const clinics = useLocalizedClinics();
   const [query, setQuery] = useState("");
   const [location, setLocation] = useState("");
   const [category, setCategory] = useState<string>("all");

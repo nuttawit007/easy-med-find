@@ -38,8 +38,8 @@ import {
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import { getClinic, getTimeSlots } from "@/lib/mock-data";
-import { useClinics } from "@/lib/clinics";
-import { addBooking, BookingConflictError } from "@/lib/bookings";
+import { useLocalizedClinics } from "@/lib/clinics";
+import { addBooking, BookingConflictError, useBookings } from "@/lib/bookings";
 import { toast } from "sonner";
 import { useAuth } from "@/lib/auth";
 import { Textarea } from "@/components/ui/textarea";
@@ -71,7 +71,7 @@ function ClinicDetail() {
   const [reviewText, setReviewText] = useState("");
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
-  const allClinics = useClinics();
+  const allClinics = useLocalizedClinics();
   const clinic = allClinics.find((c) => c.id === clinicId);
 
   const isClosedDay = (d: Date): boolean => {
@@ -110,6 +110,33 @@ function ClinicDetail() {
     [clinic, date],
   );
 
+  const allBookings = useBookings();
+
+  // ISO date string for the currently selected date (used for conflict checks)
+  const localDateString = useMemo(() => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  }, [date]);
+
+  // Set of times already booked for this clinic + service + date
+  const bookedTimes = useMemo(
+    () =>
+      new Set(
+        allBookings
+          .filter(
+            (b) =>
+              b.status !== "cancelled" &&
+              b.clinicId === clinicId &&
+              b.serviceName === selectedService &&
+              b.date === localDateString,
+          )
+          .map((b) => b.time),
+      ),
+    [allBookings, clinicId, selectedService, localDateString],
+  );
+
   useEffect(() => {
     if (selectedSlot && !slots.some((s) => s.time === selectedSlot)) {
       setSelectedSlot(null);
@@ -137,10 +164,6 @@ function ClinicDetail() {
   const confirmBooking = () => {
     if (!clinic || !selectedSlot || !selectedService) return;
     const svc = clinic.services.find((s) => s.name === selectedService);
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-    const localDateString = `${year}-${month}-${day}`;
     try {
       const booking = addBooking({
         clinicId: clinic.id,
@@ -154,18 +177,18 @@ function ClinicDetail() {
         patientEmail: user?.email,
       });
       setConfirmOpen(false);
-      toast.success("Appointment confirmed!", {
+      toast.success(t("booking.toastSuccess"), {
         description: `${booking.bookingId} · ${selectedService} · ${date.toDateString()} ${selectedSlot}`,
       });
       setSelectedSlot(null);
       navigate({ to: "/dashboard" });
     } catch (err) {
       if (err instanceof BookingConflictError) {
-        toast.error(err.message);
+        toast.error(t("booking.errorConflict"));
         setSelectedSlot(null);
         setConfirmOpen(false);
       } else {
-        toast.error(err instanceof Error ? err.message : "Booking failed");
+        toast.error(err instanceof Error ? err.message : t("booking.toastError"));
       }
     }
   };
@@ -190,7 +213,7 @@ function ClinicDetail() {
         </Button>
       </div>
 
-      <div className="container mx-auto grid gap-8 px-4 pb-24 lg:grid-cols-[1fr_380px]">
+      <div className="relative z-10 container mx-auto grid gap-8 px-4 pb-24 lg:grid-cols-[1fr_380px]">
         {/* ── Left ── */}
         <div className="-mt-12">
           {/* Profile card */}
@@ -540,26 +563,46 @@ function ClinicDetail() {
                   </div>
                 ) : (
                   <div className="mt-2 grid grid-cols-4 gap-2">
-                    {slots.map((s) => (
-                      <button
-                        key={s.time}
-                        disabled={!s.available}
-                        onClick={() => setSelectedSlot(s.time)}
-                        className={cn(
-                          "cursor-pointer rounded-xl border px-2 py-2 text-xs font-semibold transition-all duration-150",
-                          !s.available &&
-                            "cursor-not-allowed border-border bg-muted text-muted-foreground line-through opacity-50",
-                          s.available &&
-                            selectedSlot === s.time &&
-                            "border-primary bg-primary text-primary-foreground shadow-soft",
-                          s.available &&
-                            selectedSlot !== s.time &&
-                            "border-border/60 bg-background hover:border-primary hover:bg-primary/8 hover:text-primary",
-                        )}
-                      >
-                        {s.time}
-                      </button>
-                    ))}
+                    {slots.map((s) => {
+                      const isBooked = bookedTimes.has(s.time);
+                      const isUnavailable = !s.available;
+                      const isSelected = selectedSlot === s.time;
+                      return (
+                        <button
+                          key={s.time}
+                          disabled={isUnavailable}
+                          onClick={() => {
+                            if (isBooked) {
+                              toast.error(t("booking.slotBooked"));
+                              return;
+                            }
+                            setSelectedSlot(s.time);
+                          }}
+                          className={cn(
+                            "rounded-xl border px-2 py-2 text-xs font-semibold transition-all duration-150",
+                            // Already booked by a patient
+                            isBooked &&
+                              "cursor-not-allowed border-destructive/40 bg-destructive/8 text-destructive/60",
+                            // Clinic's own unavailable slots (random schedule)
+                            isUnavailable &&
+                              !isBooked &&
+                              "cursor-not-allowed border-border bg-muted text-muted-foreground line-through opacity-50",
+                            // Selected
+                            !isBooked &&
+                              !isUnavailable &&
+                              isSelected &&
+                              "cursor-pointer border-primary bg-primary text-primary-foreground shadow-soft",
+                            // Available, not selected
+                            !isBooked &&
+                              !isUnavailable &&
+                              !isSelected &&
+                              "cursor-pointer border-border/60 bg-background hover:border-primary hover:bg-primary/8 hover:text-primary",
+                          )}
+                        >
+                          {s.time}
+                        </button>
+                      );
+                    })}
                   </div>
                 )}
               </div>

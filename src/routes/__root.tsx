@@ -82,6 +82,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "Compare clinics, read reviews, and book appointments instantly with an AI assistant guiding your choice.",
       },
       { name: "author", content: "MedCentral" },
+      // PWA / mobile app meta
+      { name: "theme-color", content: "#5046e4" },
+      { name: "mobile-web-app-capable", content: "yes" },
+      { name: "apple-mobile-web-app-capable", content: "yes" },
+      { name: "apple-mobile-web-app-status-bar-style", content: "default" },
+      { name: "apple-mobile-web-app-title", content: "MedCentral" },
       { property: "og:title", content: "MedCentral — Find & Book Trusted Clinics" },
       {
         property: "og:description",
@@ -114,10 +120,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/87d9bab6-2570-443b-bc9c-cc273cfd1fdf/id-preview-c960b337--32e4a208-f1f6-4c07-ad29-e48b49d271c3.lovable.app-1779621451846.png" },
     ],
     links: [
-      {
-        rel: "stylesheet",
-        href: appCss,
-      },
+      { rel: "stylesheet", href: appCss },
+      // Apple touch icon (iOS home screen)
+      { rel: "apple-touch-icon", sizes: "180x180", href: "/apple-touch-icon.png" },
+      // Android / PWA manifest
+      { rel: "manifest", href: "/manifest.json" },
+      // Fallback icon for other browsers
+      { rel: "icon", type: "image/png", sizes: "512x512", href: "/android-chrome-512x512.png" },
     ],
   }),
   shellComponent: RootShell,
@@ -147,7 +156,7 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <Outlet />
-        <Toaster richColors position="top-right" />
+        <Toaster richColors position="bottom-left" />
       </AuthProvider>
     </QueryClientProvider>
   );

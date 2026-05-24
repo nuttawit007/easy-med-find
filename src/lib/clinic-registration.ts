@@ -137,6 +137,11 @@ export function updateRegistrationStatusByUser(userId: string, status: Registrat
   write(next);
 }
 
+/** Reset all clinic registrations (used by admin mock-data reset). */
+export function resetClinicRegistrations(): void {
+  write([]);
+}
+
 /** Clear a rejected registration for a user (so they can resubmit). */
 export function clearRejectedRegistration(userId: string): void {
   const current = read();

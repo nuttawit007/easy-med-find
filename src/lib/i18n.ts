@@ -152,6 +152,10 @@ const resources = {
         cancel: "Cancel",
         closedOnDay: "Clinic is closed on this day",
         bookAppointment: "Book appointment",
+        toastSuccess: "Appointment confirmed!",
+        toastError: "Booking failed",
+        errorConflict: "This slot is already booked. Please pick another time.",
+        slotBooked: "This time cannot be booked.",
       },
       clinic: {
         back: "Back",
@@ -379,6 +383,8 @@ const resources = {
         toastResetMock: "Mock audit queues reset successfully!",
         navClinics: "Pending Clinics",
         navServices: "Pending Services",
+        statClinics: "Clinics",
+        statServices: "Services",
       },
       apiDocs: {
         title: "API Document",
@@ -585,6 +591,10 @@ const resources = {
         cancel: "ยกเลิก",
         closedOnDay: "คลินิกปิดให้บริการในวันนี้",
         bookAppointment: "จองนัดหมาย",
+        toastSuccess: "ยืนยันการจองสำเร็จ!",
+        toastError: "การจองล้มเหลว",
+        errorConflict: "ช่วงเวลานี้ถูกจองแล้ว กรุณาเลือกเวลาอื่น",
+        slotBooked: "ไม่สามารถจองเวลานี้ได้",
       },
       clinic: {
         back: "กลับ",
@@ -812,6 +822,8 @@ const resources = {
         toastResetMock: "รีเซ็ตคิวการตรวจสอบจำลองเรียบร้อยแล้ว!",
         navClinics: "คลินิกรอดำเนินการ",
         navServices: "บริการรอดำเนินการ",
+        statClinics: "คลินิก",
+        statServices: "บริการ",
       },
       apiDocs: {
         title: "เอกสาร API",

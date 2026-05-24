@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { SiteHeader } from "@/components/site-header";
 import { ClinicCard } from "@/components/clinic-card";
 import { CATEGORIES } from "@/lib/mock-data";
-import { useClinics } from "@/lib/clinics";
+import { useLocalizedClinics } from "@/lib/clinics";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 
@@ -19,7 +19,7 @@ export const Route = createFileRoute("/categories")({
 
 function CategoriesPage() {
   const { t } = useTranslation();
-  const clinics = useClinics();
+  const clinics = useLocalizedClinics();
   const [active, setActive] = useState<string>("all");
   const list = active === "all" ? clinics : clinics.filter((c) => c.category === active);
 
