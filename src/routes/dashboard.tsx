@@ -168,39 +168,69 @@ function PatientDashboard({ name }: { name: string }) {
   }, [bookings, user?.id]);
 
   return (
-    <>
-      <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold md:text-4xl">Hi, {name} 👋</h1>
-          <p className="mt-1 text-muted-foreground">{t("dashboard.subtitle")}</p>
+    <div className="space-y-6">
+      {/* ── Greeting header ── */}
+      <div className="relative overflow-hidden rounded-3xl border border-border/60 bg-gradient-to-br from-primary-soft via-card to-secondary/30 p-6 shadow-soft md:p-8">
+        <div className="pointer-events-none absolute -top-8 -right-8 h-40 w-40 rounded-full bg-primary/6 blur-3xl" />
+        <div className="pointer-events-none absolute bottom-0 left-0 h-24 w-48 rounded-full bg-secondary/15 blur-2xl" />
+        <div className="relative flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+              {t("dashboard.welcomeBack")}
+            </p>
+            <h1 className="mt-1 text-3xl font-extrabold tracking-tight md:text-4xl">
+              Hi, {name} 👋
+            </h1>
+            <p className="mt-1.5 text-muted-foreground">{t("dashboard.subtitle")}</p>
+          </div>
+          <Button asChild size="lg" className="cursor-pointer rounded-2xl shadow-glow font-bold">
+            <Link to="/">{t("dashboard.bookVisit")}</Link>
+          </Button>
         </div>
-        <Button asChild>
-          <Link to="/">{t("dashboard.bookVisit")}</Link>
-        </Button>
       </div>
 
-      <div className="mb-6 rounded-2xl border border-border bg-gradient-to-br from-primary-soft to-secondary p-5 shadow-soft">
-        <div className="flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-soft">
-              <Trophy className="h-6 w-6" />
+      {/* ── Loyalty banner ── */}
+      <div className="relative overflow-hidden rounded-3xl border border-primary/20 bg-gradient-to-br from-primary-soft to-secondary/40 p-5 shadow-soft">
+        <div className="pointer-events-none absolute top-0 right-0 h-32 w-32 rounded-full bg-primary/8 blur-2xl" />
+        <div className="relative flex items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-glow">
+              <Trophy className="h-7 w-7" />
             </div>
             <div>
               <p className="text-sm font-medium text-muted-foreground">{t("loyalty.myRewards")}</p>
               <p className="text-2xl font-bold">{t("loyalty.youHavePoints", { count: points })}</p>
+              <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                {t("loyalty.myRewards")}
+              </p>
+              <p className="text-2xl font-extrabold text-foreground">
+                {t("loyalty.youHavePoints", { count: points })}
+              </p>
             </div>
           </div>
-          <Badge className="bg-primary/10 text-primary hover:bg-primary/15">
+          <Badge className="shrink-0 rounded-full border border-primary/20 bg-primary/10 px-3 py-1.5 text-sm font-bold text-primary hover:bg-primary/15">
             {t("loyalty.totalPoints")}: {points}
           </Badge>
         </div>
       </div>
 
+      {/* ── Tabs ── */}
       <Tabs defaultValue="upcoming" className="w-full">
-        <TabsList className="mb-6">
-          <TabsTrigger value="upcoming">{t("dashboard.tabUpcoming")}</TabsTrigger>
-          <TabsTrigger value="history">{t("dashboard.tabHistory")}</TabsTrigger>
-          <TabsTrigger value="rewards">{t("dashboard.tabRewards")}</TabsTrigger>
+        <TabsList className="mb-6 w-full justify-start gap-1 rounded-2xl border border-border/50 bg-muted/40 p-1 sm:w-auto">
+          <TabsTrigger value="upcoming" className="cursor-pointer rounded-xl font-semibold">
+            {t("dashboard.tabUpcoming")}
+            {upcoming.length > 0 && (
+              <span className="ml-2 rounded-full bg-primary px-1.5 py-0.5 text-[10px] font-bold text-primary-foreground">
+                {upcoming.length}
+              </span>
+            )}
+          </TabsTrigger>
+          <TabsTrigger value="history" className="cursor-pointer rounded-xl font-semibold">
+            {t("dashboard.tabHistory")}
+          </TabsTrigger>
+          <TabsTrigger value="rewards" className="cursor-pointer rounded-xl font-semibold">
+            {t("dashboard.tabRewards")}
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="upcoming" className="space-y-4">
@@ -209,7 +239,7 @@ function PatientDashboard({ name }: { name: string }) {
               title={t("dashboard.emptyUpcomingTitle")}
               description={t("dashboard.emptyUpcomingDesc")}
               action={
-                <Button asChild>
+                <Button asChild className="cursor-pointer rounded-2xl shadow-soft font-semibold">
                   <Link to="/">{t("dashboard.discoverClinics")}</Link>
                 </Button>
               }
@@ -233,60 +263,79 @@ function PatientDashboard({ name }: { name: string }) {
         </TabsContent>
 
         <TabsContent value="rewards">
-          <div className="rounded-2xl border border-border bg-gradient-to-br from-primary-soft to-secondary p-6 shadow-soft">
-            <div className="flex items-center gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-soft">
-                <Trophy className="h-6 w-6" />
+          {/* Loyalty progress card */}
+          <div className="relative overflow-hidden rounded-3xl border border-primary/20 bg-gradient-to-br from-primary-soft to-secondary/40 p-6 shadow-soft">
+            <div className="pointer-events-none absolute -top-6 -right-6 h-32 w-32 rounded-full bg-primary/8 blur-2xl" />
+            <div className="relative flex items-center gap-4">
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-glow">
+                <Trophy className="h-7 w-7" />
               </div>
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Your loyalty balance</p>
-                <p className="text-3xl font-bold">{points} pts</p>
+                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  {t("dashboard.loyaltyBalance")}
+                </p>
+                <p className="text-3xl font-extrabold text-foreground">
+                  {points} {t("loyalty.points")}
+                </p>
               </div>
             </div>
             <div className="mt-5">
               <div className="mb-2 flex items-center justify-between text-sm">
-                <span className="text-muted-foreground">Progress to Gold</span>
-                <span className="font-medium">
+                <span className="font-medium text-muted-foreground">
+                  {t("dashboard.progressToGold")}
+                </span>
+                <span className="font-bold">
                   {points} / {nextTier}
                 </span>
               </div>
-              <Progress value={(points / nextTier) * 100} />
+              <Progress value={(points / nextTier) * 100} className="h-2.5 rounded-full" />
               <p className="mt-2 text-xs text-muted-foreground">
-                Earn {nextTier - points} more points to unlock 15% off all bookings.
+                {t("dashboard.earnMorePoints", { count: nextTier - points })}
               </p>
             </div>
           </div>
 
+          {/* Rewards grid */}
           <div className="mt-5 grid gap-3 sm:grid-cols-2">
-            {[
-              { title: "฿200 off voucher", cost: 500 },
-              { title: "Free facial add-on", cost: 800 },
-              { title: "Birthday surprise", cost: 1000 },
-            ].map((r) => (
+            {(
+              [
+                { titleKey: "loyalty.rewardVoucher", cost: 500, emoji: "🎟️" },
+                { titleKey: "loyalty.rewardFacial", cost: 800, emoji: "✨" },
+                { titleKey: "loyalty.rewardBirthday", cost: 1000, emoji: "🎂" },
+              ] as const
+            ).map((r) => (
               <div
-                key={r.title}
-                className="flex items-center justify-between rounded-2xl border border-border bg-card p-4"
+                key={r.titleKey}
+                className="group flex cursor-pointer items-center justify-between rounded-2xl border border-border/60 bg-card p-4
+                  transition-all duration-200 hover:border-primary/30 hover:bg-primary/5 hover:shadow-soft"
               >
                 <div className="flex items-center gap-3">
-                  <Gift className="h-5 w-5 text-primary" />
+                  <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-primary-soft text-xl transition-colors group-hover:bg-primary/15">
+                    {r.emoji}
+                  </div>
                   <div>
-                    <p className="font-medium">{r.title}</p>
-                    <p className="text-xs text-muted-foreground">{r.cost} pts</p>
+                    <p className="font-semibold text-foreground transition-colors group-hover:text-primary">
+                      {t(r.titleKey)}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {r.cost} {t("loyalty.ptsRequired")}
+                    </p>
                   </div>
                 </div>
                 <Button
                   size="sm"
                   disabled={points < r.cost}
                   variant={points >= r.cost ? "default" : "outline"}
+                  className={`cursor-pointer rounded-xl font-semibold ${points >= r.cost ? "shadow-soft" : ""}`}
                 >
-                  Redeem
+                  {t("loyalty.redeem")}
                 </Button>
               </div>
             ))}
           </div>
         </TabsContent>
       </Tabs>
-    </>
+    </div>
   );
 }
 

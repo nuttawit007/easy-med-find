@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { Check, Star, X } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { SiteHeader } from "@/components/site-header";
 import { Button } from "@/components/ui/button";
 import {
@@ -26,6 +27,7 @@ export const Route = createFileRoute("/compare")({
 });
 
 function ComparePage() {
+  const { t } = useTranslation();
   const allClinics = useClinics();
   const [ids, setIds] = useState<string[]>([
     allClinics[0]?.id,
@@ -47,20 +49,18 @@ function ComparePage() {
     <div className="min-h-screen bg-background">
       <SiteHeader />
       <section className="container mx-auto px-4 py-10">
-        <h1 className="text-3xl font-bold md:text-4xl">Compare clinics side-by-side</h1>
-        <p className="mt-2 text-muted-foreground">
-          Pick up to 3 clinics to compare ratings, pricing and services.
-        </p>
+        <h1 className="text-3xl font-bold md:text-4xl">{t("compare.title")}</h1>
+        <p className="mt-2 text-muted-foreground">{t("compare.subtitle")}</p>
 
         <div className="mt-6 grid gap-3 md:grid-cols-3">
           {[0, 1, 2].map((i) => (
             <Select key={i} value={ids[i]} onValueChange={(v) => set(i, v)}>
-              <SelectTrigger>
+              <SelectTrigger className="cursor-pointer">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
                 {allClinics.map((c) => (
-                  <SelectItem key={c.id} value={c.id}>
+                  <SelectItem key={c.id} value={c.id} className="cursor-pointer">
                     {c.name}
                   </SelectItem>
                 ))}
@@ -73,7 +73,9 @@ function ComparePage() {
           <table className="w-full min-w-[640px] text-sm">
             <thead>
               <tr className="border-b border-border bg-muted/50">
-                <th className="p-4 text-left font-medium text-muted-foreground">Criteria</th>
+                <th className="p-4 text-left font-medium text-muted-foreground">
+                  {t("compare.criteria")}
+                </th>
                 {selected.map((c) => (
                   <th key={c!.id} className="p-4 text-left">
                     <div className="flex items-center gap-3">
@@ -84,7 +86,7 @@ function ComparePage() {
                       />
                       <div>
                         <p className="font-semibold">{c!.name}</p>
-                        <p className="text-xs text-muted-foreground">{c!.category}</p>
+                        <p className="text-xs text-muted-foreground">{t(`cat.${c!.category}`)}</p>
                       </div>
                     </div>
                   </th>
@@ -92,7 +94,7 @@ function ComparePage() {
               </tr>
             </thead>
             <tbody>
-              <Row label="Overall rating">
+              <Row label={t("compare.overallRating")}>
                 {selected.map((c) => (
                   <td key={c!.id} className="p-4">
                     <div className="flex items-center gap-1 font-medium">
@@ -102,7 +104,7 @@ function ComparePage() {
                   </td>
                 ))}
               </Row>
-              <Row label="Current promo">
+              <Row label={t("compare.currentPromo")}>
                 {selected.map((c) => (
                   <td key={c!.id} className="p-4">
                     {c!.promo ? (
@@ -111,28 +113,30 @@ function ComparePage() {
                       </span>
                     ) : (
                       <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
-                        <X className="h-3 w-3" /> No active promo
+                        <X className="h-3 w-3" /> {t("compare.noActivePromo")}
                       </span>
                     )}
                   </td>
                 ))}
               </Row>
-              <Row label="Starting price">
+              <Row label={t("compare.startingPrice")}>
                 {selected.map((c) => (
                   <td key={c!.id} className="p-4 font-semibold text-primary">
                     ฿{c!.startingPrice.toLocaleString()}
                   </td>
                 ))}
               </Row>
-              <Row label="Location / Distance">
+              <Row label={t("compare.locationDistance")}>
                 {selected.map((c) => (
                   <td key={c!.id} className="p-4">
                     <p>{c!.location}</p>
-                    <p className="text-xs text-muted-foreground">{c!.distanceKm} km away</p>
+                    <p className="text-xs text-muted-foreground">
+                      {c!.distanceKm} {t("compare.kmAway")}
+                    </p>
                   </td>
                 ))}
               </Row>
-              <Row label="Key services">
+              <Row label={t("compare.keyServices")}>
                 {selected.map((c) => (
                   <td key={c!.id} className="p-4">
                     <ul className="space-y-1 text-xs text-muted-foreground">
@@ -146,9 +150,9 @@ function ComparePage() {
               <Row label="">
                 {selected.map((c) => (
                   <td key={c!.id} className="p-4">
-                    <Button asChild size="sm" className="w-full">
+                    <Button asChild size="sm" className="w-full cursor-pointer">
                       <Link to="/clinic/$clinicId" params={{ clinicId: c!.id }}>
-                        Book now
+                        {t("common.bookNow")}
                       </Link>
                     </Button>
                   </td>
