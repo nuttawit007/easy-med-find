@@ -346,15 +346,12 @@ function Auth() {
                   <div className="space-y-1">
                     <Label className="text-xs font-medium">{t("auth.accountType")}</Label>
                     <Tabs value={role} onValueChange={(v) => setRole(v as UserRole)}>
-                      <TabsList className="grid h-8 w-full grid-cols-3">
+                      <TabsList className="grid h-8 w-full grid-cols-2">
                         <TabsTrigger value="patient" className="cursor-pointer text-xs">
                           {t("auth.rolePatient")}
                         </TabsTrigger>
                         <TabsTrigger value="clinic" className="cursor-pointer text-xs">
                           {t("auth.roleClinic")}
-                        </TabsTrigger>
-                        <TabsTrigger value="admin" className="cursor-pointer text-xs">
-                          {t("auth.roleAdmin")}
                         </TabsTrigger>
                       </TabsList>
                     </Tabs>
@@ -369,7 +366,8 @@ function Auth() {
           </div>
         </div>
 
-        {/* Developer mode */}
+        {/* Developer mode — only available in dev builds */}
+        {import.meta.env.DEV && (
         <div className="mt-3 rounded-2xl border border-dashed border-border/60 bg-card/70 p-3 backdrop-blur-sm">
           <div className="mb-2 flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
             <ShieldAlert className="h-3 w-3" /> {t("auth.devLogin")}
@@ -420,6 +418,7 @@ function Auth() {
             </Link>
           </div>
         </div>
+        )}
       </div>
     </div>
   );
