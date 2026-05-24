@@ -82,6 +82,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "Compare clinics, read reviews, and book appointments instantly with an AI assistant guiding your choice.",
       },
       { name: "author", content: "MedCentral" },
+      // PWA / mobile app meta
+      { name: "theme-color", content: "#5046e4" },
+      { name: "mobile-web-app-capable", content: "yes" },
+      { name: "apple-mobile-web-app-capable", content: "yes" },
+      { name: "apple-mobile-web-app-status-bar-style", content: "default" },
+      { name: "apple-mobile-web-app-title", content: "MedCentral" },
       { property: "og:title", content: "MedCentral — Find & Book Trusted Clinics" },
       {
         property: "og:description",
@@ -109,10 +115,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
     ],
     links: [
-      {
-        rel: "stylesheet",
-        href: appCss,
-      },
+      { rel: "stylesheet", href: appCss },
+      // Apple touch icon (iOS home screen)
+      { rel: "apple-touch-icon", sizes: "180x180", href: "/apple-touch-icon.png" },
+      // Android / PWA manifest
+      { rel: "manifest", href: "/manifest.json" },
+      // Fallback icon for other browsers
+      { rel: "icon", type: "image/png", sizes: "512x512", href: "/android-chrome-512x512.png" },
     ],
   }),
   shellComponent: RootShell,
