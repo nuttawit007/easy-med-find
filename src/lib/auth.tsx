@@ -46,6 +46,7 @@ const REDIRECT_URL =
   typeof window !== "undefined"
     ? `${window.location.origin}/`
     : "https://easy-med-find.lovable.app/";
+void REDIRECT_URL;
 
 function toAuthUser(u: User | null | undefined): AuthUser | null {
   if (!u) return null;
