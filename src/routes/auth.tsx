@@ -419,6 +419,8 @@ function Auth() {
           </div>
         </div>
         )}
+      </div>
+    </div>
   );
 }
 
