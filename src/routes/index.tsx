@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { SiteHeader } from "@/components/site-header";
 import { AIChatHero } from "@/components/ai-chat-hero";
 import { ClinicCard } from "@/components/clinic-card";
+import { PromotionCard } from "@/components/promotion-card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -208,10 +209,12 @@ function Index() {
           iconBg="bg-secondary"
           title={t("home.hotPromotions")}
           subtitle={t("home.hotPromotionsSub")}
+          to="/promotions"
+          seeAllLabel={t("home.seeAll")}
         />
-        <div className="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {promos.map((c) => (
-            <ClinicCard key={c.id} clinic={c} />
+            <PromotionCard key={c.id} clinic={c} />
           ))}
         </div>
       </section>
@@ -223,6 +226,8 @@ function Index() {
           iconBg="bg-primary"
           title={t("home.recommended")}
           subtitle={t("home.recommendedSub")}
+          to="/categories"
+          seeAllLabel={t("home.seeAll")}
         />
         <div className="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {recommended.map((c) => (
@@ -270,23 +275,38 @@ function SectionHeader({
   iconBg,
   title,
   subtitle,
+  to,
+  seeAllLabel,
 }: {
   icon: React.ReactNode;
   iconBg: string;
   title: string;
   subtitle: string;
+  to?: string;
+  seeAllLabel?: string;
 }) {
   return (
-    <div className="flex items-start gap-3">
-      <div
-        className={`mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl ${iconBg} shadow-soft`}
-      >
-        {icon}
+    <div className="flex items-center justify-between gap-4">
+      <div className="flex items-start gap-3">
+        <div
+          className={`mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl ${iconBg} shadow-soft`}
+        >
+          {icon}
+        </div>
+        <div>
+          <h2 className="text-2xl font-bold leading-snug">{title}</h2>
+          <p className="text-sm text-muted-foreground">{subtitle}</p>
+        </div>
       </div>
-      <div>
-        <h2 className="text-2xl font-bold leading-snug">{title}</h2>
-        <p className="text-sm text-muted-foreground">{subtitle}</p>
-      </div>
+      {to && seeAllLabel && (
+        <Link
+          to={to}
+          className="flex shrink-0 items-center gap-1.5 rounded-xl border border-border/60 bg-card px-3.5 py-2 text-sm font-semibold text-muted-foreground shadow-soft transition-colors hover:border-primary/40 hover:bg-primary/5 hover:text-primary"
+        >
+          {seeAllLabel}
+          <ArrowRight className="h-3.5 w-3.5" />
+        </Link>
+      )}
     </div>
   );
 }
