@@ -165,7 +165,8 @@ const resources = {
       },
       clinicRegistration: {
         formTitle: "Register Your Clinic",
-        formSubtitle: "Submit your clinic details for verification. Once approved by our admin team, you'll have full access to manage your clinic.",
+        formSubtitle:
+          "Submit your clinic details for verification. Once approved by our admin team, you'll have full access to manage your clinic.",
         sectionClinicInfo: "Clinic Information",
         sectionLegalDocs: "Legal & Registration Documents",
         sectionOwnerInfo: "Owner / Medical Director",
@@ -196,12 +197,14 @@ const resources = {
         toastSubmitted: "Registration submitted!",
         toastSubmittedDesc: "Your clinic details have been sent for admin review.",
         pendingTitle: "Registration Under Review",
-        pendingSubtitle: "Your clinic registration has been submitted and is currently being reviewed by our admin team. This usually takes 1–2 business days.",
+        pendingSubtitle:
+          "Your clinic registration has been submitted and is currently being reviewed by our admin team. This usually takes 1–2 business days.",
         pendingSubmittedOn: "Submitted on",
         pendingStatusLabel: "Status",
         pendingStatusValue: "Pending Admin Verification",
         rejectedTitle: "Registration Not Approved",
-        rejectedSubtitle: "Unfortunately, your clinic registration was not approved. You can update your information and resubmit.",
+        rejectedSubtitle:
+          "Unfortunately, your clinic registration was not approved. You can update your information and resubmit.",
         btnResubmit: "Update & Resubmit",
         summaryTitle: "Submitted Information",
       },
@@ -217,15 +220,18 @@ const resources = {
         badge: "Platform Executive",
         liveAuditNode: "Live Audit Node",
         controlCenter: "Control Center",
-        subtitle: "Review credential catalogs, perform geospatial verification, and audit newly registered clinics requesting system access.",
+        subtitle:
+          "Review credential catalogs, perform geospatial verification, and audit newly registered clinics requesting system access.",
         pendingClinics: "Pending Clinics",
         pendingServices: "Pending Services",
         tabClinics: "Clinics Registry Audit ({{count}})",
         tabServices: "Service Upgrades ({{count}})",
         emptyClinicsTitle: "Verification Queue Clear",
-        emptyClinicsDesc: "All registered medical clinics have been successfully audited and published. No pending verifications.",
+        emptyClinicsDesc:
+          "All registered medical clinics have been successfully audited and published. No pending verifications.",
         emptyServicesTitle: "Services Upgrades Clear",
-        emptyServicesDesc: "No clinics are currently requesting catalog additions or catalog updates.",
+        emptyServicesDesc:
+          "No clinics are currently requesting catalog additions or catalog updates.",
         btnPerformAudit: "Perform Audit",
         btnApprove: "Approve",
         btnReject: "Reject",
@@ -266,12 +272,14 @@ const resources = {
         subtitle: "Real REST endpoints, testable from Postman or Botnoi.ai. CORS enabled.",
         backToLogin: "Back to Login",
         baseUrlLabel: "Base URL",
-        baseUrlNote: "For stable integrations (Postman, Botnoi.ai webhooks, cron) use the production URL: https://easy-med-find.lovable.app",
+        baseUrlNote:
+          "For stable integrations (Postman, Botnoi.ai webhooks, cron) use the production URL: https://easy-med-find.lovable.app",
         publicBadge: "Public · No auth",
         descLabel: "Description",
         endpointLabel: "Endpoint",
         headers: "Headers",
-        noAuthNote: "No authentication required. Sending Accept: application/json is recommended but optional.",
+        noAuthNote:
+          "No authentication required. Sending Accept: application/json is recommended but optional.",
         queryParamsLabel: "Query Parameters (optional)",
         curlExampleLabel: "cURL example (Postman → Import → Raw text)",
         response200: "Response (200 OK)",
@@ -310,7 +318,8 @@ const resources = {
         getClinicByIdDesc:
           "Returns the full details of a single clinic by its unique ID. Public endpoint — no authentication required.",
         pathParamsLabel: "Path Parameters",
-        clinicIdParamDesc: "Unique clinic identifier (e.g. c1, c2). Use IDs from GET /api/public/clinics.",
+        clinicIdParamDesc:
+          "Unique clinic identifier (e.g. c1, c2). Use IDs from GET /api/public/clinics.",
         clinicNotFound: "Clinic with the given ID was not found",
       },
     },
@@ -476,7 +485,8 @@ const resources = {
       },
       clinicRegistration: {
         formTitle: "ลงทะเบียนคลินิกของคุณ",
-        formSubtitle: "กรอกข้อมูลคลินิกเพื่อส่งตรวจสอบ เมื่อได้รับการอนุมัติจากทีมผู้ดูแลระบบ คุณจะสามารถจัดการคลินิกได้อย่างเต็มรูปแบบ",
+        formSubtitle:
+          "กรอกข้อมูลคลินิกเพื่อส่งตรวจสอบ เมื่อได้รับการอนุมัติจากทีมผู้ดูแลระบบ คุณจะสามารถจัดการคลินิกได้อย่างเต็มรูปแบบ",
         sectionClinicInfo: "ข้อมูลคลินิก",
         sectionLegalDocs: "เอกสารทางกฎหมายและการจดทะเบียน",
         sectionOwnerInfo: "เจ้าของ / แพทย์ผู้อำนวยการ",
@@ -507,12 +517,14 @@ const resources = {
         toastSubmitted: "ส่งคำขอลงทะเบียนแล้ว!",
         toastSubmittedDesc: "ข้อมูลคลินิกของคุณถูกส่งไปรอการตรวจสอบจากผู้ดูแลระบบแล้ว",
         pendingTitle: "กำลังรอการตรวจสอบ",
-        pendingSubtitle: "คำขอลงทะเบียนคลินิกของคุณถูกส่งแล้วและกำลังอยู่ระหว่างการตรวจสอบโดยทีมผู้ดูแลระบบ โดยปกติใช้เวลา 1-2 วันทำการ",
+        pendingSubtitle:
+          "คำขอลงทะเบียนคลินิกของคุณถูกส่งแล้วและกำลังอยู่ระหว่างการตรวจสอบโดยทีมผู้ดูแลระบบ โดยปกติใช้เวลา 1-2 วันทำการ",
         pendingSubmittedOn: "ส่งเมื่อ",
         pendingStatusLabel: "สถานะ",
         pendingStatusValue: "รอการตรวจสอบจากผู้ดูแลระบบ",
         rejectedTitle: "คำขอไม่ผ่านการอนุมัติ",
-        rejectedSubtitle: "ขออภัย คำขอลงทะเบียนคลินิกของคุณไม่ผ่านการอนุมัติ คุณสามารถแก้ไขข้อมูลและส่งใหม่ได้",
+        rejectedSubtitle:
+          "ขออภัย คำขอลงทะเบียนคลินิกของคุณไม่ผ่านการอนุมัติ คุณสามารถแก้ไขข้อมูลและส่งใหม่ได้",
         btnResubmit: "แก้ไขและส่งใหม่",
         summaryTitle: "ข้อมูลที่ส่งไป",
       },
@@ -528,13 +540,15 @@ const resources = {
         badge: "ผู้ดูแลระบบหลัก",
         liveAuditNode: "ระบบตรวจสอบสด",
         controlCenter: "ศูนย์ควบคุมการตรวจสอบ",
-        subtitle: "ตรวจสอบเอกสารรับรองของคลินิก, ตรวจสอบพิกัดความถูกต้องทางภูมิศาสตร์ และตรวจสอบสิทธิ์คลินิกใหม่ที่ยื่นขอเข้าใช้งานระบบ",
+        subtitle:
+          "ตรวจสอบเอกสารรับรองของคลินิก, ตรวจสอบพิกัดความถูกต้องทางภูมิศาสตร์ และตรวจสอบสิทธิ์คลินิกใหม่ที่ยื่นขอเข้าใช้งานระบบ",
         pendingClinics: "คลินิกรอตรวจสอบ",
         pendingServices: "บริการรอตรวจสอบ",
         tabClinics: "ตรวจสอบคลินิกใหม่ ({{count}})",
         tabServices: "คำขอเพิ่มบริการ ({{count}})",
         emptyClinicsTitle: "คิวการตรวจสอบว่างเปล่า",
-        emptyClinicsDesc: "คลินิกทั้งหมดได้รับการตรวจสอบและอนุมัติขึ้นระบบหลักแล้ว ไม่มีคลินิกค้างรอการตรวจสอบ",
+        emptyClinicsDesc:
+          "คลินิกทั้งหมดได้รับการตรวจสอบและอนุมัติขึ้นระบบหลักแล้ว ไม่มีคลินิกค้างรอการตรวจสอบ",
         emptyServicesTitle: "คิวคำขอเพิ่มบริการว่างเปล่า",
         emptyServicesDesc: "ไม่มีคลินิกใดร้องขอเพิ่มหรืออัปเดตบริการในรายการขณะนี้",
         btnPerformAudit: "เริ่มตรวจสอบ",
@@ -555,7 +569,8 @@ const resources = {
         ownerEmail: "อีเมลติดต่อเจ้าของ",
         checklistTitle: "รายการตรวจสอบข้อมูลหลัก (คลิกเพื่อทำการสแกนตรวจสอบ)",
         checklistLicense: "การตรวจสอบใบอนุมัติกระทรวง",
-        checklistLicenseSub: "ตรวจสอบรหัสใบอนุญาตของคลินิกว่าถูกต้องและยังไม่หมดอายุในฐานข้อมูลของกระทรวง",
+        checklistLicenseSub:
+          "ตรวจสอบรหัสใบอนุญาตของคลินิกว่าถูกต้องและยังไม่หมดอายุในฐานข้อมูลของกระทรวง",
         checklistGeospatial: "ตรวจสอบพื้นที่ทางภูมิศาสตร์",
         checklistGeospatialSub: "สแกนภาพถ่ายและพิกัดพิกัด GPS เพื่อยืนยันว่าสถานที่จริงมีอยู่จริง",
         checklistKyc: "ตรวจสอบประวัติผู้ดำเนินกิจการ (KYC)",
@@ -577,7 +592,8 @@ const resources = {
         subtitle: "REST API จริง ใช้ได้กับ Postman หรือ Botnoi.ai รองรับ CORS",
         backToLogin: "กลับสู่หน้าเข้าสู่ระบบ",
         baseUrlLabel: "Base URL",
-        baseUrlNote: "สำหรับการเชื่อมต่อที่เสถียร (Postman, Botnoi.ai, cron) ใช้ production URL: https://easy-med-find.lovable.app",
+        baseUrlNote:
+          "สำหรับการเชื่อมต่อที่เสถียร (Postman, Botnoi.ai, cron) ใช้ production URL: https://easy-med-find.lovable.app",
         publicBadge: "สาธารณะ · ไม่ต้องยืนยันตัวตน",
         descLabel: "คำอธิบาย",
         endpointLabel: "Endpoint",
@@ -618,10 +634,10 @@ const resources = {
         fillAllFields: "กรุณากรอกข้อมูลให้ครบถ้วน",
         bookingSuccess: "การจองสำเร็จ!",
         getClinicByIdTitle: "ดึงข้อมูลคลินิกตาม ID",
-        getClinicByIdDesc:
-          "ดึงข้อมูลรายละเอียดทั้งหมดของคลินิกจาก ID ที่ระบุ ไม่ต้องยืนยันตัวตน",
+        getClinicByIdDesc: "ดึงข้อมูลรายละเอียดทั้งหมดของคลินิกจาก ID ที่ระบุ ไม่ต้องยืนยันตัวตน",
         pathParamsLabel: "Path Parameters",
-        clinicIdParamDesc: "รหัสคลินิกที่ไม่ซ้ำกัน (เช่น c1, c2) ใช้ ID จาก GET /api/public/clinics",
+        clinicIdParamDesc:
+          "รหัสคลินิกที่ไม่ซ้ำกัน (เช่น c1, c2) ใช้ ID จาก GET /api/public/clinics",
         clinicNotFound: "ไม่พบคลินิกที่มี ID ดังกล่าว",
       },
     },

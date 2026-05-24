@@ -27,6 +27,7 @@ Current routes: `/` (home/discover), `/auth`, `/categories`, `/clinic.$clinicId`
 ### State management pattern
 
 **There is no real database yet.** All mutable state is stored in `localStorage` via a hand-rolled `useSyncExternalStore` pattern. Each domain module (`src/lib/clinics.ts`, `src/lib/bookings.ts`, `src/lib/admin-approvals.ts`, `src/lib/loyalty.ts`, `src/lib/clinic-registration.ts`) maintains:
+
 - An in-memory `cache` variable
 - A `Set<() => void>` of listeners
 - A `read()` function (hydrates from `localStorage`, falls back to mock data on first load)
@@ -42,6 +43,7 @@ Supabase (`src/integrations/supabase/`) is wired up for auth only — `supabase/
 `src/lib/auth.tsx` provides `AuthProvider` and `useAuth()`. Three roles: `patient`, `clinic`, `admin`. Auth supports real Supabase email/password + Google OAuth, plus **mock login** for development (stored in `localStorage` under key `medcentral.mockUser`). The mock logins on the `/auth` page let you quickly switch roles without needing a real account.
 
 The `dashboard` route renders different UIs by role:
+
 - `patient` → bookings + loyalty points
 - `clinic` → registration flow (if new) or clinic management (profile, services, appointments)
 - `admin` → platform admin panel for approving/rejecting pending clinics and services

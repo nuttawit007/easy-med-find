@@ -52,19 +52,19 @@ npm run format    # run Prettier
 
 ## Technology Stack
 
-| Category | Technology |
-|---|---|
-| Framework | [TanStack Start](https://tanstack.com/start) — SSR React 19 |
-| Router | [TanStack Router](https://tanstack.com/router) — file-based, type-safe |
-| Server-side data | [TanStack Query](https://tanstack.com/query) |
-| Styling | [Tailwind CSS v4](https://tailwindcss.com) |
-| UI Components | [shadcn/ui](https://ui.shadcn.com) — Radix UI primitives |
-| Authentication | [Supabase Auth](https://supabase.com/auth) — Google OAuth, LINE OAuth, email/password |
-| Database | [Supabase](https://supabase.com) (auth only; app data uses localStorage stores) |
-| Internationalisation | [i18next](https://www.i18next.com) + react-i18next — Thai (default) and English |
-| Icons | [Lucide React](https://lucide.dev) |
-| Forms | [React Hook Form](https://react-hook-form.com) + [Zod](https://zod.dev) |
-| Charts | [Recharts](https://recharts.org) |
-| Build tool | [Vite](https://vite.dev) |
-| Deployment | [Cloudflare Workers](https://workers.cloudflare.com) via Wrangler |
-| Language | TypeScript |
+| Category             | Technology                                                                            |
+| -------------------- | ------------------------------------------------------------------------------------- |
+| Framework            | [TanStack Start](https://tanstack.com/start) — SSR React 19                           |
+| Router               | [TanStack Router](https://tanstack.com/router) — file-based, type-safe                |
+| Server-side data     | [TanStack Query](https://tanstack.com/query)                                          |
+| Styling              | [Tailwind CSS v4](https://tailwindcss.com)                                            |
+| UI Components        | [shadcn/ui](https://ui.shadcn.com) — Radix UI primitives                              |
+| Authentication       | [Supabase Auth](https://supabase.com/auth) — Google OAuth, LINE OAuth, email/password |
+| Database             | [Supabase](https://supabase.com) (auth only; app data uses localStorage stores)       |
+| Internationalisation | [i18next](https://www.i18next.com) + react-i18next — Thai (default) and English       |
+| Icons                | [Lucide React](https://lucide.dev)                                                    |
+| Forms                | [React Hook Form](https://react-hook-form.com) + [Zod](https://zod.dev)               |
+| Charts               | [Recharts](https://recharts.org)                                                      |
+| Build tool           | [Vite](https://vite.dev)                                                              |
+| Deployment           | [Cloudflare Workers](https://workers.cloudflare.com) via Wrangler                     |
+| Language             | TypeScript                                                                            |

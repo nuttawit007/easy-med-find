@@ -50,10 +50,7 @@ export const Route = createFileRoute("/api/public/bookings")({
 
         const clinic = clinics.find((c) => c.id === data.clinicId);
         if (!clinic) {
-          return jsonResponse(
-            { error: `Clinic not found: ${data.clinicId}` },
-            404,
-          );
+          return jsonResponse({ error: `Clinic not found: ${data.clinicId}` }, 404);
         }
 
         const service = clinic.services.find((s) => s.name === data.serviceName);
