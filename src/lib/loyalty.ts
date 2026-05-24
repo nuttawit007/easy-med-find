@@ -40,6 +40,10 @@ export function getLoyaltyPoints(patientId: string | undefined | null): number {
   return read()[patientId] ?? 0;
 }
 
+export function resetLoyalty(): void {
+  write({});
+}
+
 export function useLoyaltyPoints(patientId: string | undefined | null): number {
   const all = useSyncExternalStore(
     (cb) => {

@@ -16,10 +16,12 @@ export type Clinic = {
   location: string;
   distanceKm: number;
   promo?: string;
+  promoEn?: string; // English version of the promo text
   thumbnail: string;
   banner: string;
   description: string;
-  services: { name: string; price: number; durationMin: number }[];
+  descriptionEn?: string; // English version of the description
+  services: { name: string; nameEn?: string; price: number; durationMin: number }[];
   gallery: string[];
   reviewList: { user: string; rating: number; comment: string; date: string }[];
   verified?: boolean;
@@ -47,14 +49,27 @@ export const clinics: Clinic[] = [
     location: "Sukhumvit, Bangkok",
     distanceKm: 1.2,
     promo: "ลด 30% สำหรับเลเซอร์ครั้งแรก",
+    promoEn: "30% off your first laser treatment",
     thumbnail: img("1629909613654-28e377c37b09"),
     banner: img("1629909613654-28e377c37b09", 1600, 600),
     description:
       "คลินิกความงามรางวัลเลิศ เชี่ยวชาญด้านเลเซอร์กำจัดขน รักษาจุดด่างดำ และฟื้นฟูผิวด้วยเครื่องมือที่ผ่านการรับรอง FDA",
+    descriptionEn:
+      "Award-winning aesthetic clinic specializing in laser hair removal, dark spot treatment, and skin rejuvenation with FDA-approved equipment.",
     services: [
-      { name: "กำจัดขนด้วยเลเซอร์ (รักแร้)", price: 990, durationMin: 30 },
-      { name: "Pico Laser เต็มใบหน้า", price: 3500, durationMin: 45 },
-      { name: "รักษาสิวด้วยเลเซอร์", price: 2200, durationMin: 40 },
+      {
+        name: "กำจัดขนด้วยเลเซอร์ (รักแร้)",
+        nameEn: "Laser Hair Removal (Underarms)",
+        price: 990,
+        durationMin: 30,
+      },
+      {
+        name: "Pico Laser เต็มใบหน้า",
+        nameEn: "Pico Laser Full Face",
+        price: 3500,
+        durationMin: 45,
+      },
+      { name: "รักษาสิวด้วยเลเซอร์", nameEn: "Acne Laser Treatment", price: 2200, durationMin: 40 },
     ],
     gallery: [
       img("1576091160550-2173dba999ef"),
@@ -86,14 +101,17 @@ export const clinics: Clinic[] = [
     location: "Silom, Bangkok",
     distanceKm: 2.8,
     promo: "ฟอกสีฟันฟรีเมื่อขูดหินปูน",
+    promoEn: "Free whitening with scaling",
     thumbnail: img("1606811841689-23dfddce3e95"),
     banner: img("1606811841689-23dfddce3e95", 1600, 600),
     description:
       "คลินิกทันตกรรมสมัยใหม่ บริการครบวงจรทั้งทันตกรรมป้องกัน เสริมความงาม และจัดฟัน โดยทันตแพทย์ผู้เชี่ยวชาญ",
+    descriptionEn:
+      "Modern dental clinic offering comprehensive preventive, cosmetic, and orthodontic treatments by specialist dentists.",
     services: [
-      { name: "ขูดหินปูน", price: 800, durationMin: 45 },
-      { name: "ฟอกสีฟัน", price: 4500, durationMin: 60 },
-      { name: "อุดฟัน", price: 1200, durationMin: 30 },
+      { name: "ขูดหินปูน", nameEn: "Teeth Scaling & Cleaning", price: 800, durationMin: 45 },
+      { name: "ฟอกสีฟัน", nameEn: "Teeth Whitening", price: 4500, durationMin: 60 },
+      { name: "อุดฟัน", nameEn: "Dental Filling", price: 1200, durationMin: 30 },
     ],
     gallery: [
       img("1588776814546-1ffcf47267a5"),
@@ -114,13 +132,21 @@ export const clinics: Clinic[] = [
     location: "Thonglor, Bangkok",
     distanceKm: 3.4,
     promo: "ซื้อ 1 Facial รับส่วนลด 50% ครั้งที่ 2",
+    promoEn: "Buy 1 Facial, get 50% off the 2nd",
     thumbnail: img("1570172619644-dfd03ed5d881"),
     banner: img("1570172619644-dfd03ed5d881", 1600, 600),
     description:
       "ศูนย์ความงามบูทีค ขึ้นชื่อด้าน Hydrafacial สูตรพิเศษ และการรักษาเพื่อผิวกระจ่างใส",
+    descriptionEn:
+      "Boutique aesthetic center known for its signature Hydrafacial and brightening skin treatments.",
     services: [
-      { name: "Hydrafacial สูตรพิเศษ", price: 2500, durationMin: 60 },
-      { name: "มาสก์ผิวกระจ่างใส", price: 1200, durationMin: 45 },
+      {
+        name: "Hydrafacial สูตรพิเศษ",
+        nameEn: "Signature Hydrafacial",
+        price: 2500,
+        durationMin: 60,
+      },
+      { name: "มาสก์ผิวกระจ่างใส", nameEn: "Brightening Skin Mask", price: 1200, durationMin: 45 },
     ],
     gallery: [img("1522337360788-8b13dee7a37e"), img("1556228720-195a672e8a03")],
     reviewList: [
@@ -142,13 +168,21 @@ export const clinics: Clinic[] = [
     location: "Asoke, Bangkok",
     distanceKm: 1.9,
     promo: "ปรึกษาฟรีตลอดเดือนนี้",
+    promoEn: "Free consultation all month",
     thumbnail: img("1612349317150-e413f6a5b16d"),
     banner: img("1612349317150-e413f6a5b16d", 1600, 600),
     description:
       "คลินิกนำโดยแพทย์ผิวหนัง เชี่ยวชาญด้านสิว รอยแผลเป็น และโปรแกรมดูแลสุขภาพผิวระยะยาว",
+    descriptionEn:
+      "Dermatologist-led clinic specializing in acne, scarring, and long-term skin health programs.",
     services: [
-      { name: "ปรึกษาและวางแผนรักษาสิว", price: 700, durationMin: 30 },
-      { name: "Chemical Peel", price: 1800, durationMin: 40 },
+      {
+        name: "ปรึกษาและวางแผนรักษาสิว",
+        nameEn: "Acne Consultation & Treatment Plan",
+        price: 700,
+        durationMin: 30,
+      },
+      { name: "Chemical Peel", nameEn: "Chemical Peel", price: 1800, durationMin: 40 },
     ],
     gallery: [img("1559757148-5c350d0d3c56"), img("1556228453-efd6c1ff04f6")],
     reviewList: [
@@ -167,9 +201,15 @@ export const clinics: Clinic[] = [
     thumbnail: img("1559599101-f09722fb4948"),
     banner: img("1559599101-f09722fb4948", 1600, 600),
     description: "ผู้เชี่ยวชาญด้านสุขภาพหนังศีรษะ การรักษาผมร่วง และการบำบัดด้วย PRP",
+    descriptionEn: "Scalp health specialists offering hair loss treatments and PRP therapy.",
     services: [
-      { name: "บำบัดหนังศีรษะ Detox", price: 1500, durationMin: 45 },
-      { name: "การรักษาผมด้วย PRP", price: 6500, durationMin: 60 },
+      {
+        name: "บำบัดหนังศีรษะ Detox",
+        nameEn: "Scalp Detox Treatment",
+        price: 1500,
+        durationMin: 45,
+      },
+      { name: "การรักษาผมด้วย PRP", nameEn: "PRP Hair Restoration", price: 6500, durationMin: 60 },
     ],
     gallery: [img("1522337094846-8a818192de1f")],
     reviewList: [

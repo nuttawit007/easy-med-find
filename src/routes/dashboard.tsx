@@ -1142,11 +1142,15 @@ function PlatformAdminDashboard({ name }: { name: string }) {
             <div className="mt-3 grid grid-cols-2 gap-2">
               <div className="rounded-xl border border-primary/20 bg-primary-soft px-2 py-2 text-center">
                 <p className="text-lg font-black text-primary">{pendingClinics.length}</p>
-                <p className="text-[10px] font-semibold text-muted-foreground">คลินิก</p>
+                <p className="text-[10px] font-semibold text-muted-foreground">
+                  {t("platformAdmin.statClinics")}
+                </p>
               </div>
               <div className="rounded-xl border border-secondary/20 bg-secondary/10 px-2 py-2 text-center">
                 <p className="text-lg font-black text-secondary">{pendingServices.length}</p>
-                <p className="text-[10px] font-semibold text-muted-foreground">บริการ</p>
+                <p className="text-[10px] font-semibold text-muted-foreground">
+                  {t("platformAdmin.statServices")}
+                </p>
               </div>
             </div>
           </div>

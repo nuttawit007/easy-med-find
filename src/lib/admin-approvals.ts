@@ -4,8 +4,10 @@ import {
   pendingServices as mockPendingServices,
   type Clinic,
 } from "./mock-data";
-import { addNewClinic, updateClinicServices } from "./clinics";
-import { updateRegistrationStatusByUser } from "./clinic-registration";
+import { addNewClinic, updateClinicServices, resetClinicsToMock } from "./clinics";
+import { updateRegistrationStatusByUser, resetClinicRegistrations } from "./clinic-registration";
+import { resetBookings } from "./bookings";
+import { resetLoyalty } from "./loyalty";
 
 const CLINICS_KEY = "medcentral_pending_clinics_v1";
 const SERVICES_KEY = "medcentral_pending_services_v1";
@@ -340,8 +342,12 @@ export function rejectService(id: string): void {
   writeServices(pending.filter((s) => s.id !== id));
 }
 
-// Reset both queues back to full mock initial arrays
+// Reset ALL mock data back to initial state (clinics, bookings, loyalty, registrations, approval queues)
 export function resetPendingData(): void {
+  resetClinicsToMock();
+  resetBookings();
+  resetLoyalty();
+  resetClinicRegistrations();
   writeClinics(initialPendingClinics);
   writeServices(initialPendingServices);
 }

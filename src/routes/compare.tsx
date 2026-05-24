@@ -11,7 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useClinics } from "@/lib/clinics";
+import { useLocalizedClinics } from "@/lib/clinics";
 
 export const Route = createFileRoute("/compare")({
   component: ComparePage,
@@ -28,7 +28,7 @@ export const Route = createFileRoute("/compare")({
 
 function ComparePage() {
   const { t } = useTranslation();
-  const allClinics = useClinics();
+  const allClinics = useLocalizedClinics();
   const [ids, setIds] = useState<string[]>([
     allClinics[0]?.id,
     allClinics[1]?.id,

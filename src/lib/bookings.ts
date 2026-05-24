@@ -115,6 +115,10 @@ export function useBookings(): Booking[] {
   );
 }
 
+export function resetBookings(): void {
+  write([]);
+}
+
 export function isUpcoming(b: Booking): boolean {
   if (b.status === "cancelled") return false;
   if (b.status === "completed") return false;
