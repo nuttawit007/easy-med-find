@@ -193,7 +193,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           first_name: payload.firstName,
           last_name: payload.lastName,
           phone: payload.phone,
-          role: payload.role,
+          role: payload.role === "admin" ? "patient" : payload.role,
           full_name: `${payload.firstName} ${payload.lastName}`.trim(),
         },
       },
