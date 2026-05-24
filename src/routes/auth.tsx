@@ -138,7 +138,7 @@ function Auth() {
   };
 
   return (
-    <div className="flex h-screen items-center justify-center overflow-hidden bg-hero-gradient px-4">
+    <div className="flex min-h-screen items-center justify-center bg-hero-gradient px-4 py-8">
       <div className="w-full max-w-sm">
         {/* Auth card */}
         <div className="rounded-3xl border border-border/60 bg-card shadow-glow">
