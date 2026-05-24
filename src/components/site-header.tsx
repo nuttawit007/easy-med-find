@@ -15,13 +15,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetClose,
-} from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetClose } from "@/components/ui/sheet";
 
 export function SiteHeader() {
   const { user, signOut } = useAuth();
@@ -162,8 +156,7 @@ export function SiteHeader() {
                   to={link.to}
                   className="flex items-center rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
                   activeProps={{
-                    className:
-                      "bg-primary/10 text-primary hover:bg-primary/15 hover:text-primary",
+                    className: "bg-primary/10 text-primary hover:bg-primary/15 hover:text-primary",
                   }}
                   activeOptions={"exact" in link ? { exact: true } : undefined}
                 >

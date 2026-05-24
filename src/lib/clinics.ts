@@ -75,4 +75,3 @@ export function addNewClinic(clinic: Clinic): void {
   const next = [...current, clinic];
   write(next);
 }
-

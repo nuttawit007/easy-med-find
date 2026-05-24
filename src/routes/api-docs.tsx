@@ -325,7 +325,9 @@ function GetClinicsPanel() {
               >
                 {statusCode ?? "ERR"}
               </span>
-              <span className="text-xs text-muted-foreground">{t("apiDocs.responseFromServer")}</span>
+              <span className="text-xs text-muted-foreground">
+                {t("apiDocs.responseFromServer")}
+              </span>
             </div>
             <CodeBlock code={result} maxH="320px" />
           </div>
@@ -371,9 +373,7 @@ function GetClinicByIdPanel() {
     setLoading(false);
   };
 
-  const queryRows = [
-    ["clinicId", "string", "✓", t("apiDocs.clinicIdParamDesc")],
-  ];
+  const queryRows = [["clinicId", "string", "✓", t("apiDocs.clinicIdParamDesc")]];
 
   const responseFields = [
     ["id", "string", "รหัสคลินิก (เช่น c1, c2)"],
@@ -425,7 +425,10 @@ function GetClinicByIdPanel() {
 
       <div>
         <SectionLabel>{t("apiDocs.endpointLabel")}</SectionLabel>
-        <UrlBlock method="GET" path={clinicId ? resolvedPath : `${CLINICS_PATH}?clinicId={clinicId}`} />
+        <UrlBlock
+          method="GET"
+          path={clinicId ? resolvedPath : `${CLINICS_PATH}?clinicId={clinicId}`}
+        />
       </div>
 
       <div>
@@ -465,7 +468,9 @@ function GetClinicByIdPanel() {
             <tbody>
               {errorRows.map(([code, msg]) => (
                 <tr key={code} className="border-b border-border/60 last:border-0">
-                  <td className="px-4 py-2.5 font-mono text-xs text-destructive font-bold">{code}</td>
+                  <td className="px-4 py-2.5 font-mono text-xs text-destructive font-bold">
+                    {code}
+                  </td>
                   <td className="px-4 py-2.5 text-xs text-muted-foreground">{msg}</td>
                 </tr>
               ))}
@@ -526,7 +531,9 @@ function GetClinicByIdPanel() {
               >
                 {statusCode ?? "ERR"}
               </span>
-              <span className="text-xs text-muted-foreground">{t("apiDocs.responseFromServer")}</span>
+              <span className="text-xs text-muted-foreground">
+                {t("apiDocs.responseFromServer")}
+              </span>
             </div>
             <CodeBlock code={result} maxH="320px" />
           </div>
@@ -742,7 +749,9 @@ function PostBookingPanel() {
             <tbody>
               {errorRows.map(([code, msg]) => (
                 <tr key={code} className="border-b border-border/60 last:border-0">
-                  <td className="px-4 py-2.5 font-mono text-xs text-destructive font-bold">{code}</td>
+                  <td className="px-4 py-2.5 font-mono text-xs text-destructive font-bold">
+                    {code}
+                  </td>
                   <td className="px-4 py-2.5 text-xs text-muted-foreground">{msg}</td>
                 </tr>
               ))}
@@ -875,7 +884,9 @@ function PostBookingPanel() {
               >
                 {statusCode ?? "ERR"} {statusCode === 201 ? "Created" : ""}
               </span>
-              <span className="text-xs text-muted-foreground">{t("apiDocs.responseFromServer")}</span>
+              <span className="text-xs text-muted-foreground">
+                {t("apiDocs.responseFromServer")}
+              </span>
             </div>
             <CodeBlock code={result} maxH="280px" />
           </div>
@@ -956,7 +967,9 @@ function ApiDocs() {
                 <MethodBadge method="GET" />
                 <div>
                   <p className="font-bold text-foreground">{t("apiDocs.getClinicByIdTitle")}</p>
-                  <p className="mt-0.5 font-mono text-xs text-muted-foreground">{CLINICS_PATH}?clinicId={"{"}clinicId{"}"}</p>
+                  <p className="mt-0.5 font-mono text-xs text-muted-foreground">
+                    {CLINICS_PATH}?clinicId={"{"}clinicId{"}"}
+                  </p>
                 </div>
               </div>
             </AccordionTrigger>
