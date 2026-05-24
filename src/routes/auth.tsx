@@ -112,8 +112,10 @@ function Auth() {
     setOauthLoading("google");
     try {
       await signInWithGoogle();
+      // signInWithGoogle redirects the page on success; code below only runs on error
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Google sign-in failed");
+    } finally {
       setOauthLoading(null);
     }
   };
@@ -122,8 +124,10 @@ function Auth() {
     setOauthLoading("line");
     try {
       await signInWithLine();
+      // signInWithLine redirects the page; code below only runs on error
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "LINE sign-in failed");
+    } finally {
       setOauthLoading(null);
     }
   };

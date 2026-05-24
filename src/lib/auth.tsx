@@ -144,18 +144,33 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const signInWithGoogle = async () => {
-    await supabase.auth.signInWithOAuth({
+    const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: { redirectTo: REDIRECT_URL },
     });
+    if (error) throw error;
   };
 
   const signInWithLine = async () => {
-    await supabase.auth.signInWithOAuth({
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      provider: "custom:line" as any,
-      options: { redirectTo: REDIRECT_URL },
+    // LINE is not a native Supabase OAuth provider.
+    // We redirect directly to LINE's OAuth 2.1 authorization endpoint.
+    const clientId = import.meta.env.VITE_LINE_CLIENT_ID as string | undefined;
+    if (!clientId) {
+      throw new Error("LINE Login ยังไม่ได้ตั้งค่า — กรุณาเพิ่ม VITE_LINE_CLIENT_ID ใน .env");
+    }
+    const state = Array.from(crypto.getRandomValues(new Uint8Array(16)))
+      .map((b) => b.toString(16).padStart(2, "0"))
+      .join("");
+    sessionStorage.setItem("lineOAuthState", state);
+    const redirectUri = `${window.location.origin}/auth`;
+    const params = new URLSearchParams({
+      response_type: "code",
+      client_id: clientId,
+      redirect_uri: redirectUri,
+      state,
+      scope: "profile openid email",
     });
+    window.location.href = `https://access.line.me/oauth2/v2.1/authorize?${params}`;
   };
 
   const signInWithEmail = async (email: string, password: string) => {
