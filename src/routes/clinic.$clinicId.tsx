@@ -141,23 +141,33 @@ function ClinicDetail() {
     const month = String(date.getMonth() + 1).padStart(2, "0");
     const day = String(date.getDate()).padStart(2, "0");
     const localDateString = `${year}-${month}-${day}`;
-    const booking = addBooking({
-      clinicId: clinic.id,
-      clinicName: clinic.name,
-      serviceName: selectedService,
-      price: svc?.price,
-      date: localDateString,
-      time: selectedSlot,
-      patientId: user?.id,
-      patientName: user?.name,
-      patientEmail: user?.email,
-    });
-    setConfirmOpen(false);
-    toast.success("Appointment confirmed!", {
-      description: `${booking.bookingId} · ${selectedService} · ${date.toDateString()} ${selectedSlot}`,
-    });
-    setSelectedSlot(null);
-    navigate({ to: "/dashboard" });
+    try {
+      const booking = addBooking({
+        clinicId: clinic.id,
+        clinicName: clinic.name,
+        serviceName: selectedService,
+        price: svc?.price,
+        date: localDateString,
+        time: selectedSlot,
+        patientId: user?.id,
+        patientName: user?.name,
+        patientEmail: user?.email,
+      });
+      setConfirmOpen(false);
+      toast.success("Appointment confirmed!", {
+        description: `${booking.bookingId} · ${selectedService} · ${date.toDateString()} ${selectedSlot}`,
+      });
+      setSelectedSlot(null);
+      navigate({ to: "/dashboard" });
+    } catch (err) {
+      if (err instanceof BookingConflictError) {
+        toast.error(err.message);
+        setSelectedSlot(null);
+        setConfirmOpen(false);
+      } else {
+        toast.error(err instanceof Error ? err.message : "Booking failed");
+      }
+    }
   };
 
   return (
